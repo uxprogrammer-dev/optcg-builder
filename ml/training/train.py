@@ -266,7 +266,7 @@ def train(
     early_stopping_patience: Optional[int] = 3,
     include_control_tokens: bool = True,
     resume_from: Optional[Path] = None,
-    freq_hist_weight: float = 0.5,
+    freq_hist_weight: float = 1.0,
     save_checkpoints: bool = True,
 ) -> None:
     deck_config = DeckConfig()
@@ -316,8 +316,9 @@ def train(
         "cost_aux": tf.keras.losses.KLDivergence(name="cost_kld"),
         "freq_hist": tf.keras.losses.MeanSquaredError(name="freq_hist_mse"),
     }
-    # Increased freq_hist weight from 0.1 to 0.5 (default) to strongly encourage realistic card counts
+    # Increased freq_hist weight from 0.1 to 1.0 (default) to strongly encourage realistic card counts
     # This helps the model learn that 4x staples and 2x tech cards are more common than 1x cards
+    # Higher weight (1.0+) significantly reduces the number of 1x cards in generated decks
     loss_weights = {"main": 1.0, "type_aux": 0.2, "cost_aux": 0.2, "freq_hist": freq_hist_weight}
     metrics = {
         "main": [acc_fn],
@@ -527,8 +528,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--freq-hist-weight",
         type=float,
-        default=0.5,
-        help="Weight for the frequency histogram loss (higher = stronger regularization against 1x cards). Default: 0.5",
+        default=1.0,
+        help="Weight for the frequency histogram loss (higher = stronger regularization against 1x cards). Default: 1.0",
     )
     parser.add_argument(
         "--disable-checkpoints",
