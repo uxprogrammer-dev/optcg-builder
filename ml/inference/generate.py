@@ -552,6 +552,60 @@ def _extract_freq_hist(outputs: tf.Tensor | Dict[str, tf.Tensor]) -> Optional[tf
     return None
 
 
+def _apply_duplicate_encouragement_bias(
+    logits: tf.Tensor,
+    copy_counts: Counter,
+    special_ids: Set[int],
+    bias_strength: float = 2.0,
+) -> tf.Tensor:
+    """
+    Encourage duplicates by boosting cards that have been generated 1-3 times.
+    This is a simpler alternative to freq_hist bias that doesn't rely on model output.
+    
+    Args:
+        logits: Raw logits [vocab_size]
+        copy_counts: Counter of how many times each card has been generated
+        special_ids: Set of special token IDs to exclude
+        bias_strength: How strongly to boost duplicates (higher = more aggressive)
+    
+    Returns:
+        Modified logits with duplicate encouragement bias applied
+    """
+    bias = tf.zeros_like(logits)
+    
+    # Boost cards that have been generated 1-3 times (encourage 2x, 3x, 4x)
+    # Cards with 0 copies: no boost (let model decide)
+    # Cards with 1 copy: moderate boost (encourage 2x)
+    # Cards with 2 copies: strong boost (encourage 3x)
+    # Cards with 3 copies: very strong boost (encourage 4x)
+    # Cards with 4+ copies: no boost (already at limit)
+    
+    for token_id, count in copy_counts.items():
+        if token_id in special_ids:
+            continue
+        
+        if count == 1:
+            # Encourage 2x copies
+            boost = bias_strength * 1.0
+        elif count == 2:
+            # Encourage 3x copies
+            boost = bias_strength * 1.5
+        elif count == 3:
+            # Encourage 4x copies
+            boost = bias_strength * 2.0
+        else:
+            # Already at 4x or more, don't boost
+            continue
+        
+        bias = tf.tensor_scatter_nd_update(
+            bias,
+            [[token_id]],
+            [tf.constant(boost, dtype=tf.float32)]
+        )
+    
+    return logits + bias
+
+
 def _apply_freq_hist_bias(
     logits: tf.Tensor,
     freq_hist: Optional[tf.Tensor],
@@ -600,6 +654,8 @@ def _apply_freq_hist_bias(
         # If max probability is close to uniform, freq_hist isn't informative
         if max_prob < uniform_prob * 2.0:
             # freq_hist is near-uniform, skip biasing to avoid breaking generation
+            import logging
+            logging.debug(f"freq_hist is near-uniform (max_prob={max_prob:.6f}, uniform_prob={uniform_prob:.6f}), skipping freq_hist bias")
             return logits
         
         # Use numpy for faster iteration
@@ -798,16 +854,26 @@ def greedy_generate(
         next_token_logits = _apply_penalty(next_token_logits, set_penalty)
         next_token_logits = _apply_penalty(next_token_logits, prompt_bias)
         
-        # Apply freq_hist bias to encourage realistic card counts (reduces 1x cards)
+        # Apply duplicate encouragement bias to reduce 1x cards
         # BUT: Skip this for the first token (leader generation) - only apply to main deck cards
-        # The first token should be a leader, not biased by frequency distribution
         if len(generated) >= 2:  # Only apply after leader has been generated
-            next_token_logits = _apply_freq_hist_bias(
+            # First try freq_hist bias if available and informative
+            if freq_hist is not None:
+                next_token_logits = _apply_freq_hist_bias(
+                    next_token_logits,
+                    freq_hist,
+                    copy_counts,
+                    special_ids,
+                    bias_strength=5.0,  # Moderate bias (reduced from 20.0 - was too strong and breaking generation)
+                )
+            
+            # Always apply duplicate encouragement bias (doesn't rely on freq_hist)
+            # This encourages cards that have been generated 1-3 times to appear again
+            next_token_logits = _apply_duplicate_encouragement_bias(
                 next_token_logits,
-                freq_hist,
                 copy_counts,
                 special_ids,
-                bias_strength=5.0,  # Moderate bias (reduced from 20.0 - was too strong and breaking generation)
+                bias_strength=2.0,  # Moderate boost to encourage 2x, 3x, 4x copies
             )
 
         if repository and len(generated) >= 2:
@@ -1071,14 +1137,25 @@ def beam_search_generate(
                 step_logits = _apply_copy_limit_penalty(
                     step_logits, copy_counts, max_copies=4, special_ids=special_ids
                 )
-                # Apply freq_hist bias to encourage realistic card counts (reduces 1x cards)
-                step_logits = _apply_freq_hist_bias(
-                    step_logits,
-                    freq_hist,
-                    copy_counts,
-                    special_ids,
-                    bias_strength=5.0,  # Moderate bias (reduced from 20.0 - was too strong and breaking generation)
-                )
+                # Apply duplicate encouragement bias to reduce 1x cards
+                if len(seq) >= 2:  # Only apply after leader has been generated
+                    # First try freq_hist bias if available and informative
+                    if freq_hist is not None:
+                        step_logits = _apply_freq_hist_bias(
+                            step_logits,
+                            freq_hist,
+                            copy_counts,
+                            special_ids,
+                            bias_strength=5.0,  # Moderate bias (reduced from 20.0 - was too strong and breaking generation)
+                        )
+                    
+                    # Always apply duplicate encouragement bias (doesn't rely on freq_hist)
+                    step_logits = _apply_duplicate_encouragement_bias(
+                        step_logits,
+                        copy_counts,
+                        special_ids,
+                        bias_strength=2.0,  # Moderate boost to encourage 2x, 3x, 4x copies
+                    )
                 if len(seq) >= 2:
                     leader_token_id = seq[1]
                     if leader_token_id not in type_target_cache:
