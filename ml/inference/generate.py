@@ -961,12 +961,17 @@ def greedy_generate(
             next_token_logits = tf.tensor_scatter_nd_update(mask, indices, updates)
         
         # Sample from the distribution
-        if temperature != 1.0 or top_k is not None:
-            # Use sampling instead of greedy
+        # Use argmax (greedy) when temperature is very low (<= 0.1) for deterministic selection
+        # This ensures biased cards (duplicates) are selected when they have the highest logits
+        if temperature <= 0.1:
+            # Greedy decoding for very low temperature (almost deterministic anyway)
+            next_token = int(tf.argmax(next_token_logits))
+        elif temperature != 1.0 or top_k is not None:
+            # Use sampling for higher temperatures
             probs = tf.nn.softmax(next_token_logits)
             next_token = int(tf.random.categorical(tf.expand_dims(probs, 0), 1)[0, 0])
         else:
-            # Greedy decoding
+            # Greedy decoding (temperature == 1.0 and no top_k)
             next_token = int(tf.argmax(next_token_logits))
         
         token_str = index_to_card.get(next_token, f"<UNK:{next_token}>")
