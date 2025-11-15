@@ -510,8 +510,8 @@ def main() -> None:
             index_to_card=index_to_card,
             deck_config=deck_config,
             initial_sequence=initial_sequence,
-            temperature=0.8,  # Reduced from 1.3 - more deterministic, encourages repetition
-            top_k=30,  # Reduced from 50 - focus on top predictions
+            temperature=0.5,  # Lower temperature to favor biased cards (duplicates) over random diversity
+            top_k=20,  # Reduced from 30 - focus on top predictions, allows bias to have more impact
             eos_penalty=5.0,
             card_features=card_features,
             use_card_features=use_card_features_in_model,
