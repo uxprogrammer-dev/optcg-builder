@@ -585,14 +585,14 @@ def _apply_duplicate_encouragement_bias(
             continue
         
         if count == 1:
-            # Encourage 2x copies
-            boost = bias_strength * 1.0
+            # Encourage 2x copies - stronger boost for first duplicate
+            boost = bias_strength * 2.0  # Increased from 1.0 to make first duplicate more likely
         elif count == 2:
             # Encourage 3x copies
-            boost = bias_strength * 1.5
+            boost = bias_strength * 2.5  # Increased from 1.5
         elif count == 3:
             # Encourage 4x copies
-            boost = bias_strength * 2.0
+            boost = bias_strength * 3.0  # Increased from 2.0
         else:
             # Already at 4x or more, don't boost
             continue
@@ -873,7 +873,7 @@ def greedy_generate(
                 next_token_logits,
                 copy_counts,
                 special_ids,
-                bias_strength=5.0,  # Increased from 2.0 to encourage more duplicates
+                bias_strength=8.0,  # Increased from 5.0 to encourage more duplicates
             )
 
         if repository and len(generated) >= 2:
@@ -1154,7 +1154,7 @@ def beam_search_generate(
                         step_logits,
                         copy_counts,
                         special_ids,
-                        bias_strength=5.0,  # Increased from 2.0 to encourage more duplicates
+                        bias_strength=8.0,  # Increased from 5.0 to encourage more duplicates
                     )
                 if len(seq) >= 2:
                     leader_token_id = seq[1]
