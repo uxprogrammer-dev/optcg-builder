@@ -869,12 +869,12 @@ def greedy_generate(
             
             # Always apply duplicate encouragement bias (doesn't rely on freq_hist)
             # This encourages cards that have been generated 1-3 times to appear again
-            # Reduced bias strength to prevent model collapse (was 25.0, too aggressive with argmax)
+            # Increased bias strength to encourage more duplicates (was 10.0, still generating mostly 1x cards)
             next_token_logits = _apply_duplicate_encouragement_bias(
                 next_token_logits,
                 copy_counts,
                 special_ids,
-                bias_strength=10.0,  # Reduced from 25.0 - was causing model collapse with argmax
+                bias_strength=20.0,  # Increased from 10.0 - model still generating mostly 1x cards
             )
 
         if repository and len(generated) >= 2:
@@ -1156,12 +1156,12 @@ def beam_search_generate(
                         )
                     
                     # Always apply duplicate encouragement bias (doesn't rely on freq_hist)
-                    # Reduced bias strength to prevent model collapse (was 25.0, too aggressive with argmax)
+                    # Increased bias strength to encourage more duplicates (was 10.0, still generating mostly 1x cards)
                     step_logits = _apply_duplicate_encouragement_bias(
                         step_logits,
                         copy_counts,
                         special_ids,
-                        bias_strength=10.0,  # Reduced from 25.0 - was causing model collapse with argmax
+                        bias_strength=20.0,  # Increased from 10.0 - model still generating mostly 1x cards
                     )
                 if len(seq) >= 2:
                     leader_token_id = seq[1]
