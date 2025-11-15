@@ -266,6 +266,8 @@ def train(
     early_stopping_patience: Optional[int] = 3,
     include_control_tokens: bool = True,
     resume_from: Optional[Path] = None,
+    freq_hist_weight: float = 0.5,
+    save_checkpoints: bool = True,
 ) -> None:
     deck_config = DeckConfig()
     prompt_config = PromptConfig()
@@ -314,7 +316,9 @@ def train(
         "cost_aux": tf.keras.losses.KLDivergence(name="cost_kld"),
         "freq_hist": tf.keras.losses.MeanSquaredError(name="freq_hist_mse"),
     }
-    loss_weights = {"main": 1.0, "type_aux": 0.2, "cost_aux": 0.2, "freq_hist": 0.1}
+    # Increased freq_hist weight from 0.1 to 0.5 (default) to strongly encourage realistic card counts
+    # This helps the model learn that 4x staples and 2x tech cards are more common than 1x cards
+    loss_weights = {"main": 1.0, "type_aux": 0.2, "cost_aux": 0.2, "freq_hist": freq_hist_weight}
     metrics = {
         "main": [acc_fn],
         "freq_hist": [tf.keras.metrics.MeanSquaredError(name="freq_hist_metric")],
@@ -402,18 +406,21 @@ def train(
             initial_epoch = len(previous_history["loss"])
 
     if resuming:
-        latest_ckpt = checkpoints_dir / "ckpt_latest.weights.h5"
-        fallback_ckpts = sorted(checkpoints_dir.glob("ckpt_*.weights.h5"))
-        resume_weights_path = None
-        if latest_ckpt.exists():
-            resume_weights_path = latest_ckpt
-        elif fallback_ckpts:
-            resume_weights_path = fallback_ckpts[-1]
-        if resume_weights_path and resume_weights_path.exists():
-            model.load_weights(str(resume_weights_path))
-            print(f"Loaded weights from {resume_weights_path}")
+        if not save_checkpoints:
+            print("WARNING: Resuming training but checkpoints are disabled. Cannot load weights; starting from scratch.")
         else:
-            print("No checkpoint weights found; starting from randomly initialized weights.")
+            latest_ckpt = checkpoints_dir / "ckpt_latest.weights.h5"
+            fallback_ckpts = sorted(checkpoints_dir.glob("ckpt_*.weights.h5"))
+            resume_weights_path = None
+            if latest_ckpt.exists():
+                resume_weights_path = latest_ckpt
+            elif fallback_ckpts:
+                resume_weights_path = fallback_ckpts[-1]
+            if resume_weights_path and resume_weights_path.exists():
+                model.load_weights(str(resume_weights_path))
+                print(f"Loaded weights from {resume_weights_path}")
+            else:
+                print("No checkpoint weights found; starting from randomly initialized weights.")
 
     if initial_epoch >= epochs:
         print(
@@ -423,20 +430,27 @@ def train(
         return
 
     callbacks = [
-        tf.keras.callbacks.ModelCheckpoint(
-            filepath=str(checkpoints_dir / "ckpt_latest.weights.h5"),
-            save_weights_only=True,
-            save_best_only=False,
-        ),
-        tf.keras.callbacks.ModelCheckpoint(
-            filepath=str(checkpoints_dir / "ckpt_{epoch:02d}.weights.h5"),
-            save_weights_only=True,
-            monitor="val_loss",
-            save_best_only=True,
-        ),
         tf.keras.callbacks.TensorBoard(log_dir=str(tensorboard_dir)),
         EpochTracker(state_path=state_path),
     ]
+    
+    # Only add checkpoint callbacks if enabled (saves disk space on cloud training)
+    if save_checkpoints:
+        callbacks.extend([
+            tf.keras.callbacks.ModelCheckpoint(
+                filepath=str(checkpoints_dir / "ckpt_latest.weights.h5"),
+                save_weights_only=True,
+                save_best_only=False,
+            ),
+            tf.keras.callbacks.ModelCheckpoint(
+                filepath=str(checkpoints_dir / "ckpt_{epoch:02d}.weights.h5"),
+                save_weights_only=True,
+                monitor="val_loss",
+                save_best_only=True,
+            ),
+        ])
+    else:
+        print("Checkpoints disabled - only final model will be saved (saves disk space)")
     
     if early_stopping_patience is not None:
         callbacks.append(
@@ -510,6 +524,17 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         help="Path to an existing run directory to continue training from.",
     )
+    parser.add_argument(
+        "--freq-hist-weight",
+        type=float,
+        default=0.5,
+        help="Weight for the frequency histogram loss (higher = stronger regularization against 1x cards). Default: 0.5",
+    )
+    parser.add_argument(
+        "--disable-checkpoints",
+        action="store_true",
+        help="Disable saving checkpoints during training (saves disk space, useful for cloud training like RunPod). Only the final model will be saved.",
+    )
     return parser.parse_args()
 
 
@@ -539,6 +564,8 @@ def main() -> None:
         early_stopping_patience=early_stopping_patience,
         include_control_tokens=not args.disable_control_tokens,
         resume_from=args.resume_from,
+        freq_hist_weight=args.freq_hist_weight,
+        save_checkpoints=not args.disable_checkpoints,
     )
 
 
