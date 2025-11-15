@@ -594,6 +594,14 @@ def _apply_freq_hist_bias(
         freq_hist_np = None
     
     if freq_hist_np is not None:
+        # Check if freq_hist is meaningful (not near-uniform)
+        max_prob = float(max(freq_hist_np))
+        uniform_prob = 1.0 / len(freq_hist_np)
+        # If max probability is close to uniform, freq_hist isn't informative
+        if max_prob < uniform_prob * 2.0:
+            # freq_hist is near-uniform, skip biasing to avoid breaking generation
+            return logits
+        
         # Use numpy for faster iteration
         for token_id, current_count in copy_counts.items():
             if token_id in special_ids or token_id >= len(freq_hist_np):
@@ -605,7 +613,8 @@ def _apply_freq_hist_bias(
             # If we haven't reached expected count, boost this card
             if current_count < expected_count:
                 # Boost strength depends on how far we are from expected count
-                boost = (expected_count - current_count) * bias_strength * 0.5
+                # Cap boost to prevent extreme values that break generation
+                boost = min((expected_count - current_count) * bias_strength * 0.5, 10.0)
                 bias = tf.tensor_scatter_nd_update(
                     bias,
                     [[token_id]],
@@ -621,7 +630,8 @@ def _apply_freq_hist_bias(
                 # Card hasn't been generated yet, but has high freq_hist
                 prob = float(freq_hist_np[token_id])
                 if prob > 0.01:  # Only boost if probability is meaningful
-                    boost = prob * bias_strength * 2.0  # Stronger boost for new cards
+                    # Cap boost to prevent extreme values
+                    boost = min(prob * bias_strength * 2.0, 10.0)
                     bias = tf.tensor_scatter_nd_update(
                         bias,
                         [[token_id]],
@@ -797,7 +807,7 @@ def greedy_generate(
                 freq_hist,
                 copy_counts,
                 special_ids,
-                bias_strength=10.0,  # Very strong bias to reduce 1x cards (increased from 5.0)
+                bias_strength=5.0,  # Moderate bias (reduced from 20.0 - was too strong and breaking generation)
             )
 
         if repository and len(generated) >= 2:
@@ -1067,7 +1077,7 @@ def beam_search_generate(
                     freq_hist,
                     copy_counts,
                     special_ids,
-                    bias_strength=10.0,  # Very strong bias to reduce 1x cards (increased from 5.0)
+                    bias_strength=5.0,  # Moderate bias (reduced from 20.0 - was too strong and breaking generation)
                 )
                 if len(seq) >= 2:
                     leader_token_id = seq[1]
