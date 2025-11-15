@@ -789,14 +789,16 @@ def greedy_generate(
         next_token_logits = _apply_penalty(next_token_logits, prompt_bias)
         
         # Apply freq_hist bias to encourage realistic card counts (reduces 1x cards)
-        # This uses the model's learned frequency distribution to guide generation
-        next_token_logits = _apply_freq_hist_bias(
-            next_token_logits,
-            freq_hist,
-            copy_counts,
-            special_ids,
-            bias_strength=2.0,  # Strong bias to reduce 1x cards
-        )
+        # BUT: Skip this for the first token (leader generation) - only apply to main deck cards
+        # The first token should be a leader, not biased by frequency distribution
+        if len(generated) >= 2:  # Only apply after leader has been generated
+            next_token_logits = _apply_freq_hist_bias(
+                next_token_logits,
+                freq_hist,
+                copy_counts,
+                special_ids,
+                bias_strength=2.0,  # Strong bias to reduce 1x cards
+            )
 
         if repository and len(generated) >= 2:
             leader_token_id = generated[1]
