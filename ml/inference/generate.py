@@ -869,11 +869,12 @@ def greedy_generate(
             
             # Always apply duplicate encouragement bias (doesn't rely on freq_hist)
             # This encourages cards that have been generated 1-3 times to appear again
+            # Reduced bias strength to prevent model collapse (was 25.0, too aggressive with argmax)
             next_token_logits = _apply_duplicate_encouragement_bias(
                 next_token_logits,
                 copy_counts,
                 special_ids,
-                bias_strength=25.0,  # Increased from 15.0 - need much stronger bias to overcome model's diversity preference
+                bias_strength=10.0,  # Reduced from 25.0 - was causing model collapse with argmax
             )
 
         if repository and len(generated) >= 2:
@@ -961,10 +962,10 @@ def greedy_generate(
             next_token_logits = tf.tensor_scatter_nd_update(mask, indices, updates)
         
         # Sample from the distribution
-        # Use argmax (greedy) when temperature is very low (<= 0.1) for deterministic selection
-        # This ensures biased cards (duplicates) are selected when they have the highest logits
-        if temperature <= 0.1:
-            # Greedy decoding for very low temperature (almost deterministic anyway)
+        # Use argmax (greedy) when temperature is extremely low (<= 0.05) for deterministic selection
+        # For temperature 0.1, use sampling to prevent model collapse while still favoring high logits
+        if temperature <= 0.05:
+            # Greedy decoding for extremely low temperature (fully deterministic)
             next_token = int(tf.argmax(next_token_logits))
         elif temperature != 1.0 or top_k is not None:
             # Use sampling for higher temperatures
@@ -1155,11 +1156,12 @@ def beam_search_generate(
                         )
                     
                     # Always apply duplicate encouragement bias (doesn't rely on freq_hist)
+                    # Reduced bias strength to prevent model collapse (was 25.0, too aggressive with argmax)
                     step_logits = _apply_duplicate_encouragement_bias(
                         step_logits,
                         copy_counts,
                         special_ids,
-                        bias_strength=25.0,  # Increased from 15.0 - need much stronger bias to overcome model's diversity preference
+                        bias_strength=10.0,  # Reduced from 25.0 - was causing model collapse with argmax
                     )
                 if len(seq) >= 2:
                     leader_token_id = seq[1]

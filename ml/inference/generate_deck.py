@@ -510,8 +510,8 @@ def main() -> None:
             index_to_card=index_to_card,
             deck_config=deck_config,
             initial_sequence=initial_sequence,
-            temperature=0.1,  # Very low temperature to make selection almost deterministic, strongly favor biased cards
-            top_k=10,  # Reduced from 15 - focus on top predictions, allows bias to have more impact
+            temperature=0.2,  # Low temperature to favor biased cards while preventing collapse (increased from 0.1)
+            top_k=15,  # Increased from 10 - allow more diversity to prevent collapse
             eos_penalty=5.0,
             card_features=card_features,
             use_card_features=use_card_features_in_model,
