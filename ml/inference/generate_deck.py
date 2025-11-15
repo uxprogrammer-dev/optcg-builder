@@ -314,17 +314,32 @@ def main() -> None:
         print(f"WARNING: Model was trained with card features (has {model_input_count} inputs), but card features are not available. Model may not work correctly.", file=sys.stderr)
 
     def restrict_first_token(logits: tf.Tensor) -> tf.Tensor:
-        if not allowlist_ids:
-            # If allowlist is empty, we can't restrict, but this should not happen
-            # when leader-only mode is used - it means no allowlisted IDs were in vocabulary
-            import sys
-            print(f"WARNING: restrict_first_token called with empty allowlist - no restriction will be applied!", file=sys.stderr)
-            return logits
-        mask = tf.ones_like(logits) * (-1e9)
-        indices = tf.constant(sorted(list(allowlist_ids)), dtype=tf.int32)
-        updates = tf.gather(logits, indices)
-        logits_scattered = tf.tensor_scatter_nd_update(mask, tf.expand_dims(indices, 1), updates)
-        return logits_scattered
+        # Always block special tokens (EOS, PAD, BOS) from being selected as the first token
+        start_id = card_to_index[deck_config.start_token]
+        end_id = card_to_index[deck_config.end_token]
+        pad_id = card_to_index[deck_config.pad_token]
+        special_ids_to_block = {start_id, end_id, pad_id}
+        
+        # Block special tokens
+        for special_id in special_ids_to_block:
+            logits = tf.tensor_scatter_nd_update(
+                logits,
+                [[special_id]],
+                [tf.constant(-1e9, dtype=tf.float32)]
+            )
+        
+        # If allowlist is provided, further restrict to only allowlisted tokens
+        if allowlist_ids:
+            # Create mask: set all non-allowlisted tokens to very negative
+            mask = tf.ones_like(logits) * (-1e9)
+            indices = tf.constant(sorted(list(allowlist_ids)), dtype=tf.int32)
+            updates = tf.gather(logits, indices)
+            logits = tf.tensor_scatter_nd_update(mask, tf.expand_dims(indices, 1), updates)
+        else:
+            # No allowlist - just block special tokens (already done above)
+            pass
+        
+        return logits
 
     # Fast path: leader-only one-step decode
     if args.leader_only:
