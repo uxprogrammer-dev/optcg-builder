@@ -1,0 +1,9 @@
+{
+  "exact_match_rate": 0.0,
+  "leader_match_rate": 0.023809523809523808,
+  "average_overlap": 0.000248015873015873,
+  "legality_rate": 0.0,
+  "duplicate_violation_rate": 0.0,
+  "average_unknown_cards": 0.0,
+  "total_samples": 84
+}

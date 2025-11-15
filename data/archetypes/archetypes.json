@@ -1,0 +1,204 @@
+{
+  "version": "1.0",
+  "archetypes": [
+    {
+      "id": "five-elders",
+      "name": "Five Elders",
+      "description": "Archetype focused on Alabasta, CP0",
+      "keySubtypes": [
+        "Alabasta",
+        "CP0",
+        "Navy",
+        "Celestial Dragons",
+        "World Government"
+      ],
+      "keyColors": [
+        "Black"
+      ],
+      "strategy": "Archetype focused on Alabasta, CP0",
+      "keyCards": [
+        "OP13-086",
+        "OP13-092",
+        "OP13-083",
+        "OP13-089",
+        "OP13-080"
+      ],
+      "typicalRatios": {
+        "characters": 0.74,
+        "events": 0.22,
+        "stages": 0.04
+      }
+    },
+    {
+      "id": "bonney",
+      "name": "Bonney",
+      "description": "Archetype focused on Fish-Man, New Fish-Man Pirates",
+      "keySubtypes": [
+        "Fish-Man",
+        "New Fish-Man Pirates",
+        "The Seven Warlords of the Sea",
+        "Heart Pirates",
+        "Beautiful Pirates"
+      ],
+      "keyColors": [
+        "Green"
+      ],
+      "strategy": "Archetype focused on Fish-Man, New Fish-Man Pirates",
+      "keyCards": [
+        "ST02-007",
+        "EB01-015",
+        "OP10-032",
+        "EB01-012",
+        "OP08-023"
+      ],
+      "typicalRatios": {
+        "characters": 1.0,
+        "events": 0.0,
+        "stages": 0.0
+      }
+    },
+    {
+      "id": "red-blue-ace",
+      "name": "Red Blue Ace",
+      "description": "Archetype focused on The Four Emperors, Navy",
+      "keySubtypes": [
+        "The Four Emperors",
+        "Navy",
+        "FILM",
+        "Big Mom Pirates",
+        "King of the Pirates"
+      ],
+      "keyColors": [
+        "Blue",
+        "Red"
+      ],
+      "strategy": "Archetype focused on The Four Emperors, Navy",
+      "keyCards": [
+        "OP13-054",
+        "OP08-047",
+        "OP13-042",
+        "OP13-016",
+        "ST23-001"
+      ],
+      "typicalRatios": {
+        "characters": 0.91,
+        "events": 0.09,
+        "stages": 0.0
+      }
+    },
+    {
+      "id": "green-zoro",
+      "name": "Green Zoro",
+      "description": "Archetype focused on Fish-Man, The Seven Warlords of the Sea",
+      "keySubtypes": [
+        "Fish-Man",
+        "The Seven Warlords of the Sea",
+        "Land of Wano",
+        "Heart Pirates",
+        "Thriller Bark Pirates"
+      ],
+      "keyColors": [
+        "Green"
+      ],
+      "strategy": "Archetype focused on Fish-Man, The Seven Warlords of the Sea",
+      "keyCards": [
+        "EB01-015",
+        "OP12-028",
+        "OP12-034",
+        "OP12-027",
+        "ST12-003"
+      ],
+      "typicalRatios": {
+        "characters": 0.86,
+        "events": 0.14,
+        "stages": 0.0
+      }
+    },
+    {
+      "id": "red-purple-gold-roger",
+      "name": "Red Purple Gold Roger",
+      "description": "Archetype focused on Ex-Military Forces, Former Baroque Works",
+      "keySubtypes": [
+        "Ex-Military Forces",
+        "Former Baroque Works",
+        "The Four Emperors",
+        "Big Mom Pirates",
+        "FILM"
+      ],
+      "keyColors": [
+        "Purple",
+        "Red"
+      ],
+      "strategy": "Archetype focused on Ex-Military Forces, Former Baroque Works",
+      "keyCards": [
+        "OP13-065",
+        "OP13-072",
+        "OP13-068",
+        "EB01-061",
+        "OP13-067"
+      ],
+      "typicalRatios": {
+        "characters": 0.85,
+        "events": 0.15,
+        "stages": 0.0
+      }
+    },
+    {
+      "id": "red-rayleigh",
+      "name": "Red Rayleigh",
+      "description": "Archetype focused on Supernovas, Amazon Lily",
+      "keySubtypes": [
+        "Supernovas",
+        "Amazon Lily",
+        "FILM",
+        "Fish-Man",
+        "Former Roger Pirates"
+      ],
+      "keyColors": [
+        "Red"
+      ],
+      "strategy": "Archetype focused on Supernovas, Amazon Lily",
+      "keyCards": [
+        "OP01-016",
+        "OP03-008",
+        "OP12-006",
+        "OP12-014",
+        "OP01-025"
+      ],
+      "typicalRatios": {
+        "characters": 0.65,
+        "events": 0.35,
+        "stages": 0.0
+      }
+    },
+    {
+      "id": "bp-luffy",
+      "name": "BP Luffy",
+      "description": "Archetype focused on Former Baroque Works, The Four Emperors",
+      "keySubtypes": [
+        "Former Baroque Works",
+        "The Four Emperors",
+        "Animal Kingdom Pirates",
+        "Big Mom Pirates",
+        "FILM"
+      ],
+      "keyColors": [
+        "Blue",
+        "Purple"
+      ],
+      "strategy": "Archetype focused on Former Baroque Works, The Four Emperors",
+      "keyCards": [
+        "OP05-067",
+        "ST18-001",
+        "EB01-061",
+        "OP07-064",
+        "OP13-043"
+      ],
+      "typicalRatios": {
+        "characters": 0.7,
+        "events": 0.3,
+        "stages": 0.0
+      }
+    }
+  ]
+}

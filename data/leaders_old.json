@@ -1,0 +1,3071 @@
+{
+  "EB01-001": {
+    "id": "EB01-001",
+    "name": "Kouzuki Oden",
+    "colors": [
+      "Red",
+      "Green"
+    ],
+    "subtypes": [
+      "Land of Wano",
+      "Kouzuki Clan"
+    ],
+    "setName": "-Memorial Collection- [EB-01]",
+    "sourceFile": "general.json"
+  },
+  "EB01-001_P1": {
+    "id": "EB01-001_p1",
+    "name": "Kouzuki Oden",
+    "colors": [
+      "Red",
+      "Green"
+    ],
+    "subtypes": [
+      "Land of Wano",
+      "Kouzuki Clan"
+    ],
+    "setName": "-Memorial Collection- [EB-01]",
+    "sourceFile": "general.json"
+  },
+  "EB01-001_P2": {
+    "id": "EB01-001_p2",
+    "name": "Kouzuki Oden",
+    "colors": [
+      "Red",
+      "Green"
+    ],
+    "subtypes": [
+      "Land of Wano",
+      "Kouzuki Clan"
+    ],
+    "setName": "-Anime 25th Collection- [EB-02]",
+    "sourceFile": "eb02.json"
+  },
+  "EB01-021": {
+    "id": "EB01-021",
+    "name": "Hannyabal",
+    "colors": [
+      "Blue",
+      "Purple"
+    ],
+    "subtypes": [
+      "Impel Down"
+    ],
+    "setName": "-Memorial Collection- [EB-01]",
+    "sourceFile": "general.json"
+  },
+  "EB01-021_P1": {
+    "id": "EB01-021_p1",
+    "name": "Hannyabal",
+    "colors": [
+      "Blue",
+      "Purple"
+    ],
+    "subtypes": [
+      "Impel Down"
+    ],
+    "setName": "-Memorial Collection- [EB-01]",
+    "sourceFile": "general.json"
+  },
+  "EB01-021_P2": {
+    "id": "EB01-021_p2",
+    "name": "Hannyabal",
+    "colors": [
+      "Blue",
+      "Purple"
+    ],
+    "subtypes": [
+      "Impel Down"
+    ],
+    "setName": "-Anime 25th Collection- [EB-02]",
+    "sourceFile": "eb02.json"
+  },
+  "EB01-040": {
+    "id": "EB01-040",
+    "name": "Kyros",
+    "colors": [
+      "Black",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Dressrosa"
+    ],
+    "setName": "-Memorial Collection- [EB-01]",
+    "sourceFile": "general.json"
+  },
+  "EB01-040_P1": {
+    "id": "EB01-040_p1",
+    "name": "Kyros",
+    "colors": [
+      "Black",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Dressrosa"
+    ],
+    "setName": "-Memorial Collection- [EB-01]",
+    "sourceFile": "general.json"
+  },
+  "EB01-040_P2": {
+    "id": "EB01-040_p2",
+    "name": "Kyros",
+    "colors": [
+      "Black",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Dressrosa"
+    ],
+    "setName": "-Anime 25th Collection- [EB-02]",
+    "sourceFile": "eb02.json"
+  },
+  "EB02-010": {
+    "id": "EB02-010",
+    "name": "Monkey.D.Luffy",
+    "colors": [
+      "Green",
+      "Purple"
+    ],
+    "subtypes": [
+      "Straw Hat Crew"
+    ],
+    "setName": "-Anime 25th Collection- [EB-02]",
+    "sourceFile": "eb02.json"
+  },
+  "EB02-010_P1": {
+    "id": "EB02-010_p1",
+    "name": "Monkey.D.Luffy",
+    "colors": [
+      "Green",
+      "Purple"
+    ],
+    "subtypes": [
+      "Straw Hat Crew"
+    ],
+    "setName": "-Anime 25th Collection- [EB-02]",
+    "sourceFile": "eb02.json"
+  },
+  "EB02-010_P2": {
+    "id": "EB02-010_p2",
+    "name": "Monkey.D.Luffy",
+    "colors": [
+      "Green",
+      "Purple"
+    ],
+    "subtypes": [
+      "Straw Hat Crew"
+    ],
+    "setName": "DODGERS ONE PIECE NIGHT",
+    "sourceFile": "promotions.json"
+  },
+  "OP01-001": {
+    "id": "OP01-001",
+    "name": "Roronoa Zoro",
+    "colors": [
+      "Red"
+    ],
+    "subtypes": [
+      "Supernovas",
+      "Straw Hat Crew"
+    ],
+    "setName": "-ROMANCE DAWN- [OP01]",
+    "sourceFile": "op01.json"
+  },
+  "OP01-001_P1": {
+    "id": "OP01-001_p1",
+    "name": "Roronoa Zoro",
+    "colors": [
+      "Red"
+    ],
+    "subtypes": [
+      "Supernovas",
+      "Straw Hat Crew"
+    ],
+    "setName": "-ROMANCE DAWN- [OP01]",
+    "sourceFile": "op01.json"
+  },
+  "OP01-001_P2": {
+    "id": "OP01-001_p2",
+    "name": "Roronoa Zoro",
+    "colors": [
+      "Red"
+    ],
+    "subtypes": [
+      "Supernovas",
+      "Straw Hat Crew"
+    ],
+    "setName": "Premium Card Collection -25th Edition-",
+    "sourceFile": "general.json"
+  },
+  "OP01-002": {
+    "id": "OP01-002",
+    "name": "Trafalgar Law",
+    "colors": [
+      "Red",
+      "Green"
+    ],
+    "subtypes": [
+      "Supernovas",
+      "Heart Pirates"
+    ],
+    "setName": "-ROMANCE DAWN- [OP01]",
+    "sourceFile": "op01.json"
+  },
+  "OP01-002_P1": {
+    "id": "OP01-002_p1",
+    "name": "Trafalgar Law",
+    "colors": [
+      "Red",
+      "Green"
+    ],
+    "subtypes": [
+      "Supernovas",
+      "Heart Pirates"
+    ],
+    "setName": "-ROMANCE DAWN- [OP01]",
+    "sourceFile": "op01.json"
+  },
+  "OP01-003": {
+    "id": "OP01-003",
+    "name": "Monkey.D.Luffy",
+    "colors": [
+      "Red",
+      "Green"
+    ],
+    "subtypes": [
+      "Supernovas",
+      "Straw Hat Crew"
+    ],
+    "setName": "-ROMANCE DAWN- [OP01]",
+    "sourceFile": "op01.json"
+  },
+  "OP01-003_P1": {
+    "id": "OP01-003_p1",
+    "name": "Monkey.D.Luffy ",
+    "colors": [
+      "Red",
+      "Green"
+    ],
+    "subtypes": [
+      "Supernovas",
+      "Straw Hat Crew"
+    ],
+    "setName": "-ROMANCE DAWN- [OP01]",
+    "sourceFile": "op01.json"
+  },
+  "OP01-031": {
+    "id": "OP01-031",
+    "name": "Kouzuki Oden",
+    "colors": [
+      "Green"
+    ],
+    "subtypes": [
+      "Land of Wano",
+      "Kouzuki Clan"
+    ],
+    "setName": "-ROMANCE DAWN- [OP01]",
+    "sourceFile": "op01.json"
+  },
+  "OP01-031_P1": {
+    "id": "OP01-031_p1",
+    "name": "Kouzuki Oden",
+    "colors": [
+      "Green"
+    ],
+    "subtypes": [
+      "Land of Wano",
+      "Kouzuki Clan"
+    ],
+    "setName": "-ROMANCE DAWN- [OP01]",
+    "sourceFile": "op01.json"
+  },
+  "OP01-060": {
+    "id": "OP01-060",
+    "name": "Donquixote Doflamingo",
+    "colors": [
+      "Blue"
+    ],
+    "subtypes": [
+      "The Seven Warlords of the Sea",
+      "Donquixote Pirates"
+    ],
+    "setName": "-ROMANCE DAWN- [OP01]",
+    "sourceFile": "op01.json"
+  },
+  "OP01-060_P1": {
+    "id": "OP01-060_p1",
+    "name": "Donquixote Doflamingo",
+    "colors": [
+      "Blue"
+    ],
+    "subtypes": [
+      "The Seven Warlords of the Sea",
+      "Donquixote Pirates"
+    ],
+    "setName": "-ROMANCE DAWN- [OP01]",
+    "sourceFile": "op01.json"
+  },
+  "OP01-060_P2": {
+    "id": "OP01-060_p2",
+    "name": "Donquixote Doflamingo",
+    "colors": [
+      "Blue"
+    ],
+    "subtypes": [
+      "The Seven Warlords of the Sea",
+      "Donquixote Pirates"
+    ],
+    "setName": "-Blue Donquixote Doflamingo- [ST-17]",
+    "sourceFile": "st17.json"
+  },
+  "OP01-061": {
+    "id": "OP01-061",
+    "name": "Kaido",
+    "colors": [
+      "Blue",
+      "Purple"
+    ],
+    "subtypes": [
+      "The Four Emperors",
+      "Animal Kingdom Pirates"
+    ],
+    "setName": "-ROMANCE DAWN- [OP01]",
+    "sourceFile": "op01.json"
+  },
+  "OP01-061_P1": {
+    "id": "OP01-061_p1",
+    "name": "Kaido",
+    "colors": [
+      "Blue",
+      "Purple"
+    ],
+    "subtypes": [
+      "The Four Emperors",
+      "Animal Kingdom Pirates"
+    ],
+    "setName": "-ROMANCE DAWN- [OP01]",
+    "sourceFile": "op01.json"
+  },
+  "OP01-062": {
+    "id": "OP01-062",
+    "name": "Crocodile",
+    "colors": [
+      "Blue",
+      "Purple"
+    ],
+    "subtypes": [
+      "The Seven Warlords of the Sea",
+      "Baroque Works"
+    ],
+    "setName": "-ROMANCE DAWN- [OP01]",
+    "sourceFile": "op01.json"
+  },
+  "OP01-062_P1": {
+    "id": "OP01-062_p1",
+    "name": "Crocodile",
+    "colors": [
+      "Blue",
+      "Purple"
+    ],
+    "subtypes": [
+      "The Seven Warlords of the Sea",
+      "Baroque Works"
+    ],
+    "setName": "-ROMANCE DAWN- [OP01]",
+    "sourceFile": "op01.json"
+  },
+  "OP01-091": {
+    "id": "OP01-091",
+    "name": "King",
+    "colors": [
+      "Purple"
+    ],
+    "subtypes": [
+      "Animal Kingdom Pirates"
+    ],
+    "setName": "-ROMANCE DAWN- [OP01]",
+    "sourceFile": "op01.json"
+  },
+  "OP01-091_P1": {
+    "id": "OP01-091_p1",
+    "name": "King",
+    "colors": [
+      "Purple"
+    ],
+    "subtypes": [
+      "Animal Kingdom Pirates"
+    ],
+    "setName": "-ROMANCE DAWN- [OP01]",
+    "sourceFile": "op01.json"
+  },
+  "OP02-001": {
+    "id": "OP02-001",
+    "name": "Edward.Newgate",
+    "colors": [
+      "Red"
+    ],
+    "subtypes": [
+      "The Four Emperors",
+      "Whitebeard Pirates"
+    ],
+    "setName": "-PARAMOUNT WAR- [OP02]",
+    "sourceFile": "op02.json"
+  },
+  "OP02-001_P1": {
+    "id": "OP02-001_p1",
+    "name": "Edward.Newgate",
+    "colors": [
+      "Red"
+    ],
+    "subtypes": [
+      "The Four Emperors",
+      "Whitebeard Pirates"
+    ],
+    "setName": "-PARAMOUNT WAR- [OP02]",
+    "sourceFile": "op02.json"
+  },
+  "OP02-001_P2": {
+    "id": "OP02-001_p2",
+    "name": "Edward.Newgate",
+    "colors": [
+      "Red"
+    ],
+    "subtypes": [
+      "The Four Emperors",
+      "Whitebeard Pirates"
+    ],
+    "setName": "-Red Edward.Newgate- [ST-15]",
+    "sourceFile": "st15.json"
+  },
+  "OP02-002": {
+    "id": "OP02-002",
+    "name": "Monkey.D.Garp",
+    "colors": [
+      "Red",
+      "Black"
+    ],
+    "subtypes": [
+      "Navy"
+    ],
+    "setName": "-PARAMOUNT WAR- [OP02]",
+    "sourceFile": "op02.json"
+  },
+  "OP02-002_P1": {
+    "id": "OP02-002_p1",
+    "name": "Monkey.D.Garp",
+    "colors": [
+      "Red",
+      "Black"
+    ],
+    "subtypes": [
+      "Navy"
+    ],
+    "setName": "-PARAMOUNT WAR- [OP02]",
+    "sourceFile": "op02.json"
+  },
+  "OP02-025": {
+    "id": "OP02-025",
+    "name": "Kin'emon",
+    "colors": [
+      "Green"
+    ],
+    "subtypes": [
+      "Land of Wano",
+      "The Akazaya Nine"
+    ],
+    "setName": "-PARAMOUNT WAR- [OP02]",
+    "sourceFile": "op02.json"
+  },
+  "OP02-025_P1": {
+    "id": "OP02-025_p1",
+    "name": "Kin'emon",
+    "colors": [
+      "Green"
+    ],
+    "subtypes": [
+      "Land of Wano",
+      "The Akazaya Nine"
+    ],
+    "setName": "-PARAMOUNT WAR- [OP02]",
+    "sourceFile": "op02.json"
+  },
+  "OP02-026": {
+    "id": "OP02-026",
+    "name": "Sanji",
+    "colors": [
+      "Green",
+      "Blue"
+    ],
+    "subtypes": [
+      "Straw Hat Crew"
+    ],
+    "setName": "-PARAMOUNT WAR- [OP02]",
+    "sourceFile": "op02.json"
+  },
+  "OP02-026_P1": {
+    "id": "OP02-026_p1",
+    "name": "Sanji",
+    "colors": [
+      "Green",
+      "Blue"
+    ],
+    "subtypes": [
+      "Straw Hat Crew"
+    ],
+    "setName": "-PARAMOUNT WAR- [OP02]",
+    "sourceFile": "op02.json"
+  },
+  "OP02-049": {
+    "id": "OP02-049",
+    "name": "Emporio.Ivankov",
+    "colors": [
+      "Blue"
+    ],
+    "subtypes": [
+      "Impel Down",
+      "Revolutionary Army"
+    ],
+    "setName": "-PARAMOUNT WAR- [OP02]",
+    "sourceFile": "op02.json"
+  },
+  "OP02-049_P1": {
+    "id": "OP02-049_p1",
+    "name": "Emporio.Ivankov",
+    "colors": [
+      "Blue"
+    ],
+    "subtypes": [
+      "Impel Down",
+      "Revolutionary Army"
+    ],
+    "setName": "-PARAMOUNT WAR- [OP02]",
+    "sourceFile": "op02.json"
+  },
+  "OP02-071": {
+    "id": "OP02-071",
+    "name": "Magellan",
+    "colors": [
+      "Purple"
+    ],
+    "subtypes": [
+      "Impel Down"
+    ],
+    "setName": "-PARAMOUNT WAR- [OP02]",
+    "sourceFile": "op02.json"
+  },
+  "OP02-071_P1": {
+    "id": "OP02-071_p1",
+    "name": "Magellan",
+    "colors": [
+      "Purple"
+    ],
+    "subtypes": [
+      "Impel Down"
+    ],
+    "setName": "-PARAMOUNT WAR- [OP02]",
+    "sourceFile": "op02.json"
+  },
+  "OP02-072": {
+    "id": "OP02-072",
+    "name": "Zephyr",
+    "colors": [
+      "Purple",
+      "Black"
+    ],
+    "subtypes": [
+      "FILM",
+      "Neo Navy"
+    ],
+    "setName": "-PARAMOUNT WAR- [OP02]",
+    "sourceFile": "op02.json"
+  },
+  "OP02-072_P1": {
+    "id": "OP02-072_p1",
+    "name": "Zephyr",
+    "colors": [
+      "Purple",
+      "Black"
+    ],
+    "subtypes": [
+      "FILM",
+      "Neo Navy"
+    ],
+    "setName": "-PARAMOUNT WAR- [OP02]",
+    "sourceFile": "op02.json"
+  },
+  "OP02-093": {
+    "id": "OP02-093",
+    "name": "Smoker",
+    "colors": [
+      "Black"
+    ],
+    "subtypes": [
+      "Navy"
+    ],
+    "setName": "-PARAMOUNT WAR- [OP02]",
+    "sourceFile": "op02.json"
+  },
+  "OP02-093_P1": {
+    "id": "OP02-093_p1",
+    "name": "Smoker",
+    "colors": [
+      "Black"
+    ],
+    "subtypes": [
+      "Navy"
+    ],
+    "setName": "-PARAMOUNT WAR- [OP02]",
+    "sourceFile": "op02.json"
+  },
+  "OP02-093_P2": {
+    "id": "OP02-093_p2",
+    "name": "Smoker",
+    "colors": [
+      "Black"
+    ],
+    "subtypes": [
+      "Navy"
+    ],
+    "setName": "-Black Smoker- [ST-19]",
+    "sourceFile": "st19.json"
+  },
+  "OP03-001": {
+    "id": "OP03-001",
+    "name": "Portgas.D.Ace",
+    "colors": [
+      "Red"
+    ],
+    "subtypes": [
+      "Whitebeard Pirates"
+    ],
+    "setName": "-PILLARS OF STRENGTH- [OP03]",
+    "sourceFile": "op03.json"
+  },
+  "OP03-001_P1": {
+    "id": "OP03-001_p1",
+    "name": "Portgas.D.Ace",
+    "colors": [
+      "Red"
+    ],
+    "subtypes": [
+      "Whitebeard Pirates"
+    ],
+    "setName": "-PILLARS OF STRENGTH- [OP03]",
+    "sourceFile": "op03.json"
+  },
+  "OP03-001_P2": {
+    "id": "OP03-001_p2",
+    "name": "Portgas.D.Ace",
+    "colors": [
+      "Red"
+    ],
+    "subtypes": [
+      "Whitebeard Pirates"
+    ],
+    "setName": "Special Goods Set -Ace/Sabo/Luffy-",
+    "sourceFile": "op03.json"
+  },
+  "OP03-021": {
+    "id": "OP03-021",
+    "name": "Kuro",
+    "colors": [
+      "Green"
+    ],
+    "subtypes": [
+      "East Blue",
+      "Black Cat Pirates"
+    ],
+    "setName": "-PILLARS OF STRENGTH- [OP03]",
+    "sourceFile": "op03.json"
+  },
+  "OP03-021_P1": {
+    "id": "OP03-021_p1",
+    "name": "Kuro",
+    "colors": [
+      "Green"
+    ],
+    "subtypes": [
+      "East Blue",
+      "Black Cat Pirates"
+    ],
+    "setName": "-PILLARS OF STRENGTH- [OP03]",
+    "sourceFile": "op03.json"
+  },
+  "OP03-022": {
+    "id": "OP03-022",
+    "name": "Arlong",
+    "colors": [
+      "Green",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Fish-Man",
+      "East Blue",
+      "Arlong Pirates"
+    ],
+    "setName": "-PILLARS OF STRENGTH- [OP03]",
+    "sourceFile": "op03.json"
+  },
+  "OP03-022_P1": {
+    "id": "OP03-022_p1",
+    "name": "Arlong",
+    "colors": [
+      "Green",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Fish-Man",
+      "East Blue",
+      "Arlong Pirates"
+    ],
+    "setName": "-PILLARS OF STRENGTH- [OP03]",
+    "sourceFile": "op03.json"
+  },
+  "OP03-040": {
+    "id": "OP03-040",
+    "name": "Nami",
+    "colors": [
+      "Blue"
+    ],
+    "subtypes": [
+      "East Blue"
+    ],
+    "setName": "-PILLARS OF STRENGTH- [OP03]",
+    "sourceFile": "op03.json"
+  },
+  "OP03-040_P1": {
+    "id": "OP03-040_p1",
+    "name": "Nami",
+    "colors": [
+      "Blue"
+    ],
+    "subtypes": [
+      "East Blue"
+    ],
+    "setName": "-PILLARS OF STRENGTH- [OP03]",
+    "sourceFile": "op03.json"
+  },
+  "OP03-058": {
+    "id": "OP03-058",
+    "name": "Iceburg",
+    "colors": [
+      "Purple"
+    ],
+    "subtypes": [
+      "Water Seven",
+      "Galley-La Company"
+    ],
+    "setName": "-PILLARS OF STRENGTH- [OP03]",
+    "sourceFile": "op03.json"
+  },
+  "OP03-058_P1": {
+    "id": "OP03-058_p1",
+    "name": "Iceburg",
+    "colors": [
+      "Purple"
+    ],
+    "subtypes": [
+      "Water Seven",
+      "Galley-La Company"
+    ],
+    "setName": "-PILLARS OF STRENGTH- [OP03]",
+    "sourceFile": "op03.json"
+  },
+  "OP03-076": {
+    "id": "OP03-076",
+    "name": "Rob Lucci",
+    "colors": [
+      "Black"
+    ],
+    "subtypes": [
+      "CP9"
+    ],
+    "setName": "-PILLARS OF STRENGTH- [OP03]",
+    "sourceFile": "op03.json"
+  },
+  "OP03-076_P1": {
+    "id": "OP03-076_p1",
+    "name": "Rob Lucci",
+    "colors": [
+      "Black"
+    ],
+    "subtypes": [
+      "CP9"
+    ],
+    "setName": "-PILLARS OF STRENGTH- [OP03]",
+    "sourceFile": "op03.json"
+  },
+  "OP03-077": {
+    "id": "OP03-077",
+    "name": "Charlotte Linlin",
+    "colors": [
+      "Black",
+      "Yellow"
+    ],
+    "subtypes": [
+      "The Four Emperors",
+      "Big Mom Pirates"
+    ],
+    "setName": "-PILLARS OF STRENGTH- [OP03]",
+    "sourceFile": "op03.json"
+  },
+  "OP03-077_P1": {
+    "id": "OP03-077_p1",
+    "name": "Charlotte Linlin",
+    "colors": [
+      "Black",
+      "Yellow"
+    ],
+    "subtypes": [
+      "The Four Emperors",
+      "Big Mom Pirates"
+    ],
+    "setName": "-PILLARS OF STRENGTH- [OP03]",
+    "sourceFile": "op03.json"
+  },
+  "OP03-099": {
+    "id": "OP03-099",
+    "name": "Charlotte Katakuri",
+    "colors": [
+      "Yellow"
+    ],
+    "subtypes": [
+      "Big Mom Pirates"
+    ],
+    "setName": "-PILLARS OF STRENGTH- [OP03]",
+    "sourceFile": "op03.json"
+  },
+  "OP03-099_P1": {
+    "id": "OP03-099_p1",
+    "name": "Charlotte Katakuri",
+    "colors": [
+      "Yellow"
+    ],
+    "subtypes": [
+      "Big Mom Pirates"
+    ],
+    "setName": "-PILLARS OF STRENGTH- [OP03]",
+    "sourceFile": "op03.json"
+  },
+  "OP03-099_P2": {
+    "id": "OP03-099_p2",
+    "name": "Charlotte Katakuri",
+    "colors": [
+      "Yellow"
+    ],
+    "subtypes": [
+      "Big Mom Pirates"
+    ],
+    "setName": "-Yellow Charlotte Katakuri- [ST-20]",
+    "sourceFile": "st20.json"
+  },
+  "OP04-001": {
+    "id": "OP04-001",
+    "name": "Nefeltari Vivi",
+    "colors": [
+      "Red",
+      "Blue"
+    ],
+    "subtypes": [
+      "Alabasta"
+    ],
+    "setName": "-KINGDOMS OF INTRIGUE- [OP04]",
+    "sourceFile": "op04.json"
+  },
+  "OP04-001_P1": {
+    "id": "OP04-001_p1",
+    "name": "Nefeltari Vivi",
+    "colors": [
+      "Red",
+      "Blue"
+    ],
+    "subtypes": [
+      "Alabasta"
+    ],
+    "setName": "-KINGDOMS OF INTRIGUE- [OP04]",
+    "sourceFile": "op04.json"
+  },
+  "OP04-019": {
+    "id": "OP04-019",
+    "name": "Donquixote Doflamingo",
+    "colors": [
+      "Green",
+      "Purple"
+    ],
+    "subtypes": [
+      "The Seven Warlords of the Sea",
+      "Donquixote Pirates"
+    ],
+    "setName": "-KINGDOMS OF INTRIGUE- [OP04]",
+    "sourceFile": "op04.json"
+  },
+  "OP04-019_P1": {
+    "id": "OP04-019_p1",
+    "name": "Donquixote Doflamingo",
+    "colors": [
+      "Green",
+      "Purple"
+    ],
+    "subtypes": [
+      "The Seven Warlords of the Sea",
+      "Donquixote Pirates"
+    ],
+    "setName": "-KINGDOMS OF INTRIGUE- [OP04]",
+    "sourceFile": "op04.json"
+  },
+  "OP04-020": {
+    "id": "OP04-020",
+    "name": "Issho",
+    "colors": [
+      "Green",
+      "Black"
+    ],
+    "subtypes": [
+      "Navy"
+    ],
+    "setName": "-KINGDOMS OF INTRIGUE- [OP04]",
+    "sourceFile": "op04.json"
+  },
+  "OP04-020_P1": {
+    "id": "OP04-020_p1",
+    "name": "Issho",
+    "colors": [
+      "Green",
+      "Black"
+    ],
+    "subtypes": [
+      "Navy"
+    ],
+    "setName": "-KINGDOMS OF INTRIGUE- [OP04]",
+    "sourceFile": "op04.json"
+  },
+  "OP04-039": {
+    "id": "OP04-039",
+    "name": "Rebecca",
+    "colors": [
+      "Blue",
+      "Black"
+    ],
+    "subtypes": [
+      "Dressrosa"
+    ],
+    "setName": "-KINGDOMS OF INTRIGUE- [OP04]",
+    "sourceFile": "op04.json"
+  },
+  "OP04-039_P1": {
+    "id": "OP04-039_p1",
+    "name": "Rebecca",
+    "colors": [
+      "Blue",
+      "Black"
+    ],
+    "subtypes": [
+      "Dressrosa"
+    ],
+    "setName": "-KINGDOMS OF INTRIGUE- [OP04]",
+    "sourceFile": "op04.json"
+  },
+  "OP04-040": {
+    "id": "OP04-040",
+    "name": "Queen",
+    "colors": [
+      "Blue",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Animal Kingdom Pirates"
+    ],
+    "setName": "-KINGDOMS OF INTRIGUE- [OP04]",
+    "sourceFile": "op04.json"
+  },
+  "OP04-040_P1": {
+    "id": "OP04-040_p1",
+    "name": "Queen",
+    "colors": [
+      "Blue",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Animal Kingdom Pirates"
+    ],
+    "setName": "-KINGDOMS OF INTRIGUE- [OP04]",
+    "sourceFile": "op04.json"
+  },
+  "OP04-058": {
+    "id": "OP04-058",
+    "name": "Crocodile",
+    "colors": [
+      "Purple",
+      "Yellow"
+    ],
+    "subtypes": [
+      "The Seven Warlords of the Sea",
+      "Baroque Works"
+    ],
+    "setName": "-KINGDOMS OF INTRIGUE- [OP04]",
+    "sourceFile": "op04.json"
+  },
+  "OP04-058_P1": {
+    "id": "OP04-058_p1",
+    "name": "Crocodile",
+    "colors": [
+      "Purple",
+      "Yellow"
+    ],
+    "subtypes": [
+      "The Seven Warlords of the Sea",
+      "Baroque Works"
+    ],
+    "setName": "-KINGDOMS OF INTRIGUE- [OP04]",
+    "sourceFile": "op04.json"
+  },
+  "OP05-001": {
+    "id": "OP05-001",
+    "name": "Sabo",
+    "colors": [
+      "Red",
+      "Black"
+    ],
+    "subtypes": [
+      "Revolutionary Army"
+    ],
+    "setName": "OP-05",
+    "sourceFile": "op05.json"
+  },
+  "OP05-001_P1": {
+    "id": "OP05-001_p1",
+    "name": "Sabo",
+    "colors": [
+      "Red",
+      "Black"
+    ],
+    "subtypes": [
+      "Revolutionary Army"
+    ],
+    "setName": "OP-05",
+    "sourceFile": "op05.json"
+  },
+  "OP05-001_P2": {
+    "id": "OP05-001_p2",
+    "name": "Sabo",
+    "colors": [
+      "Red",
+      "Black"
+    ],
+    "subtypes": [
+      "Revolutionary Army"
+    ],
+    "setName": "-Anime 25th Collection- [EB-02]",
+    "sourceFile": "eb02.json"
+  },
+  "OP05-002": {
+    "id": "OP05-002",
+    "name": "Belo Betty",
+    "colors": [
+      "Red",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Revolutionary Army"
+    ],
+    "setName": "OP-05",
+    "sourceFile": "op05.json"
+  },
+  "OP05-002_P1": {
+    "id": "OP05-002_p1",
+    "name": "Belo Betty",
+    "colors": [
+      "Red",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Revolutionary Army"
+    ],
+    "setName": "OP-05",
+    "sourceFile": "op05.json"
+  },
+  "OP05-002_P2": {
+    "id": "OP05-002_p2",
+    "name": "Belo Betty",
+    "colors": [
+      "Red",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Revolutionary Army"
+    ],
+    "setName": "-Anime 25th Collection- [EB-02]",
+    "sourceFile": "eb02.json"
+  },
+  "OP05-022": {
+    "id": "OP05-022",
+    "name": "Donquixote Rosinante",
+    "colors": [
+      "Green",
+      "Blue"
+    ],
+    "subtypes": [
+      "Navy",
+      "Donquixote Pirates"
+    ],
+    "setName": "OP-05",
+    "sourceFile": "op05.json"
+  },
+  "OP05-022_P1": {
+    "id": "OP05-022_p1",
+    "name": "Donquixote Rosinante",
+    "colors": [
+      "Green",
+      "Blue"
+    ],
+    "subtypes": [
+      "Navy",
+      "Donquixote Pirates"
+    ],
+    "setName": "OP-05",
+    "sourceFile": "op05.json"
+  },
+  "OP05-022_P2": {
+    "id": "OP05-022_p2",
+    "name": "Donquixote Rosinante",
+    "colors": [
+      "Green",
+      "Blue"
+    ],
+    "subtypes": [
+      "Navy",
+      "Donquixote Pirates"
+    ],
+    "setName": "-Anime 25th Collection- [EB-02]",
+    "sourceFile": "eb02.json"
+  },
+  "OP05-041": {
+    "id": "OP05-041",
+    "name": "Sakazuki",
+    "colors": [
+      "Blue",
+      "Black"
+    ],
+    "subtypes": [
+      "Navy"
+    ],
+    "setName": "OP-05",
+    "sourceFile": "op05.json"
+  },
+  "OP05-041_P1": {
+    "id": "OP05-041_p1",
+    "name": "Sakazuki",
+    "colors": [
+      "Blue",
+      "Black"
+    ],
+    "subtypes": [
+      "Navy"
+    ],
+    "setName": "OP-05",
+    "sourceFile": "op05.json"
+  },
+  "OP05-060": {
+    "id": "OP05-060",
+    "name": "Monkey.D.Luffy",
+    "colors": [
+      "Purple"
+    ],
+    "subtypes": [
+      "Straw Hat Crew"
+    ],
+    "setName": "OP-05",
+    "sourceFile": "op05.json"
+  },
+  "OP05-060_P1": {
+    "id": "OP05-060_p1",
+    "name": "Monkey.D.Luffy",
+    "colors": [
+      "Purple"
+    ],
+    "subtypes": [
+      "Straw Hat Crew"
+    ],
+    "setName": "OP-05",
+    "sourceFile": "op05.json"
+  },
+  "OP05-060_P2": {
+    "id": "OP05-060_p2",
+    "name": "Monkey.D.Luffy",
+    "colors": [
+      "Purple"
+    ],
+    "subtypes": [
+      "Straw Hat Crew"
+    ],
+    "setName": "One Piece Card Game x PSA Exclusive Promo Card",
+    "sourceFile": "promotions.json"
+  },
+  "OP05-060_P3": {
+    "id": "OP05-060_p3",
+    "name": "Monkey.D.Luffy",
+    "colors": [
+      "Purple"
+    ],
+    "subtypes": [
+      "Straw Hat Crew"
+    ],
+    "setName": "-Purple Monkey.D.Luffy- [ST-18]",
+    "sourceFile": "st18.json"
+  },
+  "OP05-060_P4": {
+    "id": "OP05-060_p4",
+    "name": "Monkey.D.Luffy",
+    "colors": [
+      "Purple"
+    ],
+    "subtypes": [
+      "Straw Hat Crew"
+    ],
+    "setName": "-Anime 25th Collection- [EB-02]",
+    "sourceFile": "eb02.json"
+  },
+  "OP05-098": {
+    "id": "OP05-098",
+    "name": "Enel",
+    "colors": [
+      "Yellow"
+    ],
+    "subtypes": [
+      "Sky Island"
+    ],
+    "setName": "OP-05",
+    "sourceFile": "op05.json"
+  },
+  "OP05-098_P1": {
+    "id": "OP05-098_p1",
+    "name": "Enel",
+    "colors": [
+      "Yellow"
+    ],
+    "subtypes": [
+      "Sky Island"
+    ],
+    "setName": "OP-05",
+    "sourceFile": "op05.json"
+  },
+  "OP05-098_P2": {
+    "id": "OP05-098_p2",
+    "name": "Enel",
+    "colors": [
+      "Yellow"
+    ],
+    "subtypes": [
+      "Sky Island"
+    ],
+    "setName": "-Anime 25th Collection- [EB-02]",
+    "sourceFile": "eb02.json"
+  },
+  "OP06-001": {
+    "id": "OP06-001",
+    "name": "Uta",
+    "colors": [
+      "Red",
+      "Purple"
+    ],
+    "subtypes": [
+      "FILM"
+    ],
+    "setName": "-WINGS OF THE CAPTAIN-[OP06]",
+    "sourceFile": "op06.json"
+  },
+  "OP06-001_P1": {
+    "id": "OP06-001_p1",
+    "name": "Uta",
+    "colors": [
+      "Red",
+      "Purple"
+    ],
+    "subtypes": [
+      "FILM"
+    ],
+    "setName": "-WINGS OF THE CAPTAIN-[OP06]",
+    "sourceFile": "op06.json"
+  },
+  "OP06-001_P2": {
+    "id": "OP06-001_p2",
+    "name": "Uta",
+    "colors": [
+      "Red",
+      "Purple"
+    ],
+    "subtypes": [
+      "FILM"
+    ],
+    "setName": "-Anime 25th Collection- [EB-02]",
+    "sourceFile": "eb02.json"
+  },
+  "OP06-020": {
+    "id": "OP06-020",
+    "name": "Hody Jones",
+    "colors": [
+      "Green"
+    ],
+    "subtypes": [
+      "Fish-Man",
+      "New Fish-Man Pirates"
+    ],
+    "setName": "-WINGS OF THE CAPTAIN-[OP06]",
+    "sourceFile": "op06.json"
+  },
+  "OP06-020_P1": {
+    "id": "OP06-020_p1",
+    "name": "Hody Jones",
+    "colors": [
+      "Green"
+    ],
+    "subtypes": [
+      "Fish-Man",
+      "New Fish-Man Pirates"
+    ],
+    "setName": "-WINGS OF THE CAPTAIN-[OP06]",
+    "sourceFile": "op06.json"
+  },
+  "OP06-020_P2": {
+    "id": "OP06-020_p2",
+    "name": "Hody Jones",
+    "colors": [
+      "Green"
+    ],
+    "subtypes": [
+      "Fish-Man",
+      "New Fish-Man Pirates"
+    ],
+    "setName": "-Anime 25th Collection- [EB-02]",
+    "sourceFile": "eb02.json"
+  },
+  "OP06-021": {
+    "id": "OP06-021",
+    "name": "Perona",
+    "colors": [
+      "Green",
+      "Black"
+    ],
+    "subtypes": [
+      "Thriller Bark Pirates"
+    ],
+    "setName": "-WINGS OF THE CAPTAIN-[OP06]",
+    "sourceFile": "op06.json"
+  },
+  "OP06-021_P1": {
+    "id": "OP06-021_p1",
+    "name": "Perona",
+    "colors": [
+      "Green",
+      "Black"
+    ],
+    "subtypes": [
+      "Thriller Bark Pirates"
+    ],
+    "setName": "-WINGS OF THE CAPTAIN-[OP06]",
+    "sourceFile": "op06.json"
+  },
+  "OP06-021_P2": {
+    "id": "OP06-021_p2",
+    "name": "Perona",
+    "colors": [
+      "Green",
+      "Black"
+    ],
+    "subtypes": [
+      "Thriller Bark Pirates"
+    ],
+    "setName": "-Anime 25th Collection- [EB-02]",
+    "sourceFile": "eb02.json"
+  },
+  "OP06-022": {
+    "id": "OP06-022",
+    "name": "Yamato",
+    "colors": [
+      "Green",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Land of Wano"
+    ],
+    "setName": "-WINGS OF THE CAPTAIN-[OP06]",
+    "sourceFile": "op06.json"
+  },
+  "OP06-022_P1": {
+    "id": "OP06-022_p1",
+    "name": "Yamato",
+    "colors": [
+      "Green",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Land of Wano"
+    ],
+    "setName": "-WINGS OF THE CAPTAIN-[OP06]",
+    "sourceFile": "op06.json"
+  },
+  "OP06-022_P2": {
+    "id": "OP06-022_p2",
+    "name": "Yamato",
+    "colors": [
+      "Green",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Land of Wano"
+    ],
+    "setName": "-Anime 25th Collection- [EB-02]",
+    "sourceFile": "eb02.json"
+  },
+  "OP06-022_P3": {
+    "id": "OP06-022_p3",
+    "name": "Yamato",
+    "colors": [
+      "Green",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Land of Wano"
+    ],
+    "setName": "-GREEN/YELLOW Yamato- [ST-28]",
+    "sourceFile": "st28.json"
+  },
+  "OP06-042": {
+    "id": "OP06-042",
+    "name": "Vinsmoke Reiju",
+    "colors": [
+      "Blue",
+      "Purple"
+    ],
+    "subtypes": [
+      "The Vinsmoke Family",
+      "GERMA 66"
+    ],
+    "setName": "-WINGS OF THE CAPTAIN-[OP06]",
+    "sourceFile": "op06.json"
+  },
+  "OP06-042_P1": {
+    "id": "OP06-042_p1",
+    "name": "Vinsmoke Reiju",
+    "colors": [
+      "Blue",
+      "Purple"
+    ],
+    "subtypes": [
+      "The Vinsmoke Family",
+      "GERMA 66"
+    ],
+    "setName": "-WINGS OF THE CAPTAIN-[OP06]",
+    "sourceFile": "op06.json"
+  },
+  "OP06-042_P2": {
+    "id": "OP06-042_p2",
+    "name": "Vinsmoke Reiju",
+    "colors": [
+      "Blue",
+      "Purple"
+    ],
+    "subtypes": [
+      "The Vinsmoke Family",
+      "GERMA 66"
+    ],
+    "setName": "-Anime 25th Collection- [EB-02]",
+    "sourceFile": "eb02.json"
+  },
+  "OP06-080": {
+    "id": "OP06-080",
+    "name": "Gecko Moria",
+    "colors": [
+      "Black"
+    ],
+    "subtypes": [
+      "The Seven Warlords of the Sea",
+      "Thriller Bark Pirates"
+    ],
+    "setName": "-WINGS OF THE CAPTAIN-[OP06]",
+    "sourceFile": "op06.json"
+  },
+  "OP06-080_P1": {
+    "id": "OP06-080_p1",
+    "name": "Gecko Moria",
+    "colors": [
+      "Black"
+    ],
+    "subtypes": [
+      "The Seven Warlords of the Sea",
+      "Thriller Bark Pirates"
+    ],
+    "setName": "-WINGS OF THE CAPTAIN-[OP06]",
+    "sourceFile": "op06.json"
+  },
+  "OP06-080_P2": {
+    "id": "OP06-080_p2",
+    "name": "Gecko Moria",
+    "colors": [
+      "Black"
+    ],
+    "subtypes": [
+      "The Seven Warlords of the Sea",
+      "Thriller Bark Pirates"
+    ],
+    "setName": "-Anime 25th Collection- [EB-02]",
+    "sourceFile": "eb02.json"
+  },
+  "OP07-001": {
+    "id": "OP07-001",
+    "name": "Monkey.D.Dragon",
+    "colors": [
+      "Red"
+    ],
+    "subtypes": [
+      "Revolutionary Army"
+    ],
+    "setName": "-500 YEARS IN THE FUTURE- [OP-07]",
+    "sourceFile": "op07.json"
+  },
+  "OP07-001_P1": {
+    "id": "OP07-001_p1",
+    "name": "Monkey.D.Dragon",
+    "colors": [
+      "Red"
+    ],
+    "subtypes": [
+      "Revolutionary Army"
+    ],
+    "setName": "-500 YEARS IN THE FUTURE- [OP-07]",
+    "sourceFile": "op07.json"
+  },
+  "OP07-001_P2": {
+    "id": "OP07-001_p2",
+    "name": "Monkey.D.Dragon",
+    "colors": [
+      "Red"
+    ],
+    "subtypes": [
+      "Revolutionary Army"
+    ],
+    "setName": "-Anime 25th Collection- [EB-02]",
+    "sourceFile": "eb02.json"
+  },
+  "OP07-019": {
+    "id": "OP07-019",
+    "name": "Jewelry Bonney",
+    "colors": [
+      "Green"
+    ],
+    "subtypes": [
+      "Supernovas",
+      "Bonney Pirates"
+    ],
+    "setName": "-500 YEARS IN THE FUTURE- [OP-07]",
+    "sourceFile": "op07.json"
+  },
+  "OP07-019_P1": {
+    "id": "OP07-019_p1",
+    "name": "Jewelry Bonney",
+    "colors": [
+      "Green"
+    ],
+    "subtypes": [
+      "Supernovas",
+      "Bonney Pirates"
+    ],
+    "setName": "-500 YEARS IN THE FUTURE- [OP-07]",
+    "sourceFile": "op07.json"
+  },
+  "OP07-019_P2": {
+    "id": "OP07-019_p2",
+    "name": "Jewelry Bonney",
+    "colors": [
+      "Green"
+    ],
+    "subtypes": [
+      "Supernovas",
+      "Bonney Pirates"
+    ],
+    "setName": "-Anime 25th Collection- [EB-02]",
+    "sourceFile": "eb02.json"
+  },
+  "OP07-019_P3": {
+    "id": "OP07-019_p3",
+    "name": "Jewelry Bonney",
+    "colors": [
+      "Green"
+    ],
+    "subtypes": [
+      "Supernovas",
+      "Bonney Pirates"
+    ],
+    "setName": "-GREEN Jewelry Bonney- [ST-24]",
+    "sourceFile": "st24.json"
+  },
+  "OP07-038": {
+    "id": "OP07-038",
+    "name": "Boa Hancock",
+    "colors": [
+      "Blue"
+    ],
+    "subtypes": [
+      "The Seven Warlords of the Sea",
+      "Kuja Pirates"
+    ],
+    "setName": "-500 YEARS IN THE FUTURE- [OP-07]",
+    "sourceFile": "op07.json"
+  },
+  "OP07-038_P1": {
+    "id": "OP07-038_p1",
+    "name": "Boa Hancock",
+    "colors": [
+      "Blue"
+    ],
+    "subtypes": [
+      "The Seven Warlords of the Sea",
+      "Kuja Pirates"
+    ],
+    "setName": "-500 YEARS IN THE FUTURE- [OP-07]",
+    "sourceFile": "op07.json"
+  },
+  "OP07-038_P2": {
+    "id": "OP07-038_p2",
+    "name": "Boa Hancock",
+    "colors": [
+      "Blue"
+    ],
+    "subtypes": [
+      "The Seven Warlords of the Sea",
+      "Kuja Pirates"
+    ],
+    "setName": "-Anime 25th Collection- [EB-02]",
+    "sourceFile": "eb02.json"
+  },
+  "OP07-059": {
+    "id": "OP07-059",
+    "name": "Foxy",
+    "colors": [
+      "Purple"
+    ],
+    "subtypes": [
+      "Foxy Pirates"
+    ],
+    "setName": "-500 YEARS IN THE FUTURE- [OP-07]",
+    "sourceFile": "op07.json"
+  },
+  "OP07-059_P1": {
+    "id": "OP07-059_p1",
+    "name": "Foxy",
+    "colors": [
+      "Purple"
+    ],
+    "subtypes": [
+      "Foxy Pirates"
+    ],
+    "setName": "-500 YEARS IN THE FUTURE- [OP-07]",
+    "sourceFile": "op07.json"
+  },
+  "OP07-059_P2": {
+    "id": "OP07-059_p2",
+    "name": "Foxy",
+    "colors": [
+      "Purple"
+    ],
+    "subtypes": [
+      "Foxy Pirates"
+    ],
+    "setName": "-Anime 25th Collection- [EB-02]",
+    "sourceFile": "eb02.json"
+  },
+  "OP07-079": {
+    "id": "OP07-079",
+    "name": "Rob Lucci",
+    "colors": [
+      "Black"
+    ],
+    "subtypes": [
+      "CP0"
+    ],
+    "setName": "-500 YEARS IN THE FUTURE- [OP-07]",
+    "sourceFile": "op07.json"
+  },
+  "OP07-079_P1": {
+    "id": "OP07-079_p1",
+    "name": "Rob Lucci",
+    "colors": [
+      "Black"
+    ],
+    "subtypes": [
+      "CP0"
+    ],
+    "setName": "-500 YEARS IN THE FUTURE- [OP-07]",
+    "sourceFile": "op07.json"
+  },
+  "OP07-079_P2": {
+    "id": "OP07-079_p2",
+    "name": "Rob Lucci",
+    "colors": [
+      "Black"
+    ],
+    "subtypes": [
+      "CP0"
+    ],
+    "setName": "-Anime 25th Collection- [EB-02]",
+    "sourceFile": "eb02.json"
+  },
+  "OP07-097": {
+    "id": "OP07-097",
+    "name": "Vegapunk",
+    "colors": [
+      "Yellow"
+    ],
+    "subtypes": [
+      "Scientist",
+      "Egghead"
+    ],
+    "setName": "-500 YEARS IN THE FUTURE- [OP-07]",
+    "sourceFile": "op07.json"
+  },
+  "OP07-097_P1": {
+    "id": "OP07-097_p1",
+    "name": "Vegapunk",
+    "colors": [
+      "Yellow"
+    ],
+    "subtypes": [
+      "Scientist",
+      "Egghead"
+    ],
+    "setName": "-500 YEARS IN THE FUTURE- [OP-07]",
+    "sourceFile": "op07.json"
+  },
+  "OP07-097_P2": {
+    "id": "OP07-097_p2",
+    "name": "Vegapunk",
+    "colors": [
+      "Yellow"
+    ],
+    "subtypes": [
+      "Scientist",
+      "Egghead"
+    ],
+    "setName": "-Anime 25th Collection- [EB-02]",
+    "sourceFile": "eb02.json"
+  },
+  "OP08-001": {
+    "id": "OP08-001",
+    "name": "Tony Tony.Chopper",
+    "colors": [
+      "Red",
+      "Green"
+    ],
+    "subtypes": [
+      "Animal",
+      "Drum Kingdom",
+      "Straw Hat Crew"
+    ],
+    "setName": "-TWO LEGENDS- [OP-08]",
+    "sourceFile": "op08.json"
+  },
+  "OP08-001_P1": {
+    "id": "OP08-001_p1",
+    "name": "Tony Tony.Chopper",
+    "colors": [
+      "Red",
+      "Green"
+    ],
+    "subtypes": [
+      "Animal",
+      "Drum Kingdom",
+      "Straw Hat Crew"
+    ],
+    "setName": "-TWO LEGENDS- [OP-08]",
+    "sourceFile": "op08.json"
+  },
+  "OP08-001_P2": {
+    "id": "OP08-001_p2",
+    "name": "Tony Tony.Chopper",
+    "colors": [
+      "Red",
+      "Green"
+    ],
+    "subtypes": [
+      "Animal",
+      "Drum Kingdom",
+      "Straw Hat Crew"
+    ],
+    "setName": "-Anime 25th Collection- [EB-02]",
+    "sourceFile": "eb02.json"
+  },
+  "OP08-002": {
+    "id": "OP08-002",
+    "name": "Marco",
+    "colors": [
+      "Red",
+      "Blue"
+    ],
+    "subtypes": [
+      "Whitebeard Pirates"
+    ],
+    "setName": "-TWO LEGENDS- [OP-08]",
+    "sourceFile": "op08.json"
+  },
+  "OP08-002_P1": {
+    "id": "OP08-002_p1",
+    "name": "Marco",
+    "colors": [
+      "Red",
+      "Blue"
+    ],
+    "subtypes": [
+      "Whitebeard Pirates"
+    ],
+    "setName": "-TWO LEGENDS- [OP-08]",
+    "sourceFile": "op08.json"
+  },
+  "OP08-002_P2": {
+    "id": "OP08-002_p2",
+    "name": "Marco",
+    "colors": [
+      "Red",
+      "Blue"
+    ],
+    "subtypes": [
+      "Whitebeard Pirates"
+    ],
+    "setName": "-Anime 25th Collection- [EB-02]",
+    "sourceFile": "eb02.json"
+  },
+  "OP08-021": {
+    "id": "OP08-021",
+    "name": "Carrot",
+    "colors": [
+      "Green"
+    ],
+    "subtypes": [
+      "Minks"
+    ],
+    "setName": "-TWO LEGENDS- [OP-08]",
+    "sourceFile": "op08.json"
+  },
+  "OP08-021_P1": {
+    "id": "OP08-021_p1",
+    "name": "Carrot",
+    "colors": [
+      "Green"
+    ],
+    "subtypes": [
+      "Minks"
+    ],
+    "setName": "-TWO LEGENDS- [OP-08]",
+    "sourceFile": "op08.json"
+  },
+  "OP08-021_P2": {
+    "id": "OP08-021_p2",
+    "name": "Carrot",
+    "colors": [
+      "Green"
+    ],
+    "subtypes": [
+      "Minks"
+    ],
+    "setName": "-Anime 25th Collection- [EB-02]",
+    "sourceFile": "eb02.json"
+  },
+  "OP08-057": {
+    "id": "OP08-057",
+    "name": "King",
+    "colors": [
+      "Purple",
+      "Black"
+    ],
+    "subtypes": [
+      "Animal Kingdom Pirates"
+    ],
+    "setName": "-TWO LEGENDS- [OP-08]",
+    "sourceFile": "op08.json"
+  },
+  "OP08-057_P1": {
+    "id": "OP08-057_p1",
+    "name": "King",
+    "colors": [
+      "Purple",
+      "Black"
+    ],
+    "subtypes": [
+      "Animal Kingdom Pirates"
+    ],
+    "setName": "-TWO LEGENDS- [OP-08]",
+    "sourceFile": "op08.json"
+  },
+  "OP08-057_P2": {
+    "id": "OP08-057_p2",
+    "name": "King",
+    "colors": [
+      "Purple",
+      "Black"
+    ],
+    "subtypes": [
+      "Animal Kingdom Pirates"
+    ],
+    "setName": "-Anime 25th Collection- [EB-02]",
+    "sourceFile": "eb02.json"
+  },
+  "OP08-058": {
+    "id": "OP08-058",
+    "name": "Charlotte Pudding",
+    "colors": [
+      "Purple",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Big Mom Pirates"
+    ],
+    "setName": "-TWO LEGENDS- [OP-08]",
+    "sourceFile": "op08.json"
+  },
+  "OP08-058_P1": {
+    "id": "OP08-058_p1",
+    "name": "Charlotte Pudding",
+    "colors": [
+      "Purple",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Big Mom Pirates"
+    ],
+    "setName": "-TWO LEGENDS- [OP-08]",
+    "sourceFile": "op08.json"
+  },
+  "OP08-058_P2": {
+    "id": "OP08-058_p2",
+    "name": "Charlotte Pudding",
+    "colors": [
+      "Purple",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Big Mom Pirates"
+    ],
+    "setName": "-Anime 25th Collection- [EB-02]",
+    "sourceFile": "eb02.json"
+  },
+  "OP08-098": {
+    "id": "OP08-098",
+    "name": "Kalgara",
+    "colors": [
+      "Yellow"
+    ],
+    "subtypes": [
+      "Jaya",
+      "Sky Island",
+      "Shandian Warrior"
+    ],
+    "setName": "-TWO LEGENDS- [OP-08]",
+    "sourceFile": "op08.json"
+  },
+  "OP08-098_P1": {
+    "id": "OP08-098_p1",
+    "name": "Kalgara",
+    "colors": [
+      "Yellow"
+    ],
+    "subtypes": [
+      "Jaya",
+      "Sky Island",
+      "Shandian Warrior"
+    ],
+    "setName": "-TWO LEGENDS- [OP-08]",
+    "sourceFile": "op08.json"
+  },
+  "OP08-098_P2": {
+    "id": "OP08-098_p2",
+    "name": "Kalgara",
+    "colors": [
+      "Yellow"
+    ],
+    "subtypes": [
+      "Jaya",
+      "Sky Island",
+      "Shandian Warrior"
+    ],
+    "setName": "-Anime 25th Collection- [EB-02]",
+    "sourceFile": "eb02.json"
+  },
+  "OP09-001": {
+    "id": "OP09-001",
+    "name": "Shanks",
+    "colors": [
+      "Red"
+    ],
+    "subtypes": [
+      "The Four Emperors",
+      "Red-Haired Pirates"
+    ],
+    "setName": "-EMPERORS IN THE NEW WORLD- [OP-09]",
+    "sourceFile": "op09.json"
+  },
+  "OP09-001_P1": {
+    "id": "OP09-001_p1",
+    "name": "Shanks",
+    "colors": [
+      "Red"
+    ],
+    "subtypes": [
+      "The Four Emperors",
+      "Red-Haired Pirates"
+    ],
+    "setName": "-EMPERORS IN THE NEW WORLD- [OP-09]",
+    "sourceFile": "op09.json"
+  },
+  "OP09-001_P2": {
+    "id": "OP09-001_p2",
+    "name": "Shanks",
+    "colors": [
+      "Red"
+    ],
+    "subtypes": [
+      "The Four Emperors",
+      "Red-Haired Pirates"
+    ],
+    "setName": "-RED Shanks- [ST-23]",
+    "sourceFile": "st23.json"
+  },
+  "OP09-022": {
+    "id": "OP09-022",
+    "name": "Lim",
+    "colors": [
+      "Green",
+      "Purple"
+    ],
+    "subtypes": [
+      "ODYSSEY"
+    ],
+    "setName": "-EMPERORS IN THE NEW WORLD- [OP-09]",
+    "sourceFile": "op09.json"
+  },
+  "OP09-022_P1": {
+    "id": "OP09-022_p1",
+    "name": "Lim",
+    "colors": [
+      "Green",
+      "Purple"
+    ],
+    "subtypes": [
+      "ODYSSEY"
+    ],
+    "setName": "-EMPERORS IN THE NEW WORLD- [OP-09]",
+    "sourceFile": "op09.json"
+  },
+  "OP09-042": {
+    "id": "OP09-042",
+    "name": "Buggy",
+    "colors": [
+      "Blue"
+    ],
+    "subtypes": [
+      "The Four Emperors",
+      "Cross Guild"
+    ],
+    "setName": "-EMPERORS IN THE NEW WORLD- [OP-09]",
+    "sourceFile": "op09.json"
+  },
+  "OP09-042_P1": {
+    "id": "OP09-042_p1",
+    "name": "Buggy",
+    "colors": [
+      "Blue"
+    ],
+    "subtypes": [
+      "The Four Emperors",
+      "Cross Guild"
+    ],
+    "setName": "-EMPERORS IN THE NEW WORLD- [OP-09]",
+    "sourceFile": "op09.json"
+  },
+  "OP09-042_P2": {
+    "id": "OP09-042_p2",
+    "name": "Buggy",
+    "colors": [
+      "Blue"
+    ],
+    "subtypes": [
+      "The Four Emperors",
+      "Cross Guild"
+    ],
+    "setName": "-BLUE Buggy- [ST-25]",
+    "sourceFile": "st25.json"
+  },
+  "OP09-061": {
+    "id": "OP09-061",
+    "name": "Monkey.D.Luffy",
+    "colors": [
+      "Purple",
+      "Black"
+    ],
+    "subtypes": [
+      "The Four Emperors",
+      "Straw Hat Crew"
+    ],
+    "setName": "-EMPERORS IN THE NEW WORLD- [OP-09]",
+    "sourceFile": "op09.json"
+  },
+  "OP09-061_P1": {
+    "id": "OP09-061_p1",
+    "name": "Monkey.D.Luffy",
+    "colors": [
+      "Purple",
+      "Black"
+    ],
+    "subtypes": [
+      "The Four Emperors",
+      "Straw Hat Crew"
+    ],
+    "setName": "-EMPERORS IN THE NEW WORLD- [OP-09]",
+    "sourceFile": "op09.json"
+  },
+  "OP09-061_P2": {
+    "id": "OP09-061_p2",
+    "name": "Monkey.D.Luffy",
+    "colors": [
+      "Purple",
+      "Black"
+    ],
+    "subtypes": [
+      "The Four Emperors",
+      "Straw Hat Crew"
+    ],
+    "setName": "-PURPLE/BLACK Monkey.D.Luffy- [ST-26]",
+    "sourceFile": "st26.json"
+  },
+  "OP09-062": {
+    "id": "OP09-062",
+    "name": "Nico Robin",
+    "colors": [
+      "Purple",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Straw Hat Crew"
+    ],
+    "setName": "-EMPERORS IN THE NEW WORLD- [OP-09]",
+    "sourceFile": "op09.json"
+  },
+  "OP09-062_P1": {
+    "id": "OP09-062_p1",
+    "name": "Nico Robin",
+    "colors": [
+      "Purple",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Straw Hat Crew"
+    ],
+    "setName": "-EMPERORS IN THE NEW WORLD- [OP-09]",
+    "sourceFile": "op09.json"
+  },
+  "OP09-081": {
+    "id": "OP09-081",
+    "name": "Marshall.D.Teach",
+    "colors": [
+      "Black"
+    ],
+    "subtypes": [
+      "The Four Emperors",
+      "Blackbeard Pirates"
+    ],
+    "setName": "-EMPERORS IN THE NEW WORLD- [OP-09]",
+    "sourceFile": "op09.json"
+  },
+  "OP09-081_P1": {
+    "id": "OP09-081_p1",
+    "name": "Marshall.D.Teach",
+    "colors": [
+      "Black"
+    ],
+    "subtypes": [
+      "The Four Emperors",
+      "Blackbeard Pirates"
+    ],
+    "setName": "-EMPERORS IN THE NEW WORLD- [OP-09]",
+    "sourceFile": "op09.json"
+  },
+  "OP09-081_P2": {
+    "id": "OP09-081_p2",
+    "name": "Marshall.D.Teach",
+    "colors": [
+      "Black"
+    ],
+    "subtypes": [
+      "The Four Emperors",
+      "Blackbeard Pirates"
+    ],
+    "setName": "-BLACK Marshall.D.Teach- [ST-27]",
+    "sourceFile": "st27.json"
+  },
+  "OP10-001": {
+    "id": "OP10-001",
+    "name": "Smoker",
+    "colors": [
+      "Red",
+      "Green"
+    ],
+    "subtypes": [
+      "Punk Hazard",
+      "Navy"
+    ],
+    "setName": "-ROYAL BLOOD- [OP-10]",
+    "sourceFile": "op10.json"
+  },
+  "OP10-001_P1": {
+    "id": "OP10-001_p1",
+    "name": "Smoker",
+    "colors": [
+      "Red",
+      "Green"
+    ],
+    "subtypes": [
+      "Punk Hazard",
+      "Navy"
+    ],
+    "setName": "-ROYAL BLOOD- [OP-10]",
+    "sourceFile": "op10.json"
+  },
+  "OP10-002": {
+    "id": "OP10-002",
+    "name": "Caesar Clown",
+    "colors": [
+      "Red",
+      "Blue"
+    ],
+    "subtypes": [
+      "Scientist",
+      "Punk Hazard"
+    ],
+    "setName": "-ROYAL BLOOD- [OP-10]",
+    "sourceFile": "op10.json"
+  },
+  "OP10-002_P1": {
+    "id": "OP10-002_p1",
+    "name": "Caesar Clown",
+    "colors": [
+      "Red",
+      "Blue"
+    ],
+    "subtypes": [
+      "Scientist",
+      "Punk Hazard"
+    ],
+    "setName": "-ROYAL BLOOD- [OP-10]",
+    "sourceFile": "op10.json"
+  },
+  "OP10-003": {
+    "id": "OP10-003",
+    "name": "Sugar",
+    "colors": [
+      "Red",
+      "Purple"
+    ],
+    "subtypes": [
+      "Donquixote Pirates"
+    ],
+    "setName": "-ROYAL BLOOD- [OP-10]",
+    "sourceFile": "op10.json"
+  },
+  "OP10-003_P1": {
+    "id": "OP10-003_p1",
+    "name": "Sugar",
+    "colors": [
+      "Red",
+      "Purple"
+    ],
+    "subtypes": [
+      "Donquixote Pirates"
+    ],
+    "setName": "-ROYAL BLOOD- [OP-10]",
+    "sourceFile": "op10.json"
+  },
+  "OP10-022": {
+    "id": "OP10-022",
+    "name": "Trafalgar Law",
+    "colors": [
+      "Green",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Dressrosa",
+      "Supernovas",
+      "Heart Pirates"
+    ],
+    "setName": "-ROYAL BLOOD- [OP-10]",
+    "sourceFile": "op10.json"
+  },
+  "OP10-022_P1": {
+    "id": "OP10-022_p1",
+    "name": "Trafalgar Law",
+    "colors": [
+      "Green",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Dressrosa",
+      "Supernovas",
+      "Heart Pirates"
+    ],
+    "setName": "-ROYAL BLOOD- [OP-10]",
+    "sourceFile": "op10.json"
+  },
+  "OP10-042": {
+    "id": "OP10-042",
+    "name": "Usopp",
+    "colors": [
+      "Blue",
+      "Black"
+    ],
+    "subtypes": [
+      "Dressrosa",
+      "Straw Hat Crew"
+    ],
+    "setName": "-ROYAL BLOOD- [OP-10]",
+    "sourceFile": "op10.json"
+  },
+  "OP10-042_P1": {
+    "id": "OP10-042_p1",
+    "name": "Usopp",
+    "colors": [
+      "Blue",
+      "Black"
+    ],
+    "subtypes": [
+      "Dressrosa",
+      "Straw Hat Crew"
+    ],
+    "setName": "-ROYAL BLOOD- [OP-10]",
+    "sourceFile": "op10.json"
+  },
+  "OP10-099": {
+    "id": "OP10-099",
+    "name": "Eustass\"Captain\"Kid",
+    "colors": [
+      "Yellow"
+    ],
+    "subtypes": [
+      "Supernovas",
+      "Kid Pirates"
+    ],
+    "setName": "-ROYAL BLOOD- [OP-10]",
+    "sourceFile": "op10.json"
+  },
+  "OP10-099_P1": {
+    "id": "OP10-099_p1",
+    "name": "Eustass\"Captain\"Kid",
+    "colors": [
+      "Yellow"
+    ],
+    "subtypes": [
+      "Supernovas",
+      "Kid Pirates"
+    ],
+    "setName": "-ROYAL BLOOD- [OP-10]",
+    "sourceFile": "op10.json"
+  },
+  "OP11-001": {
+    "id": "OP11-001",
+    "name": "Koby",
+    "colors": [
+      "Red",
+      "Black"
+    ],
+    "subtypes": [
+      "Navy",
+      "SWORD"
+    ],
+    "setName": "-A FIST OF DIVINE SPEED- [OP-11]",
+    "sourceFile": "op11.json"
+  },
+  "OP11-001_P1": {
+    "id": "OP11-001_p1",
+    "name": "Koby",
+    "colors": [
+      "Red",
+      "Black"
+    ],
+    "subtypes": [
+      "Navy",
+      "SWORD"
+    ],
+    "setName": "-A FIST OF DIVINE SPEED- [OP-11]",
+    "sourceFile": "op11.json"
+  },
+  "OP11-021": {
+    "id": "OP11-021",
+    "name": "Jinbe",
+    "colors": [
+      "Green"
+    ],
+    "subtypes": [
+      "Fish-Man",
+      "Straw Hat Crew"
+    ],
+    "setName": "-A FIST OF DIVINE SPEED- [OP-11]",
+    "sourceFile": "op11.json"
+  },
+  "OP11-021_P1": {
+    "id": "OP11-021_p1",
+    "name": "Jinbe",
+    "colors": [
+      "Green"
+    ],
+    "subtypes": [
+      "Fish-Man",
+      "Straw Hat Crew"
+    ],
+    "setName": "-A FIST OF DIVINE SPEED- [OP-11]",
+    "sourceFile": "op11.json"
+  },
+  "OP11-022": {
+    "id": "OP11-022",
+    "name": "Shirahoshi",
+    "colors": [
+      "Green",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Merfolk",
+      "Fish-Man Island"
+    ],
+    "setName": "-A FIST OF DIVINE SPEED- [OP-11]",
+    "sourceFile": "op11.json"
+  },
+  "OP11-022_P1": {
+    "id": "OP11-022_p1",
+    "name": "Shirahoshi",
+    "colors": [
+      "Green",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Merfolk",
+      "Fish-Man Island"
+    ],
+    "setName": "-A FIST OF DIVINE SPEED- [OP-11]",
+    "sourceFile": "op11.json"
+  },
+  "OP11-040": {
+    "id": "OP11-040",
+    "name": "Monkey.D.Luffy",
+    "colors": [
+      "Blue",
+      "Purple"
+    ],
+    "subtypes": [
+      "Straw Hat Crew"
+    ],
+    "setName": "-A FIST OF DIVINE SPEED- [OP-11]",
+    "sourceFile": "op11.json"
+  },
+  "OP11-040_P1": {
+    "id": "OP11-040_p1",
+    "name": "Monkey.D.Luffy",
+    "colors": [
+      "Blue",
+      "Purple"
+    ],
+    "subtypes": [
+      "Straw Hat Crew"
+    ],
+    "setName": "-A FIST OF DIVINE SPEED- [OP-11]",
+    "sourceFile": "op11.json"
+  },
+  "OP11-041": {
+    "id": "OP11-041",
+    "name": "Nami",
+    "colors": [
+      "Blue",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Straw Hat Crew"
+    ],
+    "setName": "-A FIST OF DIVINE SPEED- [OP-11]",
+    "sourceFile": "op11.json"
+  },
+  "OP11-041_P1": {
+    "id": "OP11-041_p1",
+    "name": "Nami",
+    "colors": [
+      "Blue",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Straw Hat Crew"
+    ],
+    "setName": "-A FIST OF DIVINE SPEED- [OP-11]",
+    "sourceFile": "op11.json"
+  },
+  "OP11-062": {
+    "id": "OP11-062",
+    "name": "Charlotte Katakuri",
+    "colors": [
+      "Purple"
+    ],
+    "subtypes": [
+      "Big Mom Pirates"
+    ],
+    "setName": "-A FIST OF DIVINE SPEED- [OP-11]",
+    "sourceFile": "op11.json"
+  },
+  "OP11-062_P1": {
+    "id": "OP11-062_p1",
+    "name": "Charlotte Katakuri",
+    "colors": [
+      "Purple"
+    ],
+    "subtypes": [
+      "Big Mom Pirates"
+    ],
+    "setName": "-A FIST OF DIVINE SPEED- [OP-11]",
+    "sourceFile": "op11.json"
+  },
+  "OP12-001": {
+    "id": "OP12-001",
+    "name": "Silvers Rayleigh",
+    "colors": [
+      "Red"
+    ],
+    "subtypes": [
+      "Former Roger Pirates"
+    ],
+    "setName": "-LEGACY OF THE MASTER- [OP-12]",
+    "sourceFile": "op12.json"
+  },
+  "OP12-001_P1": {
+    "id": "OP12-001_p1",
+    "name": "Silvers Rayleigh",
+    "colors": [
+      "Red"
+    ],
+    "subtypes": [
+      "Former Roger Pirates"
+    ],
+    "setName": "-LEGACY OF THE MASTER- [OP-12]",
+    "sourceFile": "op12.json"
+  },
+  "OP12-020": {
+    "id": "OP12-020",
+    "name": "Roronoa Zoro",
+    "colors": [
+      "Green"
+    ],
+    "subtypes": [
+      "Supernovas",
+      "Straw Hat Crew"
+    ],
+    "setName": "-LEGACY OF THE MASTER- [OP-12]",
+    "sourceFile": "op12.json"
+  },
+  "OP12-020_P1": {
+    "id": "OP12-020_p1",
+    "name": "Roronoa Zoro",
+    "colors": [
+      "Green"
+    ],
+    "subtypes": [
+      "Supernovas",
+      "Straw Hat Crew"
+    ],
+    "setName": "-LEGACY OF THE MASTER- [OP-12]",
+    "sourceFile": "op12.json"
+  },
+  "OP12-040": {
+    "id": "OP12-040",
+    "name": "Kuzan",
+    "colors": [
+      "Blue"
+    ],
+    "subtypes": [
+      "Navy"
+    ],
+    "setName": "-LEGACY OF THE MASTER- [OP-12]",
+    "sourceFile": "op12.json"
+  },
+  "OP12-040_P1": {
+    "id": "OP12-040_p1",
+    "name": "Kuzan",
+    "colors": [
+      "Blue"
+    ],
+    "subtypes": [
+      "Navy"
+    ],
+    "setName": "-LEGACY OF THE MASTER- [OP-12]",
+    "sourceFile": "op12.json"
+  },
+  "OP12-041": {
+    "id": "OP12-041",
+    "name": "Sanji",
+    "colors": [
+      "Blue",
+      "Purple"
+    ],
+    "subtypes": [
+      "The Vinsmoke Family",
+      "Straw Hat Crew"
+    ],
+    "setName": "-LEGACY OF THE MASTER- [OP-12]",
+    "sourceFile": "op12.json"
+  },
+  "OP12-041_P1": {
+    "id": "OP12-041_p1",
+    "name": "Sanji",
+    "colors": [
+      "Blue",
+      "Purple"
+    ],
+    "subtypes": [
+      "The Vinsmoke Family",
+      "Straw Hat Crew"
+    ],
+    "setName": "-LEGACY OF THE MASTER- [OP-12]",
+    "sourceFile": "op12.json"
+  },
+  "OP12-061": {
+    "id": "OP12-061",
+    "name": "Donquixote Rosinante",
+    "colors": [
+      "Purple",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Navy",
+      "Donquixote Pirates"
+    ],
+    "setName": "-LEGACY OF THE MASTER- [OP-12]",
+    "sourceFile": "op12.json"
+  },
+  "OP12-061_P1": {
+    "id": "OP12-061_p1",
+    "name": "Donquixote Rosinante",
+    "colors": [
+      "Purple",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Navy",
+      "Donquixote Pirates"
+    ],
+    "setName": "-LEGACY OF THE MASTER- [OP-12]",
+    "sourceFile": "op12.json"
+  },
+  "OP12-081": {
+    "id": "OP12-081",
+    "name": "Koala",
+    "colors": [
+      "Black",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Dressrosa",
+      "Revolutionary Army"
+    ],
+    "setName": "-LEGACY OF THE MASTER- [OP-12]",
+    "sourceFile": "op12.json"
+  },
+  "OP12-081_P1": {
+    "id": "OP12-081_p1",
+    "name": "Koala",
+    "colors": [
+      "Black",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Dressrosa",
+      "Revolutionary Army"
+    ],
+    "setName": "-LEGACY OF THE MASTER- [OP-12]",
+    "sourceFile": "op12.json"
+  },
+  "P-011": {
+    "id": "P-011",
+    "name": "Uta",
+    "colors": [
+      "Red"
+    ],
+    "subtypes": [
+      "FILM"
+    ],
+    "setName": "Included in FILM RED Promotion Card Set",
+    "sourceFile": "promotions.json"
+  },
+  "P-047": {
+    "id": "P-047",
+    "name": "Monkey.D.Luffy",
+    "colors": [
+      "Blue"
+    ],
+    "subtypes": [
+      "Straw Hat Crew"
+    ],
+    "setName": "Sealed Battle 2023 Vol.1",
+    "sourceFile": "promotions.json"
+  },
+  "P-076": {
+    "id": "P-076",
+    "name": "Sakazuki",
+    "colors": [
+      "Blue",
+      "Black"
+    ],
+    "subtypes": [
+      "Navy"
+    ],
+    "setName": "Pirates Party Vol.7",
+    "sourceFile": "promotions.json"
+  },
+  "PRB01-001": {
+    "id": "PRB01-001",
+    "name": "Sanji",
+    "colors": [
+      "Red"
+    ],
+    "subtypes": [
+      "Straw Hat Crew"
+    ],
+    "setName": "-ONE PIECE CARD THE BEST- [PRB-01]",
+    "sourceFile": "prb01.json"
+  },
+  "PRB01-001_P1": {
+    "id": "PRB01-001_p1",
+    "name": "Sanji",
+    "colors": [
+      "Red"
+    ],
+    "subtypes": [
+      "Straw Hat Crew"
+    ],
+    "setName": "-ONE PIECE CARD THE BEST- [PRB-01]",
+    "sourceFile": "prb01.json"
+  },
+  "ST01-001": {
+    "id": "ST01-001",
+    "name": "Monkey.D.Luffy",
+    "colors": [
+      "Red"
+    ],
+    "subtypes": [
+      "Supernovas",
+      "Straw Hat Crew"
+    ],
+    "setName": "-Straw Hat Crew-[ST-01]",
+    "sourceFile": "general.json"
+  },
+  "ST02-001": {
+    "id": "ST02-001",
+    "name": "Eustass\"Captain\"Kid",
+    "colors": [
+      "Green"
+    ],
+    "subtypes": [
+      "Supernovas",
+      "Kid Pirates"
+    ],
+    "setName": "-Worst Generation-[ST-02]",
+    "sourceFile": "general.json"
+  },
+  "ST03-001": {
+    "id": "ST03-001",
+    "name": "Crocodile",
+    "colors": [
+      "Blue"
+    ],
+    "subtypes": [
+      "The Seven Warlords of the Sea",
+      "Baroque Works"
+    ],
+    "setName": "-The Seven Warlords of the Sea-[ST-03]",
+    "sourceFile": "general.json"
+  },
+  "ST04-001": {
+    "id": "ST04-001",
+    "name": "Kaido",
+    "colors": [
+      "Purple"
+    ],
+    "subtypes": [
+      "The Four Emperors",
+      "Animal Kingdom Pirates"
+    ],
+    "setName": "-Animal Kingdom Pirates-[ST-04]",
+    "sourceFile": "general.json"
+  },
+  "ST05-001": {
+    "id": "ST05-001",
+    "name": "Shanks",
+    "colors": [
+      "Purple"
+    ],
+    "subtypes": [
+      "FILM",
+      "The Four Emperors",
+      "Red-Haired Pirates"
+    ],
+    "setName": "ONE PIECE FILM edition [ST-05]",
+    "sourceFile": "general.json"
+  },
+  "ST06-001": {
+    "id": "ST06-001",
+    "name": "Sakazuki",
+    "colors": [
+      "Black"
+    ],
+    "subtypes": [
+      "Navy"
+    ],
+    "setName": "-Absolute Justice- [ST-06]",
+    "sourceFile": "general.json"
+  },
+  "ST07-001": {
+    "id": "ST07-001",
+    "name": "Charlotte Linlin",
+    "colors": [
+      "Yellow"
+    ],
+    "subtypes": [
+      "The Four Emperors",
+      "Big Mom Pirates"
+    ],
+    "setName": "Big Mom Pirates [ST-07]",
+    "sourceFile": "general.json"
+  },
+  "ST08-001": {
+    "id": "ST08-001",
+    "name": "Monkey.D.Luffy",
+    "colors": [
+      "Black"
+    ],
+    "subtypes": [
+      "Straw Hat Crew"
+    ],
+    "setName": "-Monkey D. Luffy-[ST-08]",
+    "sourceFile": "general.json"
+  },
+  "ST09-001": {
+    "id": "ST09-001",
+    "name": "Yamato",
+    "colors": [
+      "Yellow"
+    ],
+    "subtypes": [
+      "Land of Wano"
+    ],
+    "setName": "-Yamato-[ST-09]",
+    "sourceFile": "general.json"
+  },
+  "ST10-001": {
+    "id": "ST10-001",
+    "name": "Trafalgar Law",
+    "colors": [
+      "Red",
+      "Purple"
+    ],
+    "subtypes": [
+      "Heart Pirates"
+    ],
+    "setName": "-The Three Captains-[ST-10]",
+    "sourceFile": "general.json"
+  },
+  "ST10-002": {
+    "id": "ST10-002",
+    "name": "Monkey.D.Luffy",
+    "colors": [
+      "Red",
+      "Purple"
+    ],
+    "subtypes": [
+      "Straw Hat Crew"
+    ],
+    "setName": "-The Three Captains-[ST-10]",
+    "sourceFile": "general.json"
+  },
+  "ST10-003": {
+    "id": "ST10-003",
+    "name": "Eustass\"Captain\"Kid",
+    "colors": [
+      "Red",
+      "Purple"
+    ],
+    "subtypes": [
+      "Kid Pirates"
+    ],
+    "setName": "-The Three Captains-[ST-10]",
+    "sourceFile": "general.json"
+  },
+  "ST11-001": {
+    "id": "ST11-001",
+    "name": "Uta",
+    "colors": [
+      "Green"
+    ],
+    "subtypes": [
+      "FILM"
+    ],
+    "setName": "-Uta-[ST-11]",
+    "sourceFile": "general.json"
+  },
+  "ST11-001_P1": {
+    "id": "ST11-001_p1",
+    "name": "Uta",
+    "colors": [
+      "Green"
+    ],
+    "subtypes": [
+      "FILM"
+    ],
+    "setName": "-Green Uta- [ST-16]",
+    "sourceFile": "st16.json"
+  },
+  "ST12-001": {
+    "id": "ST12-001",
+    "name": "Roronoa Zoro & Sanji",
+    "colors": [
+      "Green",
+      "Blue"
+    ],
+    "subtypes": [
+      "Straw Hat Crew"
+    ],
+    "setName": "-Zoro & Sanji- [ST-12]",
+    "sourceFile": "general.json"
+  },
+  "ST13-001": {
+    "id": "ST13-001",
+    "name": "Sabo",
+    "colors": [
+      "Red",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Dressrosa",
+      "Revolutionary Army"
+    ],
+    "setName": "-The Three Brothers-[ST13]",
+    "sourceFile": "st13.json"
+  },
+  "ST13-001_P1": {
+    "id": "ST13-001_p1",
+    "name": "Sabo",
+    "colors": [
+      "Red",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Dressrosa",
+      "Revolutionary Army"
+    ],
+    "setName": "-The Three Brothers-[ST13]",
+    "sourceFile": "st13.json"
+  },
+  "ST13-002": {
+    "id": "ST13-002",
+    "name": "Portgas.D.Ace",
+    "colors": [
+      "Blue",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Whitebeard Pirates"
+    ],
+    "setName": "-The Three Brothers-[ST13]",
+    "sourceFile": "st13.json"
+  },
+  "ST13-002_P1": {
+    "id": "ST13-002_p1",
+    "name": "Portgas.D.Ace",
+    "colors": [
+      "Blue",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Whitebeard Pirates"
+    ],
+    "setName": "-The Three Brothers-[ST13]",
+    "sourceFile": "st13.json"
+  },
+  "ST13-003": {
+    "id": "ST13-003",
+    "name": "Monkey.D.Luffy",
+    "colors": [
+      "Black",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Supernovas",
+      "Straw Hat Crew"
+    ],
+    "setName": "-The Three Brothers-[ST13]",
+    "sourceFile": "st13.json"
+  },
+  "ST13-003_P1": {
+    "id": "ST13-003_p1",
+    "name": "Monkey.D.Luffy",
+    "colors": [
+      "Black",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Supernovas",
+      "Straw Hat Crew"
+    ],
+    "setName": "-The Three Brothers-[ST13]",
+    "sourceFile": "st13.json"
+  },
+  "ST13-003_P2": {
+    "id": "ST13-003_p2",
+    "name": "Monkey.D.Luffy",
+    "colors": [
+      "Black",
+      "Yellow"
+    ],
+    "subtypes": [
+      "Supernovas",
+      "Straw Hat Crew"
+    ],
+    "setName": "ONE PIECE CARD GAME and Football Team DORTMUND collaboration event",
+    "sourceFile": "promotions.json"
+  },
+  "ST14-001": {
+    "id": "ST14-001",
+    "name": "Monkey.D.Luffy",
+    "colors": [
+      "Black"
+    ],
+    "subtypes": [
+      "Straw Hat Crew"
+    ],
+    "setName": "-3D2Y- [ST-14]",
+    "sourceFile": "st14.json"
+  },
+  "ST21-001": {
+    "id": "ST21-001",
+    "name": "Monkey.D.Luffy",
+    "colors": [
+      "Red"
+    ],
+    "subtypes": [
+      "The Four Emperors",
+      "Straw Hat Crew"
+    ],
+    "setName": "-GEAR5- [ST-21]",
+    "sourceFile": "st21.json"
+  },
+  "ST21-001_P1": {
+    "id": "ST21-001_p1",
+    "name": "Monkey.D.Luffy",
+    "colors": [
+      "Red"
+    ],
+    "subtypes": [
+      "The Four Emperors",
+      "Straw Hat Crew"
+    ],
+    "setName": "-GEAR5- [ST-21]",
+    "sourceFile": "st21.json"
+  }
+}

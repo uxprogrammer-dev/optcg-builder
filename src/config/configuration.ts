@@ -1,0 +1,46 @@
+export default () => ({
+  port: parseInt(process.env.PORT ?? '3000', 10),
+  openai: {
+    apiKey: process.env.OPENAI_API_KEY ?? '',
+    model: process.env.OPENAI_MODEL ?? 'gpt-4o-mini',
+    temperature: parseFloat(process.env.OPENAI_TEMPERATURE ?? '0.3'),
+  },
+  optcgApi: {
+    baseUrl: process.env.OPTCG_API_BASE_URL ?? 'https://optcgapi.com/api',
+    timeout: parseInt(process.env.OPTCG_API_TIMEOUT ?? '8000', 10),
+  },
+  frontend: {
+    origin:
+      process.env.FRONTEND_ORIGIN ?? process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3001',
+  },
+  mlModel: {
+    enabled: process.env.ML_MODEL_ENABLED === 'true',
+    pythonPath: process.env.ML_PYTHON_PATH ?? 'python',
+    module: process.env.ML_DECK_MODULE ?? 'ml.inference.generate_deck',
+    modelPath: process.env.ML_MODEL_PATH ?? '',
+    promptVocabularyPath: process.env.ML_PROMPT_VOCAB_PATH ?? '',
+    cardVocabularyPath: process.env.ML_CARD_VOCAB_PATH ?? '',
+    dataRoot: process.env.ML_DATA_ROOT ?? 'data',
+    decodeStrategy: process.env.ML_DECODE_STRATEGY ?? 'beam',
+    beamWidth: parseInt(process.env.ML_BEAM_WIDTH ?? '5', 10),
+    lengthPenalty: parseFloat(process.env.ML_LENGTH_PENALTY ?? '0.7'),
+    timeoutMs: parseInt(process.env.ML_TIMEOUT_MS ?? '15000', 10),
+  },
+  mlIntent: {
+    enabled: process.env.ML_INTENT_ENABLED === 'true',
+    pythonPath: process.env.ML_INTENT_PYTHON_PATH ?? process.env.ML_PYTHON_PATH ?? 'python',
+    module: process.env.ML_INTENT_MODULE ?? 'ml.inference.intent_classify',
+    modelPath: process.env.ML_INTENT_MODEL_PATH ?? '',
+    promptVocabularyPath: process.env.ML_INTENT_PROMPT_VOCAB_PATH ?? '',
+    colorVocabularyPath: process.env.ML_INTENT_COLOR_VOCAB_PATH ?? '',
+    keywordVocabularyPath: process.env.ML_INTENT_KEYWORD_VOCAB_PATH ?? '',
+    leaderVocabularyPath: process.env.ML_INTENT_LEADER_VOCAB_PATH ?? '',
+    strategyVocabularyPath: process.env.ML_INTENT_STRATEGY_VOCAB_PATH ?? '',
+    leaderIdsPath: process.env.ML_INTENT_LEADER_IDS_PATH ?? '',
+    dataRoot: process.env.ML_INTENT_DATA_ROOT ?? process.env.ML_DATA_ROOT ?? 'data',
+    timeoutMs: parseInt(process.env.ML_INTENT_TIMEOUT_MS ?? '10000', 10),
+    threshold: parseFloat(process.env.ML_INTENT_THRESHOLD ?? '0.5'),
+    topKLeaders: parseInt(process.env.ML_INTENT_TOP_K_LEADERS ?? '10', 10),
+    topKKeywords: parseInt(process.env.ML_INTENT_TOP_K_KEYWORDS ?? '20', 10),
+  },
+});

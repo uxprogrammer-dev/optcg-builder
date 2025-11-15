@@ -1,0 +1,348 @@
+{
+  "version": "1.0",
+  "strategies": [
+    {
+      "leaderId": "OP13-079",
+      "leaderName": "Imu",
+      "archetype": "Midrange",
+      "strategy": "Midrange deck that focuses on Generate card advantage.",
+      "keyCards": [
+        {
+          "cardId": "OP13-086",
+          "role": "engine",
+          "rationale": "Core engine card that [Activate: Main] You may rest this Character and pay 1 DON!!: Up to 1 of your opponent's Characters "
+        },
+        {
+          "cardId": "OP13-083",
+          "role": "engine",
+          "rationale": "Core engine card that [When Attacking] Up to 1 of your opponent's Characters with a cost of 3 or less cannot block during "
+        },
+        {
+          "cardId": "OP13-089",
+          "role": "engine",
+          "rationale": "Core engine card that [On Play] Add up to 1 DON!! card from your DON!! deck and set it as active. [On Attack] You may rest"
+        },
+        {
+          "cardId": "OP13-080",
+          "role": "engine",
+          "rationale": "Core engine card that [On Play] Add up to 1 DON!! card from your DON!! deck and set it as active. [When Attacking] Give up"
+        },
+        {
+          "cardId": "OP13-091",
+          "role": "removal",
+          "rationale": "Core removal card that [Blocker] [On Play] K.O. up to 1 of your opponent's Characters with a cost of 5 or less. [On K.O.] A"
+        }
+      ],
+      "winConditions": [
+        "Build board presence",
+        "Use leader ability effectively",
+        "Outvalue opponent"
+      ],
+      "typicalRatios": {
+        "characters": 0.74,
+        "events": 0.22,
+        "stages": 0.04
+      },
+      "costCurve": {
+        "0-2": 0.45,
+        "3-4": 0.28,
+        "5-6": 0.16,
+        "7+": 0.12
+      }
+    },
+    {
+      "leaderId": "OP07-019",
+      "leaderName": "Jewelry Bonney",
+      "archetype": "Midrange",
+      "strategy": "Midrange deck that focuses on Manage resources efficiently.",
+      "keyCards": [
+        {
+          "cardId": "ST02-007",
+          "role": "engine",
+          "rationale": "Core engine card that [Activate: Main] ➀ (You may rest the specified number of DON!! cards in your cost area.) You may res"
+        },
+        {
+          "cardId": "EB01-015",
+          "role": "engine",
+          "rationale": "Core engine card that [On Play] Rest up to 1 of your opponent's Characters with acost of 2 or less."
+        },
+        {
+          "cardId": "OP10-032",
+          "role": "engine",
+          "rationale": "Core engine card that If you have a green Character other than [Tashigi] that would be removed from the field by your oppo"
+        },
+        {
+          "cardId": "EB01-012",
+          "role": "engine",
+          "rationale": "Core engine card that [On Play]/[When Attacking] If your Leader has the{Supernovas} type and you have no other [Cavendish]"
+        },
+        {
+          "cardId": "OP08-023",
+          "role": "engine",
+          "rationale": "Core engine card that [On Play]/[When Attacking] Up to 1 of your opponent's restedCharacters with a cost of 7 or less will"
+        }
+      ],
+      "winConditions": [
+        "Build board presence",
+        "Use leader ability effectively",
+        "Outvalue opponent"
+      ],
+      "typicalRatios": {
+        "characters": 1.0,
+        "events": 0.0,
+        "stages": 0.0
+      },
+      "costCurve": {
+        "0-2": 0.29,
+        "3-4": 0.09,
+        "5-6": 0.34,
+        "7+": 0.28
+      }
+    },
+    {
+      "leaderId": "OP13-002",
+      "leaderName": "Portgas.D.Ace",
+      "archetype": "Midrange",
+      "strategy": "Midrange deck that focuses on Generate card advantage, Control the board with removal.",
+      "keyCards": [
+        {
+          "cardId": "OP08-047",
+          "role": "finisher",
+          "rationale": "Core finisher card that [On Play] You may return 1 of your Characters other thanthis Character to the owner's hand: Return u"
+        },
+        {
+          "cardId": "OP13-042",
+          "role": "engine",
+          "rationale": "Core engine card that [Blocker] [On Play] Draw 2 cards and trash 1 card from your hand. Then, give your Leader and 1 Chara"
+        },
+        {
+          "cardId": "OP13-016",
+          "role": "engine",
+          "rationale": "Core engine card that [On Play] If your Leader is [Sabo], [Portgas.D.Ace] or [Monkey.D.Luffy], look at 4 cards from the to"
+        },
+        {
+          "cardId": "OP13-054",
+          "role": "engine",
+          "rationale": "Core engine card that [On Play] If you have 3 or less Life cards, draw 2 cards. Then, give up to 1 rested DON!! card to yo"
+        },
+        {
+          "cardId": "OP13-043",
+          "role": "engine",
+          "rationale": "Core engine card that [On Play] If you have 3 or less Life cards, draw 2 cards and trash 1 card from your hand."
+        }
+      ],
+      "winConditions": [
+        "Build board presence",
+        "Use leader ability effectively",
+        "Outvalue opponent"
+      ],
+      "typicalRatios": {
+        "characters": 0.91,
+        "events": 0.09,
+        "stages": 0.0
+      },
+      "costCurve": {
+        "0-2": 0.31,
+        "3-4": 0.11,
+        "5-6": 0.36,
+        "7+": 0.22
+      }
+    },
+    {
+      "leaderId": "OP12-020",
+      "leaderName": "Roronoa Zoro",
+      "archetype": "Midrange",
+      "strategy": "Midrange deck that focuses on Manage resources efficiently.",
+      "keyCards": [
+        {
+          "cardId": "OP12-028",
+          "role": "engine",
+          "rationale": "Core engine card that [Activate: Main] You may rest 1 of your DON!! cards and this Character: If your Leader is [Roronoa Z"
+        },
+        {
+          "cardId": "OP12-034",
+          "role": "engine",
+          "rationale": "Core engine card that [On Play] If your Leader has the &lt;Slash&gt; attribute, look at 5 cards from the top of your deck;"
+        },
+        {
+          "cardId": "OP12-027",
+          "role": "removal",
+          "rationale": "Core removal card that If your &lt;Slash&gt; attribute Character with a cost of 5 or less other than this Character would b"
+        },
+        {
+          "cardId": "ST12-003",
+          "role": "engine",
+          "rationale": "Core engine card that [On Play] If you have 2 or less Characters, play up to 1{Muggy Kingdom} type or &lt;Slash&gt; attrib"
+        },
+        {
+          "cardId": "OP13-037",
+          "role": "engine",
+          "rationale": "Core engine card that [On Play] If your Leader has the {FILM} or {Straw Hat Crew} type, set up to 2 of your DON!! cards as"
+        }
+      ],
+      "winConditions": [
+        "Build board presence",
+        "Use leader ability effectively",
+        "Outvalue opponent"
+      ],
+      "typicalRatios": {
+        "characters": 0.86,
+        "events": 0.14,
+        "stages": 0.0
+      },
+      "costCurve": {
+        "0-2": 0.36,
+        "3-4": 0.36,
+        "5-6": 0.27,
+        "7+": 0.01
+      }
+    },
+    {
+      "leaderId": "OP13-003",
+      "leaderName": "Gol.D.Roger",
+      "archetype": "Midrange",
+      "strategy": "Midrange deck that focuses on Manage resources efficiently.",
+      "keyCards": [
+        {
+          "cardId": "OP13-065",
+          "role": "engine",
+          "rationale": "Core engine card that [On Play] Look at 5 cards from the top of your deck; reveal up to 1 card with a type including 'Roge"
+        },
+        {
+          "cardId": "OP13-072",
+          "role": "engine",
+          "rationale": "Core engine card that [On Play] You may rest 1 of your DON!! cards: Add up to 1 DON!! card from your DON!! deck and rest i"
+        },
+        {
+          "cardId": "OP13-068",
+          "role": "removal",
+          "rationale": "Core removal card that [On Play] You may rest 1 of your DON!! cards: If you have no Characters, K.O. up to 1 of your oppone"
+        },
+        {
+          "cardId": "EB01-061",
+          "role": "engine",
+          "rationale": "Core engine card that [On Play] Add up to 1 DON!! card from your DON!! deck andset it as active.<br>[When Attacking] Selec"
+        },
+        {
+          "cardId": "ST23-001",
+          "role": "finisher",
+          "rationale": "Core finisher card that If you have a Character with 10000 power or more, give this card in your hand −4 cost.<br>[Blocker] "
+        }
+      ],
+      "winConditions": [
+        "Build board presence",
+        "Use leader ability effectively",
+        "Outvalue opponent"
+      ],
+      "typicalRatios": {
+        "characters": 0.85,
+        "events": 0.15,
+        "stages": 0.0
+      },
+      "costCurve": {
+        "0-2": 0.35,
+        "3-4": 0.18,
+        "5-6": 0.22,
+        "7+": 0.25
+      }
+    },
+    {
+      "leaderId": "OP12-001",
+      "leaderName": "Silvers Rayleigh",
+      "archetype": "Midrange",
+      "strategy": "Midrange deck that focuses on Build board presence.",
+      "keyCards": [
+        {
+          "cardId": "OP01-016",
+          "role": "engine",
+          "rationale": "Core engine card that [On Play] Look at 5 cards from the top of your deck; reveal up to 1 {Straw Hat Crew} type card other"
+        },
+        {
+          "cardId": "OP03-008",
+          "role": "removal",
+          "rationale": "Core removal card that This Character cannot be K.O.'d in battle by <slash> attribute cards.<br>[On Play] Look at 5 cards f"
+        },
+        {
+          "cardId": "OP12-006",
+          "role": "engine",
+          "rationale": "Core engine card that [On Play] Look at 5 cards from the top of your deck; reveal up to 1 [Monkey.D.Luffy] or 1 red Event "
+        },
+        {
+          "cardId": "OP12-014",
+          "role": "engine",
+          "rationale": "Core engine card that [On Play] Look at 5 cards from the top of your deck; reveal up to 1 [Monkey.D.Luffy] or red Event an"
+        },
+        {
+          "cardId": "OP10-005",
+          "role": "removal",
+          "rationale": "Core removal card that [Your Turn] This Character gains +3000 power.<br>[On K.O.] Draw 1 card."
+        }
+      ],
+      "winConditions": [
+        "Build board presence",
+        "Use leader ability effectively",
+        "Outvalue opponent"
+      ],
+      "typicalRatios": {
+        "characters": 0.65,
+        "events": 0.35,
+        "stages": 0.0
+      },
+      "costCurve": {
+        "0-2": 0.65,
+        "3-4": 0.35,
+        "5-6": 0.0,
+        "7+": 0.0
+      }
+    },
+    {
+      "leaderId": "OP11-040",
+      "leaderName": "Monkey.D.Luffy",
+      "archetype": "Midrange",
+      "strategy": "Midrange deck that focuses on Manage resources efficiently.",
+      "keyCards": [
+        {
+          "cardId": "OP05-067",
+          "role": "engine",
+          "rationale": "Core engine card that [When Attacking] If you have 3 or less Life cards, add up to 1 DON!! card from your DON!! deck and s"
+        },
+        {
+          "cardId": "ST18-001",
+          "role": "engine",
+          "rationale": "Core engine card that [On Play] If you have 8 or more DON!! cards on your field,\n                    rest up to 1 of your "
+        },
+        {
+          "cardId": "EB01-061",
+          "role": "engine",
+          "rationale": "Core engine card that [On Play] Add up to 1 DON!! card from your DON!! deck andset it as active.<br>[When Attacking] Selec"
+        },
+        {
+          "cardId": "OP11-054",
+          "role": "engine",
+          "rationale": "Core engine card that [Blocker] (After your opponent declares an attack, you may rest this card to make it the new target "
+        },
+        {
+          "cardId": "OP06-119",
+          "role": "finisher",
+          "rationale": "Core finisher card that [On Play] Reveal 1 card from the top of your deck and play up to 1 Character with a cost of 9 or les"
+        }
+      ],
+      "winConditions": [
+        "Build board presence",
+        "Use leader ability effectively",
+        "Outvalue opponent"
+      ],
+      "typicalRatios": {
+        "characters": 0.7,
+        "events": 0.3,
+        "stages": 0.0
+      },
+      "costCurve": {
+        "0-2": 0.32,
+        "3-4": 0.32,
+        "5-6": 0.19,
+        "7+": 0.18
+      }
+    }
+  ]
+}
