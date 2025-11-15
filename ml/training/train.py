@@ -266,7 +266,9 @@ def train(
     early_stopping_patience: Optional[int] = 3,
     include_control_tokens: bool = True,
     resume_from: Optional[Path] = None,
-    freq_hist_weight: float = 3.0,  # Increased from 1.0 to 3.0 to strongly reduce 1x cards
+    freq_hist_weight: float = 10.0,  # Increased from 3.0 - new loss is more effective
+    entropy_penalty: float = 1.0,
+    low_prob_penalty: float = 5.0,
     save_checkpoints: bool = True,
 ) -> None:
     deck_config = DeckConfig()
@@ -310,11 +312,18 @@ def train(
     loss_fn = masked_sparse_categorical_crossentropy(pad_token_id=pad_token_id)
     acc_fn = masked_accuracy(pad_token_id=pad_token_id)
 
+    from .losses import anti_singleton_loss
+    
     losses = {
         "main": loss_fn,
         "type_aux": tf.keras.losses.KLDivergence(name="type_kld"),
         "cost_aux": tf.keras.losses.KLDivergence(name="cost_kld"),
-        "freq_hist": tf.keras.losses.MeanSquaredError(name="freq_hist_mse"),
+        "freq_hist": anti_singleton_loss(
+            mse_weight=0.1,  # Keep some MSE for distribution matching
+            entropy_penalty=entropy_penalty,  # Penalize high entropy (encourages concentration)
+            low_prob_penalty=low_prob_penalty,  # Strongly penalize low-probability cards (1x cards)
+            low_prob_threshold=0.001,  # Cards with prob < 0.1% are likely 1x
+        ),
     }
     # Increased freq_hist weight from 0.1 to 1.0 (default) to strongly encourage realistic card counts
     # This helps the model learn that 4x staples and 2x tech cards are more common than 1x cards
@@ -528,8 +537,20 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--freq-hist-weight",
         type=float,
-        default=3.0,
-        help="Weight for the frequency histogram loss (higher = stronger regularization against 1x cards). Default: 3.0",
+        default=10.0,  # Increased from 3.0 - new loss is more effective
+        help="Weight for the frequency histogram loss (higher = stronger regularization against 1x cards). Default: 10.0",
+    )
+    parser.add_argument(
+        "--entropy-penalty",
+        type=float,
+        default=1.0,
+        help="Weight for entropy penalty in freq_hist loss (higher = more concentration on fewer cards). Default: 1.0",
+    )
+    parser.add_argument(
+        "--low-prob-penalty",
+        type=float,
+        default=5.0,
+        help="Weight for low-probability penalty in freq_hist loss (higher = stronger penalty for 1x cards). Default: 5.0",
     )
     parser.add_argument(
         "--disable-checkpoints",
@@ -566,6 +587,8 @@ def main() -> None:
         include_control_tokens=not args.disable_control_tokens,
         resume_from=args.resume_from,
         freq_hist_weight=args.freq_hist_weight,
+        entropy_penalty=args.entropy_penalty,
+        low_prob_penalty=args.low_prob_penalty,
         save_checkpoints=not args.disable_checkpoints,
     )
 
