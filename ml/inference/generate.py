@@ -556,7 +556,7 @@ def _apply_duplicate_encouragement_bias(
     logits: tf.Tensor,
     copy_counts: Counter,
     special_ids: Set[int],
-    bias_strength: float = 2.0,
+    bias_strength: float = 25.0,  # Increased from 2.0 - need much stronger bias to overcome model's diversity preference
 ) -> tf.Tensor:
     """
     Encourage duplicates by boosting cards that have been generated 1-3 times.
@@ -873,7 +873,7 @@ def greedy_generate(
                 next_token_logits,
                 copy_counts,
                 special_ids,
-                bias_strength=15.0,  # Increased from 8.0 - model still generating mostly 1x cards
+                bias_strength=25.0,  # Increased from 15.0 - need much stronger bias to overcome model's diversity preference
             )
 
         if repository and len(generated) >= 2:
@@ -1154,7 +1154,7 @@ def beam_search_generate(
                         step_logits,
                         copy_counts,
                         special_ids,
-                        bias_strength=15.0,  # Increased from 8.0 - model still generating mostly 1x cards
+                        bias_strength=25.0,  # Increased from 15.0 - need much stronger bias to overcome model's diversity preference
                     )
                 if len(seq) >= 2:
                     leader_token_id = seq[1]
