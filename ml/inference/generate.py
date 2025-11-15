@@ -797,7 +797,7 @@ def greedy_generate(
                 freq_hist,
                 copy_counts,
                 special_ids,
-                bias_strength=2.0,  # Strong bias to reduce 1x cards
+                bias_strength=5.0,  # Very strong bias to reduce 1x cards (increased from 2.0)
             )
 
         if repository and len(generated) >= 2:
@@ -1067,7 +1067,7 @@ def beam_search_generate(
                     freq_hist,
                     copy_counts,
                     special_ids,
-                    bias_strength=2.0,  # Strong bias to reduce 1x cards
+                    bias_strength=5.0,  # Very strong bias to reduce 1x cards (increased from 2.0)
                 )
                 if len(seq) >= 2:
                     leader_token_id = seq[1]
