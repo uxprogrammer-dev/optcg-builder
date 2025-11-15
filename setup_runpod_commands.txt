@@ -1,0 +1,81 @@
+# ============================================
+# Complete RunPod RTX 4090 Setup Commands
+# Copy and paste these commands in order
+# ============================================
+
+# ============================================
+# STEP 1: Clone Repository
+# ============================================
+cd /workspace
+git clone git@github.com:uxprogrammer-dev/optcg-builder.git || git clone https://github.com/uxprogrammer-dev/optcg-builder.git
+cd optcg-builder
+
+# ============================================
+# STEP 2: Set up Python Virtual Environment
+# ============================================
+python3 -m venv ml/.venv
+source ml/.venv/bin/activate
+pip install --upgrade pip
+pip install -r ml/requirements.txt
+
+# ============================================
+# STEP 3: Configure GPU Environment
+# ============================================
+export PYTHONPATH=/workspace/optcg-builder:$PYTHONPATH
+export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:/usr/local/cuda-12.8/targets/x86_64-linux/lib:/usr/local/cuda-12.8/lib64:$LD_LIBRARY_PATH
+VENV_LIB=/workspace/optcg-builder/ml/.venv/lib/python3.12/site-packages
+export LD_LIBRARY_PATH=$VENV_LIB/nvidia/cudnn/lib:$VENV_LIB/nvidia/cublas/lib:$VENV_LIB/nvidia/cufft/lib:$VENV_LIB/nvidia/curand/lib:$VENV_LIB/nvidia/cusolver/lib:$VENV_LIB/nvidia/cusparse/lib:$VENV_LIB/nvidia/cuda_runtime/lib:$VENV_LIB/nvidia/nccl/lib:$LD_LIBRARY_PATH
+
+# ============================================
+# STEP 4: Verify GPU Detection
+# ============================================
+python -c "import tensorflow as tf; gpus = tf.config.list_physical_devices('GPU'); print('GPUs detected:', len(gpus)); [print(f'  GPU {i}: {gpu}') for i, gpu in enumerate(gpus)]"
+
+# ============================================
+# STEP 5: Start Training
+# ============================================
+python -m ml.training.train \
+  --dataset ml/artifacts/combined_prompt_deck.jsonl \
+  --output-dir models \
+  --epochs 40 \
+  --batch-size 48 \
+  --learning-rate 2e-4 \
+  --coverage-weight 0.05
+
+# ============================================
+# After Training: Download Model
+# ============================================
+# In RunPod SSH session, create zip:
+# cd /workspace/optcg-builder/models
+# zip -r run_YYYYMMDD-HHMMSS.zip run_YYYYMMDD-HHMMSS/
+
+# From local machine, download:
+# scp -P 13047 -i ~/.ssh/id_ed25519 root@213.173.109.76:/workspace/optcg-builder/models/run_YYYYMMDD-HHMMSS.zip ./
+# (Replace YYYYMMDD-HHMMSS with actual run directory name)
+
+# ============================================
+# IMPORTANT: Stop Billing After Download
+# ============================================
+# After downloading your model:
+# 
+# RECOMMENDATION: Terminate (not Stop) for cost savings
+# 
+# Cost Comparison:
+# - Storage for stopped pods: $0.20/GB/month (~$0.33/day for 50GB)
+# - Reconfiguration time: ~5-10 minutes
+# 
+# For a few days break: TERMINATE is cheaper than storage costs
+# 
+# Steps:
+# 1. Download your model first (see commands above)
+# 2. Go to RunPod dashboard → My Pods
+# 3. Click "Terminate" to stop all billing
+# 4. When you need it again, use setup_runpod_quick.sh for fast reconfiguration
+# 
+# Alternative (if you need it within 24 hours):
+# - "Stop" keeps volumes but charges $0.20/GB/month for storage
+# - Only worth it if reconfiguration time > storage cost for your volume size
+# 
+# Note: GPU billing stops when instance is stopped/terminated.
+#       Storage billing continues if volumes persist after stopping.
+
