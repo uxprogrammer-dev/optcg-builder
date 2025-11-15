@@ -266,7 +266,7 @@ def train(
     early_stopping_patience: Optional[int] = 3,
     include_control_tokens: bool = True,
     resume_from: Optional[Path] = None,
-    freq_hist_weight: float = 1.0,
+    freq_hist_weight: float = 3.0,  # Increased from 1.0 to 3.0 to strongly reduce 1x cards
     save_checkpoints: bool = True,
 ) -> None:
     deck_config = DeckConfig()
@@ -528,8 +528,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--freq-hist-weight",
         type=float,
-        default=1.0,
-        help="Weight for the frequency histogram loss (higher = stronger regularization against 1x cards). Default: 1.0",
+        default=3.0,
+        help="Weight for the frequency histogram loss (higher = stronger regularization against 1x cards). Default: 3.0",
     )
     parser.add_argument(
         "--disable-checkpoints",

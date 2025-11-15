@@ -1014,6 +1014,8 @@ def beam_search_generate(
             model_inputs.insert(1, decoder_input)  # Insert decoder_input after prompt_tensor
             outputs = model(model_inputs, training=False)
             logits = _extract_main_logits(outputs)
+            # Extract freq_hist for biasing (encourages realistic card counts)
+            freq_hist = _extract_freq_hist(outputs)
             step_logits = logits[0, len(seq) - 1]
             step_logits = _apply_penalty(step_logits, set_penalty)
             step_logits = _apply_penalty(step_logits, prompt_bias)
@@ -1058,6 +1060,14 @@ def beam_search_generate(
                 )
                 step_logits = _apply_copy_limit_penalty(
                     step_logits, copy_counts, max_copies=4, special_ids=special_ids
+                )
+                # Apply freq_hist bias to encourage realistic card counts (reduces 1x cards)
+                step_logits = _apply_freq_hist_bias(
+                    step_logits,
+                    freq_hist,
+                    copy_counts,
+                    special_ids,
+                    bias_strength=2.0,  # Strong bias to reduce 1x cards
                 )
                 if len(seq) >= 2:
                     leader_token_id = seq[1]
