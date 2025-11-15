@@ -873,7 +873,7 @@ def greedy_generate(
                 next_token_logits,
                 copy_counts,
                 special_ids,
-                bias_strength=2.0,  # Moderate boost to encourage 2x, 3x, 4x copies
+                bias_strength=5.0,  # Increased from 2.0 to encourage more duplicates
             )
 
         if repository and len(generated) >= 2:
@@ -1154,7 +1154,7 @@ def beam_search_generate(
                         step_logits,
                         copy_counts,
                         special_ids,
-                        bias_strength=2.0,  # Moderate boost to encourage 2x, 3x, 4x copies
+                        bias_strength=5.0,  # Increased from 2.0 to encourage more duplicates
                     )
                 if len(seq) >= 2:
                     leader_token_id = seq[1]
