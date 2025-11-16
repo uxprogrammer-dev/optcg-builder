@@ -18,5 +18,7 @@ python -m ml.training.train \
   --epochs 40 \
   --batch-size 48 \
   --learning-rate 2e-4 \
-  --coverage-weight 0.05
+  --coverage-weight 0.05 \
+  --freq-hist-weight 15.0 \
+  --low-prob-penalty 8.0
 
