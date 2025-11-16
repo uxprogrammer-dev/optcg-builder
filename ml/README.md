@@ -39,6 +39,8 @@ Artifacts:
 - `ml/artifacts/synthetic_prompt_deck_{train,val,test}.jsonl` – split subsets.
 - `ml/artifacts/vocab/` – prompt vocabulary + card id vocabulary (when `--export-tf-assets` is set).
 
+**Important:** the deck payloads in each JSONL record must preserve multiplicities. If a deck runs four copies of a card, that card id should appear four times in the `deck` vector. Deduplicating here removes the supervision the anti-singleton loss needs to learn realistic 2×/4× counts.
+
 ### tf.data Input Pipeline
 
 `ml/datasets/tfdata.py` exposes:
@@ -79,7 +81,9 @@ python -m ml.training.train \
   --output-dir models \
   --epochs 20 \
   --batch-size 48 \
-  --learning-rate 3e-4
+  --learning-rate 3e-4 \
+  --freq-hist-weight 12.0 \
+  --low-prob-penalty 7.0
 ```
 
 Outputs (`models/run_*/`):
@@ -91,6 +95,8 @@ Outputs (`models/run_*/`):
 - `vocab/` – prompt + card vocabularies used for the run.
 
 Losses (`ml/training/losses.py`) provide padding-aware cross-entropy and accuracy helpers.
+
+The `freq_hist` anti-singleton loss is enabled by default; raising `--freq-hist-weight` and `--low-prob-penalty` during training increases the penalty on rare counts so the generator prefers realistic 2×/4× staples instead of only 1× copies.
 
 ## 6. Inference & Evaluation
 
