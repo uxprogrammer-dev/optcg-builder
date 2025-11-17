@@ -947,6 +947,26 @@ def greedy_generate(
     start_step = len(generated) - 1
     for step in range(start_step, max_length - 1):
         decoder_input = _prepare_decoder_input(generated, pad_id, max_length)
+        # Rebuild copy_counts from full generated sequence at the start of each step
+        # This ensures counts are accurate before applying biasing
+        if len(generated) >= 2:  # Only rebuild if we have at least the leader
+            base_code_counts: Dict[str, int] = {}
+            for token_id in generated:
+                if token_id not in special_ids:
+                    card_id = index_to_card.get(token_id, "")
+                    if card_id:
+                        base_code = _normalize_card_id_to_base(card_id)
+                        base_code_counts[base_code] = base_code_counts.get(base_code, 0) + 1
+            
+            # Update copy_counts: map each token_id to the count of its base code
+            copy_counts.clear()
+            for token_id in generated:
+                if token_id not in special_ids:
+                    card_id = index_to_card.get(token_id, "")
+                    if card_id:
+                        base_code = _normalize_card_id_to_base(card_id)
+                        copy_counts[token_id] = base_code_counts.get(base_code, 0)
+        
         # Build model inputs: [prompt_tensor, decoder_input, ...card_features]
         model_inputs = [prompt_tensor, decoder_input] + card_feature_inputs
         outputs = model(model_inputs, training=False)
@@ -1089,29 +1109,9 @@ def greedy_generate(
         print(f"DEBUG: Step {step}: generated token {next_token} -> {token_str}", file=sys.stderr)
         generated.append(next_token)
         if next_token not in special_ids:
-            # Rebuild copy_counts from full generated sequence to ensure accuracy
-            # This ensures variant cards are counted together correctly
-            base_code_counts: Dict[str, int] = {}
-            for token_id in generated:
-                if token_id not in special_ids:
-                    card_id = index_to_card.get(token_id, "")
-                    if card_id:
-                        base_code = _normalize_card_id_to_base(card_id)
-                        base_code_counts[base_code] = base_code_counts.get(base_code, 0) + 1
-            
-            # Update copy_counts: map each token_id to the count of its base code
-            copy_counts.clear()
-            for token_id in generated:
-                if token_id not in special_ids:
-                    card_id = index_to_card.get(token_id, "")
-                    if card_id:
-                        base_code = _normalize_card_id_to_base(card_id)
-                        copy_counts[token_id] = base_code_counts.get(base_code, 0)
-            
-            # Debug: show current counts for this card
+            # Debug: show what base code this card maps to
             base_code = _normalize_card_id_to_base(token_str)
-            current_count = base_code_counts.get(base_code, 0)
-            print(f"DEBUG: Card {token_str} (base: {base_code}) now has {current_count} copies", file=sys.stderr)
+            print(f"DEBUG: Card {token_str} normalized to base code: {base_code}", file=sys.stderr)
             if next_token < len(token_types):
                 category = token_types[next_token]
                 if category in TYPE_BUCKETS:
