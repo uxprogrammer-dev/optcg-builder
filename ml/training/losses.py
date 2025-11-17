@@ -144,15 +144,18 @@ def sequence_level_loss(
         singleton_excess = tf.maximum(0.0, predicted_singletons - target_singletons)
         # Use a smoother penalty: sqrt(x^2 + epsilon) to avoid explosion while still being stronger than linear
         # This gives us a penalty that grows faster than linear but doesn't explode like pure quadratic
-        singleton_penalty = tf.reduce_mean(tf.sqrt(singleton_excess ** 2 + 1.0) * singleton_excess) * 2.0  # Smoother penalty that's stronger than linear but more stable than quadratic
+        # CRITICAL: Dramatically increase penalties - model still generates 49 unique cards after 40 epochs
+        # Current penalties (2.0 and 1.0) are too weak - validation loss is only 5,158 despite 49 unique cards
+        singleton_penalty = tf.reduce_mean(tf.sqrt(singleton_excess ** 2 + 1.0) * singleton_excess) * 20.0  # Increased from 2.0 to 20.0 (10x stronger)
         
         # 3. Diversity penalty: penalize if too many unique cards are predicted
         # Tournament decks average ~16.3 unique cards, so penalize if predicted > 16.3
         predicted_unique = tf.reduce_sum(tf.cast(y_pred > 0.0, tf.float32), axis=-1)
         target_unique = 16.3
         unique_excess = tf.maximum(0.0, predicted_unique - target_unique)
-        # Use a smoother penalty: sqrt(x^2 + epsilon) to avoid explosion while still being stronger than linear
-        unique_penalty = tf.reduce_mean(tf.sqrt(unique_excess ** 2 + 1.0) * unique_excess) * 1.0  # Smoother penalty that's stronger than linear but more stable than quadratic
+        # CRITICAL: Dramatically increase penalty - model still generates 49 unique cards
+        # For 49 unique cards: excess = 32.7, penalty ≈ 1,069 * 50.0 = 53,450 (vs 1,069 * 1.0 = 1,069 before)
+        unique_penalty = tf.reduce_mean(tf.sqrt(unique_excess ** 2 + 1.0) * unique_excess) * 50.0  # Increased from 1.0 to 50.0 (50x stronger)
         
         total_loss = mse + singleton_penalty + unique_penalty
         
