@@ -17,6 +17,7 @@ class DeckConfig:
     start_token: str = "<BOS>"
     end_token: str = "<EOS>"
     unknown_token: str = "<UNK>"
+    max_copies_per_card: int = 4  # OP TCG rules: up to 4 copies per non-leader card
 
 
 @dataclass(frozen=True)

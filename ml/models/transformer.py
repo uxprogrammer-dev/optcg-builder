@@ -515,7 +515,11 @@ def build_deck_transformer(
     pooled_decoder = layers.GlobalAveragePooling1D(name="decoder_global_pool")(y)
     type_aux_output = layers.Dense(len(TYPE_BUCKETS), activation="softmax", name="type_aux")(pooled_decoder)
     cost_aux_output = layers.Dense(COST_BUCKETS, activation="softmax", name="cost_aux")(pooled_decoder)
-    freq_hist_output = layers.Dense(deck_vocab_size, activation="softmax", name="freq_hist")(pooled_decoder)
+    freq_hist_output = layers.Dense(
+        deck_vocab_size,
+        activation="sigmoid",
+        name="freq_hist",
+    )(pooled_decoder)
 
     # Build model inputs list
     model_inputs = [encoder_inputs, decoder_inputs]

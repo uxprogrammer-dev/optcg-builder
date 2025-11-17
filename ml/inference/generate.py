@@ -618,7 +618,7 @@ def _apply_freq_hist_bias(
     
     Args:
         logits: Current token logits [vocab_size]
-        freq_hist: Frequency histogram from model [vocab_size] (softmax probabilities)
+        freq_hist: Frequency histogram from model [vocab_size] (values 0-1 corresponding to expected copy ratio)
         copy_counts: Counter of how many times each card has been generated
         special_ids: Set of special token IDs to exclude
         bias_strength: How strongly to apply the bias (higher = more aggressive)
@@ -630,7 +630,7 @@ def _apply_freq_hist_bias(
         return logits
     
     # freq_hist shape is [vocab_size] (1D tensor from pooled decoder output)
-    # Higher values mean the card should appear more frequently
+    # Values are scaled between 0 and 1, where 1.0 ~= max_copies_per_card (4 copies)
     # We want to boost cards that:
     # 1. Have high freq_hist probability (should appear multiple times)
     # 2. Have already been generated but haven't reached their expected count yet
@@ -648,29 +648,29 @@ def _apply_freq_hist_bias(
         freq_hist_np = None
     
     if freq_hist_np is not None:
-        # Check if freq_hist is meaningful (not near-uniform)
+        # Skip if histogram provides no strong signal
         max_prob = float(max(freq_hist_np))
-        uniform_prob = 1.0 / len(freq_hist_np)
-        # If max probability is close to uniform, freq_hist isn't informative
-        if max_prob < uniform_prob * 2.0:
-            # freq_hist is near-uniform, skip biasing to avoid breaking generation
+        if max_prob < 0.05:
             import logging
-            logging.debug(f"freq_hist is near-uniform (max_prob={max_prob:.6f}, uniform_prob={uniform_prob:.6f}), skipping freq_hist bias")
+            logging.debug(
+                "freq_hist peak < 0.05 (%.6f), skipping freq_hist bias",
+                max_prob,
+            )
             return logits
         
         # Use numpy for faster iteration
         for token_id, current_count in copy_counts.items():
             if token_id in special_ids or token_id >= len(freq_hist_np):
                 continue
-            # Expected count based on freq_hist (normalized to deck size ~50)
+            # Expected count based on freq_hist (scaled by max copies)
             expected_prob = float(freq_hist_np[token_id])
-            expected_count = expected_prob * 50.0  # Rough estimate
+            expected_count = expected_prob * 4.0  # Convert back to copies
             
             # If we haven't reached expected count, boost this card
             if current_count < expected_count:
                 # Boost strength depends on how far we are from expected count
                 # Cap boost to prevent extreme values that break generation
-                boost = min((expected_count - current_count) * bias_strength * 0.5, 10.0)
+                boost = min((expected_count - current_count) * bias_strength, 12.0)
                 bias = tf.tensor_scatter_nd_update(
                     bias,
                     [[token_id]],
@@ -678,33 +678,33 @@ def _apply_freq_hist_bias(
                 )
         
         # Also boost cards with high freq_hist that haven't been generated yet
-        vocab_size_int = int(vocab_size.numpy()) if hasattr(vocab_size, 'numpy') else int(vocab_size)
+        vocab_size_int = int(vocab_size.numpy()) if hasattr(vocab_size, "numpy") else int(vocab_size)
         for token_id in range(min(vocab_size_int, len(freq_hist_np))):
-            if token_id in special_ids:
+            if token_id in special_ids or token_id in copy_counts:
                 continue
-            if token_id not in copy_counts:
-                # Card hasn't been generated yet, but has high freq_hist
-                prob = float(freq_hist_np[token_id])
-                if prob > 0.01:  # Only boost if probability is meaningful
-                    # Cap boost to prevent extreme values
-                    boost = min(prob * bias_strength * 2.0, 10.0)
-                    bias = tf.tensor_scatter_nd_update(
-                        bias,
-                        [[token_id]],
-                        [tf.constant(boost, dtype=tf.float32)]
-                    )
+            prob = float(freq_hist_np[token_id])
+            if prob > 0.25:  # Model expects at least one copy
+                boost = min(prob * bias_strength * 4.0, 10.0)
+                bias = tf.tensor_scatter_nd_update(
+                    bias,
+                    [[token_id]],
+                    [tf.constant(boost, dtype=tf.float32)],
+                )
     else:
         # Fallback: use tensor operations (slower)
         # Boost cards that have high freq_hist but low current count
         for token_id, current_count in copy_counts.items():
             if token_id in special_ids:
                 continue
-            # Expected count based on freq_hist (normalized to deck size ~50)
+            # Expected count based on freq_hist (scaled by max copies)
             expected_prob = tf.gather(freq_hist_flat, token_id)
-            expected_count = expected_prob * 50.0  # Rough estimate
+            expected_count = expected_prob * 4.0
             
             # If we haven't reached expected count, boost this card
-            boost = tf.maximum(0.0, (expected_count - tf.cast(current_count, tf.float32)) * bias_strength * 0.5)
+            boost = tf.maximum(
+                0.0,
+                (expected_count - tf.cast(current_count, tf.float32)) * bias_strength,
+            )
             bias = tf.tensor_scatter_nd_update(
                 bias,
                 [[token_id]],

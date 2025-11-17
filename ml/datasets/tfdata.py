@@ -340,6 +340,7 @@ def make_tf_dataset(
     eos_value = tf.constant(card_to_index[deck_config.end_token], dtype=tf.int32)
 
     vocab_size = len(card_to_index)
+    max_copies = tf.constant(deck_config.max_copies_per_card, dtype=tf.float32)
     special_token_mask = tf.tensor_scatter_nd_update(
         tf.ones((vocab_size,), dtype=tf.float32),
         tf.constant(
@@ -421,7 +422,9 @@ def make_tf_dataset(
         token_one_hot = tf.one_hot(decoder_target, depth=vocab_size, dtype=tf.float32)
         freq_hist = tf.reduce_sum(token_one_hot, axis=0)
         freq_hist = freq_hist * special_token_mask
-        freq_hist = tf.math.divide_no_nan(freq_hist, tf.reduce_sum(freq_hist))
+        # Normalize by max copies per card so targets fall in [0, 1]
+        freq_hist = tf.minimum(freq_hist, max_copies)
+        freq_hist = tf.math.divide_no_nan(freq_hist, max_copies)
 
         return (
             (prompt_tokens, decoder_input),

@@ -269,6 +269,7 @@ def train(
     freq_hist_weight: float = 10.0,  # Increased from 3.0 - new loss is more effective
     entropy_penalty: float = 1.0,
     low_prob_penalty: float = 5.0,
+    low_prob_threshold: float = 0.25,
     save_checkpoints: bool = True,
 ) -> None:
     deck_config = DeckConfig()
@@ -322,7 +323,7 @@ def train(
             mse_weight=0.1,  # Keep some MSE for distribution matching
             entropy_penalty=entropy_penalty,  # Penalize high entropy (encourages concentration)
             low_prob_penalty=low_prob_penalty,  # Strongly penalize low-probability cards (1x cards)
-            low_prob_threshold=0.001,  # Cards with prob < 0.1% are likely 1x
+            low_prob_threshold=low_prob_threshold,
         ),
     }
     # Increased freq_hist weight from 0.1 to 1.0 (default) to strongly encourage realistic card counts
@@ -553,6 +554,12 @@ def parse_args() -> argparse.Namespace:
         help="Weight for low-probability penalty in freq_hist loss (higher = stronger penalty for 1x cards). Default: 5.0",
     )
     parser.add_argument(
+        "--low-prob-threshold",
+        type=float,
+        default=0.25,
+        help="Threshold for considering a card 'low probability' in freq_hist loss (matches 1 copy when hist targets are scaled by max copies). Default: 0.25",
+    )
+    parser.add_argument(
         "--disable-checkpoints",
         action="store_true",
         help="Disable saving checkpoints during training (saves disk space, useful for cloud training like RunPod). Only the final model will be saved.",
@@ -589,6 +596,7 @@ def main() -> None:
         freq_hist_weight=args.freq_hist_weight,
         entropy_penalty=args.entropy_penalty,
         low_prob_penalty=args.low_prob_penalty,
+        low_prob_threshold=args.low_prob_threshold,
         save_checkpoints=not args.disable_checkpoints,
     )
 

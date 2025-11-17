@@ -37,7 +37,7 @@ def anti_singleton_loss(
     mse_weight: float = 0.1,
     entropy_penalty: float = 1.0,
     low_prob_penalty: float = 2.0,
-    low_prob_threshold: float = 0.001,
+    low_prob_threshold: float = 0.25,
 ):
     """
     Custom loss that directly penalizes 1x cards (singletons) in generated decks.
@@ -59,8 +59,8 @@ def anti_singleton_loss(
     mse_loss = tf.keras.losses.MeanSquaredError(reduction=tf.keras.losses.Reduction.SUM_OVER_BATCH_SIZE)
     
     def _loss(y_true: tf.Tensor, y_pred: tf.Tensor) -> tf.Tensor:
-        # y_true: (batch, vocab_size) - normalized frequency histogram
-        # y_pred: (batch, vocab_size) - predicted frequency histogram (softmax)
+        # y_true: (batch, vocab_size) - normalized frequency histogram (0-1 scaled by max copies)
+        # y_pred: (batch, vocab_size) - predicted frequency histogram (sigmoid outputs)
         
         # 1. MSE loss (existing approach)
         mse = mse_loss(y_true, y_pred)
