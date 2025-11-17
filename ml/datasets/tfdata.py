@@ -214,7 +214,7 @@ def make_tf_dataset(
     cache: bool = True,
     prompt_dropout_rate: float = 0.1,
     prompt_paraphrase_rate: float = 0.2,
-    deck_shuffle_rate: float = 0.2,
+    deck_shuffle_rate: float = 0.05,  # Reduced from 0.2 - allow duplicates to appear consecutively so model learns realistic card counts
     shuffle: bool = True,
     data_root: Optional[Path] = None,
     repository: Optional[CardRepository] = None,
