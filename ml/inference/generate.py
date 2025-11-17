@@ -1390,13 +1390,23 @@ def beam_search_generate(
                     # Always apply duplicate encouragement bias (doesn't rely on freq_hist)
                     # AND penalizes unseen cards to force duplicates
                     # Dramatically increased bias strength - model still generating all 1x cards despite previous increases
+                    # Calculate dynamic unseen penalty based on current sequence length
+                    actual_card_count = sum(1 for tid in seq if tid not in special_ids)
+                    dynamic_unseen_penalty = 20.0
+                    if actual_card_count >= 40:
+                        dynamic_unseen_penalty = 60.0  # Much stronger penalty when we have many cards
+                    elif actual_card_count >= 30:
+                        dynamic_unseen_penalty = 40.0
+                    elif actual_card_count >= 20:
+                        dynamic_unseen_penalty = 30.0
+                    
                     step_logits = _apply_duplicate_encouragement_bias(
                         step_logits,
                         copy_counts,
                         special_ids,
                         index_to_card=index_to_card,  # NEW: Pass index_to_card to normalize variants
-                        bias_strength=50.0,  # Increased from 20.0 - need much stronger bias to overcome model's diversity preference
-                        unseen_penalty=20.0,  # NEW: Penalize unseen cards to force duplicates
+                        bias_strength=100.0,  # Increased from 50.0 - need even stronger boost to overcome model's overconfidence
+                        unseen_penalty=dynamic_unseen_penalty,  # Dynamic penalty based on card count
                     )
                 if len(seq) >= 2:
                     leader_token_id = seq[1]
