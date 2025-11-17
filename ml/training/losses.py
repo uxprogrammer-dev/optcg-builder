@@ -127,12 +127,30 @@ def sequence_level_loss(
                    This is computed from argmax predictions of main output in the Lambda layer.
         
         Returns:
-            MSE loss between predicted and target frequency histograms
+            MSE loss between predicted and target frequency histograms, plus a direct singleton penalty
         """
-        # y_pred is already the frequency histogram computed by the Lambda layer
-        # Just compute MSE directly
-        loss = mse_loss(y_true, y_pred)
+        # 1. MSE loss between predicted and target histograms
+        mse = mse_loss(y_true, y_pred)
         
-        return loss
+        # 2. Direct singleton penalty: heavily penalize predicted histograms with too many 1x cards
+        # Count how many cards are predicted to be 1x (normalized value < 0.25, which is 1 copy / 4 max copies)
+        # Tournament decks have ~2.1 cards at 1x, so we want to penalize if there are many more
+        singleton_threshold = 0.25  # 1 copy / 4 max copies
+        predicted_singletons = tf.reduce_sum(tf.cast((y_pred > 0.0) & (y_pred < singleton_threshold), tf.float32), axis=-1)
+        # Tournament decks average ~2.1 singletons, so penalize if predicted > 5
+        target_singletons = 2.1
+        singleton_excess = tf.maximum(0.0, predicted_singletons - target_singletons)
+        singleton_penalty = tf.reduce_mean(singleton_excess) * 10.0  # Strong penalty for excess singletons
+        
+        # 3. Diversity penalty: penalize if too many unique cards are predicted
+        # Tournament decks average ~16.3 unique cards, so penalize if predicted > 25
+        predicted_unique = tf.reduce_sum(tf.cast(y_pred > 0.0, tf.float32), axis=-1)
+        target_unique = 16.3
+        unique_excess = tf.maximum(0.0, predicted_unique - target_unique)
+        unique_penalty = tf.reduce_mean(unique_excess) * 5.0  # Penalty for too many unique cards
+        
+        total_loss = mse + singleton_penalty + unique_penalty
+        
+        return total_loss
     
     return _loss
