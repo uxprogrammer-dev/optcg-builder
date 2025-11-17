@@ -556,7 +556,7 @@ def _apply_duplicate_encouragement_bias(
     logits: tf.Tensor,
     copy_counts: Counter,
     special_ids: Set[int],
-    bias_strength: float = 25.0,  # Increased from 2.0 - need much stronger bias to overcome model's diversity preference
+    bias_strength: float = 50.0,  # Dramatically increased from 25.0 - model still generating all 1x cards
 ) -> tf.Tensor:
     """
     Encourage duplicates by boosting cards that have been generated 1-3 times.
@@ -585,14 +585,15 @@ def _apply_duplicate_encouragement_bias(
             continue
         
         if count == 1:
-            # Encourage 2x copies - stronger boost for first duplicate
-            boost = bias_strength * 2.0  # Increased from 1.0 to make first duplicate more likely
+            # Encourage 2x copies - MUCH stronger boost for first duplicate
+            # This is critical - we need to overcome the model's strong preference for diversity
+            boost = bias_strength * 3.0  # Increased from 2.0 - need to make duplicates much more likely
         elif count == 2:
             # Encourage 3x copies
-            boost = bias_strength * 2.5  # Increased from 1.5
+            boost = bias_strength * 3.5  # Increased from 2.5
         elif count == 3:
             # Encourage 4x copies
-            boost = bias_strength * 3.0  # Increased from 2.0
+            boost = bias_strength * 4.0  # Increased from 3.0
         else:
             # Already at 4x or more, don't boost
             continue
@@ -1156,12 +1157,12 @@ def beam_search_generate(
                         )
                     
                     # Always apply duplicate encouragement bias (doesn't rely on freq_hist)
-                    # Increased bias strength to encourage more duplicates (was 10.0, still generating mostly 1x cards)
+                    # Dramatically increased bias strength - model still generating all 1x cards despite previous increases
                     step_logits = _apply_duplicate_encouragement_bias(
                         step_logits,
                         copy_counts,
                         special_ids,
-                        bias_strength=20.0,  # Increased from 10.0 - model still generating mostly 1x cards
+                        bias_strength=50.0,  # Increased from 20.0 - need much stronger bias to overcome model's diversity preference
                     )
                 if len(seq) >= 2:
                     leader_token_id = seq[1]
