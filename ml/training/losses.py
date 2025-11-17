@@ -133,10 +133,12 @@ def sequence_level_loss(
         mse = mse_loss(y_true, y_pred)
         
         # 2. Direct singleton penalty: heavily penalize predicted histograms with too many 1x cards
-        # Count how many cards are predicted to be 1x (normalized value < 0.25, which is 1 copy / 4 max copies)
+        # Count how many cards are predicted to be 1x (normalized value = 0.25, which is 1 copy / 4 max copies)
         # Tournament decks have ~2.1 cards at 1x, so we want to penalize if there are many more
-        singleton_threshold = 0.25  # 1 copy / 4 max copies
-        predicted_singletons = tf.reduce_sum(tf.cast((y_pred > 0.0) & (y_pred < singleton_threshold), tf.float32), axis=-1)
+        # Note: y_pred is normalized [0, 1] where 0.25 = 1 copy, 0.5 = 2 copies, 0.75 = 3 copies, 1.0 = 4 copies
+        # We count cards with exactly 1 copy: y_pred > 0.0 and y_pred <= 0.25 (allowing some tolerance for floating point)
+        singleton_threshold = 0.3  # Slightly above 0.25 to account for floating point precision
+        predicted_singletons = tf.reduce_sum(tf.cast((y_pred > 0.0) & (y_pred <= singleton_threshold), tf.float32), axis=-1)
         # Tournament decks average ~2.1 singletons, so penalize if predicted > 5
         target_singletons = 2.1
         singleton_excess = tf.maximum(0.0, predicted_singletons - target_singletons)
