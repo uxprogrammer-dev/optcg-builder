@@ -655,10 +655,23 @@ def _apply_duplicate_encouragement_bias(
                     base_code_to_tokens[base_code] = []
                 base_code_to_tokens[base_code].append(token_id)
     
+    # Build base_code_counts from copy_counts to get accurate counts per base code
+    # This ensures we boost ALL variants, not just the ones in copy_counts
+    base_code_counts_from_copy: Dict[str, int] = {}
     for token_id, count in copy_counts.items():
         if token_id in special_ids:
             continue
-        
+        if index_to_card:
+            card_id = index_to_card.get(token_id, "")
+            if card_id:
+                base_code = _normalize_card_id_to_base(card_id)
+                # Use the maximum count for this base code (should be the same for all variants)
+                base_code_counts_from_copy[base_code] = max(base_code_counts_from_copy.get(base_code, 0), count)
+    
+    # Boost ALL token IDs that map to base codes with count 1-3
+    # This ensures ALL variants get boosted, not just the ones in copy_counts
+    boosted_cards = []  # For debugging
+    for base_code, count in base_code_counts_from_copy.items():
         if count == 1:
             # Encourage 2x copies - MUCH stronger boost for first duplicate
             # This is critical - we need to overcome the model's strong preference for diversity
@@ -673,26 +686,23 @@ def _apply_duplicate_encouragement_bias(
             # Already at 4x or more, don't boost
             continue
         
-        # Boost ALL token IDs that map to the same base code (all variants)
-        if index_to_card:
-            card_id = index_to_card.get(token_id, "")
-            if card_id:
-                base_code = _normalize_card_id_to_base(card_id)
-                variant_tokens = base_code_to_tokens.get(base_code, [token_id])
-                for variant_token_id in variant_tokens:
-                    if variant_token_id not in special_ids:
-                        bias = tf.tensor_scatter_nd_update(
-                            bias,
-                            [[variant_token_id]],
-                            [tf.constant(boost, dtype=tf.float32)]
-                        )
-        else:
-            # Fallback: only boost the exact token_id
-            bias = tf.tensor_scatter_nd_update(
-                bias,
-                [[token_id]],
-                [tf.constant(boost, dtype=tf.float32)]
-            )
+        # Boost ALL token IDs that map to this base code (all variants)
+        if index_to_card and base_code in base_code_to_tokens:
+            variant_tokens = base_code_to_tokens[base_code]
+            for variant_token_id in variant_tokens:
+                if variant_token_id not in special_ids:
+                    card_name = index_to_card.get(variant_token_id, f"<UNK:{variant_token_id}>")
+                    boosted_cards.append((card_name, count, boost))
+                    bias = tf.tensor_scatter_nd_update(
+                        bias,
+                        [[variant_token_id]],
+                        [tf.constant(boost, dtype=tf.float32)]
+                    )
+    
+    # Debug: show which cards are being boosted
+    if boosted_cards:
+        import sys
+        print(f"DEBUG: Boosting {len(boosted_cards)} card variants for duplicates: {boosted_cards[:5]}...", file=sys.stderr)
     
     return logits + bias
 
