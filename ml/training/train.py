@@ -25,6 +25,36 @@ from ..models import TransformerConfig, build_deck_transformer
 from .losses import masked_accuracy, masked_sparse_categorical_crossentropy
 
 
+def configure_tensorflow_for_gpu() -> None:
+    """
+    Configure TensorFlow for optimal GPU performance.
+    
+    Enables GPU memory growth and optimizes TensorFlow settings for GPU-based training.
+    Falls back to CPU configuration if no GPU is detected.
+    """
+    try:
+        gpus = tf.config.list_physical_devices('GPU')
+        if gpus:
+            # Enable memory growth to prevent TensorFlow from allocating all GPU memory at once
+            for gpu in gpus:
+                tf.config.experimental.set_memory_growth(gpu, True)
+            
+            # Set mixed precision for faster training (optional, can be enabled if needed)
+            # tf.keras.mixed_precision.set_global_policy('mixed_float16')
+            
+            print(f"TensorFlow GPU configuration:")
+            print(f"  GPUs detected: {len(gpus)}")
+            for i, gpu in enumerate(gpus):
+                print(f"    GPU {i}: {gpu.name}")
+            print(f"  Memory growth: Enabled")
+            return
+    except Exception as e:
+        print(f"GPU configuration failed: {e}, falling back to CPU")
+    
+    # Fallback to CPU configuration
+    configure_tensorflow_for_cpu()
+
+
 def configure_tensorflow_for_cpu() -> None:
     """
     Configure TensorFlow for optimal CPU performance.
@@ -568,8 +598,8 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
-    # Configure TensorFlow and system for optimal CPU performance
-    configure_tensorflow_for_cpu()
+    # Configure TensorFlow for GPU (falls back to CPU if no GPU detected)
+    configure_tensorflow_for_gpu()
     configure_process_priority()
     
     args = parse_args()
