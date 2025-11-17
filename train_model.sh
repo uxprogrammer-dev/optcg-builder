@@ -19,8 +19,7 @@ python -m ml.training.train \
   --batch-size 48 \
   --learning-rate 2e-4 \
   --coverage-weight 0.05 \
-  --freq-hist-weight 0.5 \
+  --freq-hist-weight 15.0 \
+  --low-prob-penalty 8.0 \ 
   --disable-checkpoints
-
-#python -m ml.training.train --dataset ml/artifacts/combined_prompt_deck.jsonl --output-dir models --epochs 40 --batch-size 48 --learning-rate 2e-4 --coverage-weight 0.05 --freq-hist-weight 0.5 --disable-checkpoints
 
