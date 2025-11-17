@@ -18,10 +18,10 @@ python -m ml.training.train \
   --epochs 40 \
   --batch-size 32 \
   --learning-rate 3e-4 \
-  --freq-hist-weight 20.0 \
-  --entropy-penalty 3.0 \
-  --low-prob-penalty 15.0 \
-  --low-prob-threshold 0.25 \
+  --freq-hist-weight 100.0 \
+  --entropy-penalty 2.0 \
+  --low-prob-penalty 10.0 \
+  --low-prob-threshold 0.3 \
   --coverage-weight 0.05 \
   --disable-checkpoints
 
