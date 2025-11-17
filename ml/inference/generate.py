@@ -1089,13 +1089,29 @@ def greedy_generate(
         print(f"DEBUG: Step {step}: generated token {next_token} -> {token_str}", file=sys.stderr)
         generated.append(next_token)
         if next_token not in special_ids:
-            # Update copy_counts using normalized base codes
-            # This ensures variant cards are counted together
+            # Rebuild copy_counts from full generated sequence to ensure accuracy
+            # This ensures variant cards are counted together correctly
+            base_code_counts: Dict[str, int] = {}
+            for token_id in generated:
+                if token_id not in special_ids:
+                    card_id = index_to_card.get(token_id, "")
+                    if card_id:
+                        base_code = _normalize_card_id_to_base(card_id)
+                        base_code_counts[base_code] = base_code_counts.get(base_code, 0) + 1
+            
+            # Update copy_counts: map each token_id to the count of its base code
+            copy_counts.clear()
+            for token_id in generated:
+                if token_id not in special_ids:
+                    card_id = index_to_card.get(token_id, "")
+                    if card_id:
+                        base_code = _normalize_card_id_to_base(card_id)
+                        copy_counts[token_id] = base_code_counts.get(base_code, 0)
+            
+            # Debug: show current counts for this card
             base_code = _normalize_card_id_to_base(token_str)
-            # Find all token_ids that map to this base code and update their counts
-            for tid, cid in index_to_card.items():
-                if _normalize_card_id_to_base(cid) == base_code:
-                    copy_counts[tid] = copy_counts.get(tid, 0) + 1
+            current_count = base_code_counts.get(base_code, 0)
+            print(f"DEBUG: Card {token_str} (base: {base_code}) now has {current_count} copies", file=sys.stderr)
             if next_token < len(token_types):
                 category = token_types[next_token]
                 if category in TYPE_BUCKETS:
