@@ -46,8 +46,11 @@ export class MlDeckService {
     let moduleName = rawModule.trim();
     // Remove any environment variable patterns (KEY=VALUE) that might be appended
     moduleName = moduleName.split(/\s+/)[0].split(/[=;]/)[0];
-    // Also remove any trailing non-alphanumeric characters except dots and underscores
-    moduleName = moduleName.replace(/[^a-zA-Z0-9._-]+$/, '');
+    // Python module names can only contain: letters, numbers, dots, and underscores
+    // Remove everything from the first invalid character onwards
+    // Match only valid Python module name characters: [a-zA-Z0-9._]
+    const validMatch = moduleName.match(/^[a-zA-Z0-9._]+/);
+    moduleName = validMatch ? validMatch[0] : 'ml.inference.generate_deck';
     
     if (moduleName !== rawModule.trim()) {
       this.logger.warn(`Module name was sanitized during config load: "${rawModule}" -> "${moduleName}"`);
@@ -293,8 +296,10 @@ export class MlDeckService {
     let moduleName = this.config.module.trim();
     // Remove any environment variable patterns (KEY=VALUE) that might be appended
     moduleName = moduleName.split(/\s+/)[0].split(/[=;]/)[0];
-    // Also remove any trailing non-alphanumeric characters except dots and underscores
-    moduleName = moduleName.replace(/[^a-zA-Z0-9._-]+$/, '');
+    // Python module names can only contain: letters, numbers, dots, and underscores
+    // Remove everything from the first invalid character onwards
+    const validMatch = moduleName.match(/^[a-zA-Z0-9._]+/);
+    moduleName = validMatch ? validMatch[0] : 'ml.inference.generate_deck';
     
     if (moduleName !== this.config.module.trim()) {
       this.logger.warn(`Module name was sanitized: "${this.config.module}" -> "${moduleName}"`);
