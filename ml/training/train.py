@@ -300,7 +300,7 @@ def train(
     entropy_penalty: float = 2.0,  # Increased from 1.0 - encourage more concentration on fewer cards
     low_prob_penalty: float = 10.0,  # Increased from 5.0 - stronger penalty for 1x cards
     low_prob_threshold: float = 0.3,  # Increased from 0.25 - penalize more cards
-    sequence_level_weight: float = 50.0,  # Phase 1: Weight for sequence-level loss (directly penalizes singleton-heavy generations)
+    sequence_level_weight: float = 200.0,  # Phase 1: Weight for sequence-level loss (directly penalizes singleton-heavy generations) - Increased from 50.0 to 200.0 to strongly penalize singleton-heavy decks
     save_checkpoints: bool = True,
 ) -> None:
     deck_config = DeckConfig()

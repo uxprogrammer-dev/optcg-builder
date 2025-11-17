@@ -22,7 +22,7 @@ python -m ml.training.train \
   --entropy-penalty 2.0 \
   --low-prob-penalty 10.0 \
   --low-prob-threshold 0.3 \
-  --sequence-level-weight 50.0 \
+  --sequence-level-weight 200.0 \
   --coverage-weight 0.05 \
   --disable-checkpoints
 
