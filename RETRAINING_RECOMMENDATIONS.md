@@ -1,13 +1,14 @@
 # Retraining Recommendations for Duplicate Card Issue
 
 ## Problem
-The model generates 48-50 unique cards (all 1x) despite:
-- Tournament decks having realistic duplicates (4x staples, 2x tech cards)
-- Inference-time biasing with boosts of 150-200 logits
+The model generates 48-62 unique cards (all 1x) despite:
+- Tournament decks averaging **16.3 unique cards** with only **2.1 cards at 1x** (12.8% of unique cards)
+- Tournament decks have **9.0 cards at 4x** on average (55.3% of unique cards)
+- Inference-time biasing with boosts of 300+ logits
 - Anti-singleton loss during training
 
 ## Root Cause
-The model learns local sequence patterns (via teacher forcing) rather than global frequency distributions. Even though training data has duplicates, deck shuffling randomizes order, so the model rarely sees the same card appear multiple times consecutively.
+The model learns local sequence patterns (via teacher forcing) rather than global frequency distributions. Even though training data has duplicates, deck shuffling randomizes order, so the model rarely sees the same card appear multiple times consecutively. The model has learned such a strong preference for diversity that even massive inference-time biases (300+ logits) cannot overcome it.
 
 ## Solution: Retrain with These Changes
 
@@ -73,7 +74,9 @@ python -m ml.training.train \
 ## Expected Results
 After retraining with these changes:
 - Model should generate decks with realistic duplicates (4x staples, 2x tech cards)
-- Fewer singleton cards (target: < 20 unique cards instead of 48-50)
+- **Target: ~16 unique cards** (matching tournament deck average) instead of 48-62
+- **Target: ~2 cards at 1x** (matching tournament deck average) instead of 48-62
+- **Target: ~9 cards at 4x** (matching tournament deck average)
 - Better alignment with tournament deck statistics
 
 ## Why This Should Work

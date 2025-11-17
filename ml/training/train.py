@@ -296,10 +296,10 @@ def train(
     early_stopping_patience: Optional[int] = 3,
     include_control_tokens: bool = True,
     resume_from: Optional[Path] = None,
-    freq_hist_weight: float = 10.0,  # Increased from 3.0 - new loss is more effective
-    entropy_penalty: float = 1.0,
-    low_prob_penalty: float = 5.0,
-    low_prob_threshold: float = 0.25,
+    freq_hist_weight: float = 100.0,  # Increased from 10.0 - need much stronger penalty to match tournament decks (16.3 unique cards, 2.1 at 1x)
+    entropy_penalty: float = 2.0,  # Increased from 1.0 - encourage more concentration on fewer cards
+    low_prob_penalty: float = 10.0,  # Increased from 5.0 - stronger penalty for 1x cards
+    low_prob_threshold: float = 0.3,  # Increased from 0.25 - penalize more cards
     save_checkpoints: bool = True,
 ) -> None:
     deck_config = DeckConfig()
@@ -568,26 +568,26 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--freq-hist-weight",
         type=float,
-        default=10.0,  # Increased from 3.0 - new loss is more effective
-        help="Weight for the frequency histogram loss (higher = stronger regularization against 1x cards). Default: 10.0",
+        default=100.0,  # Increased from 10.0 - need much stronger penalty to match tournament decks (16.3 unique cards, 2.1 at 1x)
+        help="Weight for the frequency histogram loss (higher = stronger regularization against 1x cards). Default: 100.0",
     )
     parser.add_argument(
         "--entropy-penalty",
         type=float,
-        default=1.0,
-        help="Weight for entropy penalty in freq_hist loss (higher = more concentration on fewer cards). Default: 1.0",
+        default=2.0,  # Increased from 1.0 - encourage more concentration on fewer cards
+        help="Weight for entropy penalty in freq_hist loss (higher = more concentration on fewer cards). Default: 2.0",
     )
     parser.add_argument(
         "--low-prob-penalty",
         type=float,
-        default=5.0,
-        help="Weight for low-probability penalty in freq_hist loss (higher = stronger penalty for 1x cards). Default: 5.0",
+        default=10.0,  # Increased from 5.0 - stronger penalty for 1x cards
+        help="Weight for low-probability penalty in freq_hist loss (higher = stronger penalty for 1x cards). Default: 10.0",
     )
     parser.add_argument(
         "--low-prob-threshold",
         type=float,
-        default=0.25,
-        help="Threshold for considering a card 'low probability' in freq_hist loss (matches 1 copy when hist targets are scaled by max copies). Default: 0.25",
+        default=0.3,  # Increased from 0.25 - penalize more cards
+        help="Threshold for considering a card 'low probability' in freq_hist loss (matches 1 copy when hist targets are scaled by max copies). Default: 0.3",
     )
     parser.add_argument(
         "--disable-checkpoints",
