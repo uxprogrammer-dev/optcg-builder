@@ -1057,27 +1057,64 @@ def greedy_generate(
                 special_ids,
             )
         
-        # Apply EOS penalty to discourage early termination (only if we have very few cards)
+        # Apply EOS penalty to discourage early termination
         # Store original logits for debugging before applying penalty
         original_logits = next_token_logits
-        if eos_penalty > 0.0 and len(generated) < 10:  # Only penalize EOS if we have less than 10 tokens
+        # Apply EOS penalty more aggressively - need to prevent early termination
+        # Count actual cards (excluding special tokens)
+        actual_card_count = sum(1 for tid in generated if tid not in special_ids)
+        if eos_penalty > 0.0 and actual_card_count < deck_config.main_deck_size:
+            # Stronger penalty when we have fewer cards
+            penalty_strength = eos_penalty
+            if actual_card_count < 20:
+                penalty_strength = eos_penalty * 2.0  # Double penalty if less than 20 cards
+            elif actual_card_count < 30:
+                penalty_strength = eos_penalty * 1.5  # 1.5x penalty if less than 30 cards
+            
             eos_penalty_tensor = tf.zeros_like(next_token_logits)
             eos_penalty_tensor = tf.tensor_scatter_nd_update(
                 eos_penalty_tensor,
                 [[end_id]],
-                [-eos_penalty]
+                [-penalty_strength]
             )
             next_token_logits = next_token_logits + eos_penalty_tensor
+            print(f"DEBUG: Applied EOS penalty of -{penalty_strength} (actual cards: {actual_card_count})", file=sys.stderr)
         
-        # Get top 5 predictions for debugging (use original logits to show what model actually predicted)
+        # Get top 5 predictions for debugging - show BOTH original and biased logits
         debug_top_k = 5
-        debug_top_k_values, debug_top_k_indices = tf.nn.top_k(original_logits, k=min(debug_top_k, len(original_logits)))
-        top_predictions = [
+        debug_top_k_values_orig, debug_top_k_indices_orig = tf.nn.top_k(original_logits, k=min(debug_top_k, len(original_logits)))
+        debug_top_k_values_biased, debug_top_k_indices_biased = tf.nn.top_k(next_token_logits, k=min(debug_top_k, len(next_token_logits)))
+        
+        top_predictions_orig = [
             (int(idx), float(val), index_to_card.get(int(idx), f"<UNK:{int(idx)}>"))
-            for idx, val in zip(debug_top_k_indices.numpy(), debug_top_k_values.numpy())
+            for idx, val in zip(debug_top_k_indices_orig.numpy(), debug_top_k_values_orig.numpy())
         ]
-        print(f"DEBUG: Step {step}, position {logit_position}, current sequence length {len(generated)}", file=sys.stderr)
-        print(f"DEBUG: Top {debug_top_k} predictions: {top_predictions}", file=sys.stderr)
+        top_predictions_biased = [
+            (int(idx), float(val), index_to_card.get(int(idx), f"<UNK:{int(idx)}>"))
+            for idx, val in zip(debug_top_k_indices_biased.numpy(), debug_top_k_values_biased.numpy())
+        ]
+        
+        actual_card_count = sum(1 for tid in generated if tid not in special_ids)
+        print(f"DEBUG: Step {step}, position {logit_position}, current sequence length {len(generated)}, actual cards: {actual_card_count}", file=sys.stderr)
+        print(f"DEBUG: Top {debug_top_k} predictions (ORIGINAL): {top_predictions_orig}", file=sys.stderr)
+        print(f"DEBUG: Top {debug_top_k} predictions (AFTER BIASING): {top_predictions_biased}", file=sys.stderr)
+        
+        # Show copy counts for debugging
+        if len(generated) >= 2:
+            unique_base_codes = {}
+            for tid in generated:
+                if tid not in special_ids:
+                    cid = index_to_card.get(tid, "")
+                    if cid:
+                        base = _normalize_card_id_to_base(cid)
+                        unique_base_codes[base] = unique_base_codes.get(base, 0) + 1
+            duplicates = {base: count for base, count in unique_base_codes.items() if count > 1}
+            if duplicates:
+                print(f"DEBUG: Cards with duplicates: {duplicates}", file=sys.stderr)
+            else:
+                print(f"DEBUG: No duplicates yet (all {len(unique_base_codes)} cards are 1x)", file=sys.stderr)
+        
+        top_predictions = top_predictions_biased  # Use biased predictions for fallback logic
         
         # Apply temperature and top-k filtering
         if temperature != 1.0:
