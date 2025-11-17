@@ -27,6 +27,7 @@ from ..models.transformer import (
     ExtractFeatureLayer,
     PaddingMaskLayer,
     PositionalEncodingLayer,
+    PredictedSequenceFreqHistLayer,  # Phase 1: Sequence-level loss layer
     TransformerDecoderLayer,
     TransformerEncoderLayer,
     gather_card_features,
@@ -95,6 +96,7 @@ def evaluate(
         "ExtractFeatureLayer": ExtractFeatureLayer,
         "TransformerEncoderLayer": TransformerEncoderLayer,
         "TransformerDecoderLayer": TransformerDecoderLayer,
+        "PredictedSequenceFreqHistLayer": PredictedSequenceFreqHistLayer,  # Phase 1: Sequence-level loss layer
         "PositionalEncodingLayer": PositionalEncodingLayer,
         "PaddingMaskLayer": PaddingMaskLayer,
         "CombinedDecoderMaskLayer": CombinedDecoderMaskLayer,

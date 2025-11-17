@@ -117,6 +117,92 @@ class ExtractFeatureLayer(layers.Layer):
 
 
 @register_keras_serializable(package="ml.models.transformer")
+class PredictedSequenceFreqHistLayer(layers.Layer):
+    """
+    Phase 1: Compute frequency histogram from argmax predictions of main output.
+    
+    This layer takes the main output logits, computes argmax predictions,
+    and returns a normalized frequency histogram for sequence-level loss.
+    """
+    
+    def __init__(
+        self,
+        vocab_size: int,
+        pad_token_id: int,
+        start_token_id: int,
+        end_token_id: int,
+        max_copies: int = 4,
+        **kwargs
+    ):
+        super().__init__(**kwargs)
+        self.vocab_size = vocab_size
+        self.pad_token_id = pad_token_id
+        self.start_token_id = start_token_id
+        self.end_token_id = end_token_id
+        self.max_copies = max_copies
+    
+    def call(self, main_logits: tf.Tensor) -> tf.Tensor:
+        """
+        Compute frequency histogram from argmax predictions.
+        
+        Args:
+            main_logits: (batch, seq_len, vocab_size) - logits from main output
+        
+        Returns:
+            (batch, vocab_size) - normalized frequency histogram [0, 1]
+        """
+        # Get predicted tokens (argmax)
+        predicted_tokens = tf.argmax(main_logits, axis=-1, output_type=tf.int32)  # (batch, seq_len)
+        
+        # Convert to one-hot
+        predicted_one_hot = tf.one_hot(
+            predicted_tokens,
+            depth=self.vocab_size,
+            dtype=tf.float32
+        )  # (batch, seq_len, vocab_size)
+        
+        # Sum across sequence dimension to get frequency histogram
+        predicted_freq_hist = tf.reduce_sum(predicted_one_hot, axis=1)  # (batch, vocab_size)
+        
+        # Mask out special tokens (PAD, BOS, EOS)
+        special_ids = tf.constant([self.pad_token_id, self.start_token_id, self.end_token_id], dtype=tf.int32)
+        special_mask = tf.ones((self.vocab_size,), dtype=tf.float32)
+        # Zero out special tokens
+        special_mask = tf.tensor_scatter_nd_update(
+            special_mask,
+            tf.expand_dims(special_ids, 1),
+            tf.zeros((tf.shape(special_ids)[0],), dtype=tf.float32)
+        )
+        special_mask = tf.expand_dims(special_mask, 0)  # (1, vocab_size)
+        predicted_freq_hist = predicted_freq_hist * special_mask
+        
+        # Normalize by max copies
+        max_copies_tensor = tf.constant(float(self.max_copies), dtype=tf.float32)
+        predicted_freq_hist = tf.minimum(predicted_freq_hist, max_copies_tensor)
+        predicted_freq_hist = tf.math.divide_no_nan(
+            predicted_freq_hist,
+            max_copies_tensor
+        )
+        
+        return predicted_freq_hist
+    
+    def get_config(self):
+        config = super().get_config()
+        config.update({
+            "vocab_size": self.vocab_size,
+            "pad_token_id": self.pad_token_id,
+            "start_token_id": self.start_token_id,
+            "end_token_id": self.end_token_id,
+            "max_copies": self.max_copies,
+        })
+        return config
+    
+    @classmethod
+    def from_config(cls, config):
+        return cls(**config)
+
+
+@register_keras_serializable(package="ml.models.transformer")
 class PaddingMaskLayer(layers.Layer):
     """Creates padding mask for token sequences: [batch, seq] -> [batch, 1, 1, seq]."""
 
@@ -525,66 +611,14 @@ def build_deck_transformer(
 
     # Phase 1: Sequence-level output - compute frequency histogram from predicted tokens
     # This allows us to add a sequence-level loss that directly penalizes singleton-heavy generations
-    def make_compute_predicted_sequence_freq_hist(vocab_size, pad_id, start_id, end_id, max_copies_val):
-        """Create a closure that captures special token IDs for the Lambda layer."""
-        def compute_predicted_sequence_freq_hist(main_logits):
-            """
-            Compute frequency histogram from argmax predictions of main output.
-            
-            Args:
-                main_logits: (batch, seq_len, vocab_size) - logits from main output
-            
-            Returns:
-                (batch, vocab_size) - normalized frequency histogram [0, 1]
-            """
-            # Get predicted tokens (argmax)
-            predicted_tokens = tf.argmax(main_logits, axis=-1, output_type=tf.int32)  # (batch, seq_len)
-            
-            # Convert to one-hot
-            predicted_one_hot = tf.one_hot(
-                predicted_tokens,
-                depth=vocab_size,
-                dtype=tf.float32
-            )  # (batch, seq_len, vocab_size)
-            
-            # Sum across sequence dimension to get frequency histogram
-            predicted_freq_hist = tf.reduce_sum(predicted_one_hot, axis=1)  # (batch, vocab_size)
-            
-            # Mask out special tokens (PAD, BOS, EOS)
-            special_ids = tf.constant([pad_id, start_id, end_id], dtype=tf.int32)
-            special_mask = tf.ones((vocab_size,), dtype=tf.float32)
-            # Zero out special tokens
-            special_mask = tf.tensor_scatter_nd_update(
-                special_mask,
-                tf.expand_dims(special_ids, 1),
-                tf.zeros((tf.shape(special_ids)[0],), dtype=tf.float32)
-            )
-            special_mask = tf.expand_dims(special_mask, 0)  # (1, vocab_size)
-            predicted_freq_hist = predicted_freq_hist * special_mask
-            
-            # Normalize by max copies
-            max_copies_tensor = tf.constant(float(max_copies_val), dtype=tf.float32)
-            predicted_freq_hist = tf.minimum(predicted_freq_hist, max_copies_tensor)
-            predicted_freq_hist = tf.math.divide_no_nan(
-                predicted_freq_hist,
-                max_copies_tensor
-            )
-            
-            return predicted_freq_hist
-        return compute_predicted_sequence_freq_hist
-    
-    # Phase 1: Create Lambda layer with captured special token IDs
     from ..config import DeckConfig
     deck_config = DeckConfig()
-    compute_fn = make_compute_predicted_sequence_freq_hist(
+    predicted_sequence_freq_hist = PredictedSequenceFreqHistLayer(
         vocab_size=deck_vocab_size,
-        pad_id=pad_token_id,
-        start_id=start_token_id,
-        end_id=end_token_id,
-        max_copies_val=deck_config.max_copies_per_card,
-    )
-    predicted_sequence_freq_hist = layers.Lambda(
-        compute_fn,
+        pad_token_id=pad_token_id,
+        start_token_id=start_token_id,
+        end_token_id=end_token_id,
+        max_copies=deck_config.max_copies_per_card,
         name="predicted_sequence_freq_hist"
     )(main_output)
 

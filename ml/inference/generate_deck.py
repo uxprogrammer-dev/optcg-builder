@@ -290,10 +290,12 @@ def main() -> None:
     keras.config.enable_unsafe_deserialization()
     
     # Provide custom objects explicitly to ensure they can be deserialized
+    from ml.models.transformer import PredictedSequenceFreqHistLayer
     custom_objects = {
         "TransformerEncoderLayer": TransformerEncoderLayer,
         "TransformerDecoderLayer": TransformerDecoderLayer,
         "PositionalEncodingLayer": PositionalEncodingLayer,
+        "PredictedSequenceFreqHistLayer": PredictedSequenceFreqHistLayer,  # Phase 1: Sequence-level loss layer
         "_create_combined_decoder_mask": _create_combined_decoder_mask,
         "gather_card_features": gather_card_features,
     }
