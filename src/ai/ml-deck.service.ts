@@ -41,10 +41,22 @@ export class MlDeckService {
     private readonly leaderKnowledgeService: LeaderKnowledgeService,
     private readonly cardKnowledgeService: CardKnowledgeService,
   ) {
+    // Sanitize module name when loading from config to prevent corruption
+    const rawModule = this.configService.get<string>('mlModel.module') ?? 'ml.inference.generate_deck';
+    let moduleName = rawModule.trim();
+    // Remove any environment variable patterns (KEY=VALUE) that might be appended
+    moduleName = moduleName.split(/\s+/)[0].split(/[=;]/)[0];
+    // Also remove any trailing non-alphanumeric characters except dots and underscores
+    moduleName = moduleName.replace(/[^a-zA-Z0-9._-]+$/, '');
+    
+    if (moduleName !== rawModule.trim()) {
+      this.logger.warn(`Module name was sanitized during config load: "${rawModule}" -> "${moduleName}"`);
+    }
+    
     this.config = {
       enabled: this.configService.get<boolean>('mlModel.enabled') ?? false,
       pythonPath: this.configService.get<string>('mlModel.pythonPath') ?? 'python',
-      module: this.configService.get<string>('mlModel.module') ?? 'ml.inference.generate_deck',
+      module: moduleName,
       modelPath: this.configService.get<string>('mlModel.modelPath') ?? '',
       promptVocabularyPath: this.configService.get<string>('mlModel.promptVocabularyPath') ?? '',
       cardVocabularyPath: this.configService.get<string>('mlModel.cardVocabularyPath') ?? '',
@@ -277,9 +289,20 @@ export class MlDeckService {
     // Compose prompt with leader ability (async to fetch leader card)
     const promptText = await this.composePrompt(request, leaderOnly);
     
+    // Sanitize module name to prevent environment variables or paths from being appended
+    let moduleName = this.config.module.trim();
+    // Remove any environment variable patterns (KEY=VALUE) that might be appended
+    moduleName = moduleName.split(/\s+/)[0].split(/[=;]/)[0];
+    // Also remove any trailing non-alphanumeric characters except dots and underscores
+    moduleName = moduleName.replace(/[^a-zA-Z0-9._-]+$/, '');
+    
+    if (moduleName !== this.config.module.trim()) {
+      this.logger.warn(`Module name was sanitized: "${this.config.module}" -> "${moduleName}"`);
+    }
+    
     const args = [
       '-m',
-      this.config.module,
+      moduleName,
       '--prompt',
       promptText,
       '--model',

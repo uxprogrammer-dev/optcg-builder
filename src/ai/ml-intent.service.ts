@@ -243,10 +243,18 @@ export class MlIntentService {
         }
 
         try {
-          // Parse JSON output (last line should be JSON)
-          const lines = stdout.trim().split('\n');
-          const jsonLine = lines[lines.length - 1];
-          const payload = JSON.parse(jsonLine) as MlIntentPayload;
+          // Parse JSON output - extract JSON object from stdout (handle trailing characters)
+          const trimmed = stdout.trim();
+          // Find the JSON object by looking for the first { and last }
+          const firstBrace = trimmed.indexOf('{');
+          const lastBrace = trimmed.lastIndexOf('}');
+          
+          if (firstBrace === -1 || lastBrace === -1 || lastBrace <= firstBrace) {
+            throw new Error('No valid JSON object found in output');
+          }
+          
+          const jsonStr = trimmed.substring(firstBrace, lastBrace + 1);
+          const payload = JSON.parse(jsonStr) as MlIntentPayload;
           resolve(payload);
         } catch (error) {
           this.logger.error(`Failed to parse ML intent output: ${error}\nOutput: ${stdout}`);
