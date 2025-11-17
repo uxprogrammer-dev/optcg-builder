@@ -557,24 +557,41 @@ def _apply_duplicate_encouragement_bias(
     copy_counts: Counter,
     special_ids: Set[int],
     bias_strength: float = 50.0,  # Dramatically increased from 25.0 - model still generating all 1x cards
+    unseen_penalty: float = 20.0,  # NEW: Penalize cards that haven't been generated yet
 ) -> tf.Tensor:
     """
-    Encourage duplicates by boosting cards that have been generated 1-3 times.
-    This is a simpler alternative to freq_hist bias that doesn't rely on model output.
+    Encourage duplicates by boosting cards that have been generated 1-3 times,
+    and penalizing cards that haven't been generated yet.
     
     Args:
         logits: Raw logits [vocab_size]
         copy_counts: Counter of how many times each card has been generated
         special_ids: Set of special token IDs to exclude
         bias_strength: How strongly to boost duplicates (higher = more aggressive)
+        unseen_penalty: How strongly to penalize unseen cards (higher = more aggressive)
     
     Returns:
         Modified logits with duplicate encouragement bias applied
     """
     bias = tf.zeros_like(logits)
+    vocab_size = tf.shape(logits)[0]
+    vocab_size_int = int(vocab_size.numpy()) if hasattr(vocab_size, "numpy") else int(vocab_size)
     
-    # Boost cards that have been generated 1-3 times (encourage 2x, 3x, 4x)
-    # Cards with 0 copies: no boost (let model decide)
+    # First, penalize all unseen cards (cards with 0 copies)
+    # This forces the model to prefer cards it has already generated
+    for token_id in range(vocab_size_int):
+        if token_id in special_ids:
+            continue
+        if token_id not in copy_counts or copy_counts[token_id] == 0:
+            # Penalize unseen cards to encourage duplicates
+            penalty = -unseen_penalty
+            bias = tf.tensor_scatter_nd_update(
+                bias,
+                [[token_id]],
+                [tf.constant(penalty, dtype=tf.float32)]
+            )
+    
+    # Then, boost cards that have been generated 1-3 times (encourage 2x, 3x, 4x)
     # Cards with 1 copy: moderate boost (encourage 2x)
     # Cards with 2 copies: strong boost (encourage 3x)
     # Cards with 3 copies: very strong boost (encourage 4x)
@@ -598,6 +615,7 @@ def _apply_duplicate_encouragement_bias(
             # Already at 4x or more, don't boost
             continue
         
+        # Override the unseen penalty with the boost
         bias = tf.tensor_scatter_nd_update(
             bias,
             [[token_id]],
@@ -870,12 +888,14 @@ def greedy_generate(
             
             # Always apply duplicate encouragement bias (doesn't rely on freq_hist)
             # This encourages cards that have been generated 1-3 times to appear again
+            # AND penalizes unseen cards to force duplicates
             # Dramatically increased bias strength - model still generating all 1x cards despite previous increases
             next_token_logits = _apply_duplicate_encouragement_bias(
                 next_token_logits,
                 copy_counts,
                 special_ids,
                 bias_strength=50.0,  # Increased from 20.0 - need much stronger bias to overcome model's diversity preference
+                unseen_penalty=20.0,  # NEW: Penalize unseen cards to force duplicates
             )
 
         if repository and len(generated) >= 2:
@@ -1157,12 +1177,14 @@ def beam_search_generate(
                         )
                     
                     # Always apply duplicate encouragement bias (doesn't rely on freq_hist)
+                    # AND penalizes unseen cards to force duplicates
                     # Dramatically increased bias strength - model still generating all 1x cards despite previous increases
                     step_logits = _apply_duplicate_encouragement_bias(
                         step_logits,
                         copy_counts,
                         special_ids,
                         bias_strength=50.0,  # Increased from 20.0 - need much stronger bias to overcome model's diversity preference
+                        unseen_penalty=20.0,  # NEW: Penalize unseen cards to force duplicates
                     )
                 if len(seq) >= 2:
                     leader_token_id = seq[1]

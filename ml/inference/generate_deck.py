@@ -491,6 +491,27 @@ def main() -> None:
             )
         else:
             sequence = candidate_sequences[0] if candidate_sequences else []
+        
+        # If beam search collapsed (only leader + EOS), fall back to greedy
+        if sequence and len(sequence) <= 1:
+            import sys
+            print("WARNING: Beam search collapsed to trivial sequence, falling back to greedy decoding", file=sys.stderr)
+            sequence = greedy_generate(
+                prompt=prompt_text,
+                model=model,
+                prompt_vectorizer=vectorizer,
+                card_to_index=card_to_index,
+                index_to_card=index_to_card,
+                deck_config=deck_config,
+                initial_sequence=initial_sequence,
+                temperature=0.2,
+                top_k=15,
+                eos_penalty=5.0,
+                card_features=card_features,
+                use_card_features=use_card_features_in_model,
+                repository=repository,
+                tournament_priors=tournament_priors,
+            )
     else:
         if args.rerank_beams > 1:
             import sys
