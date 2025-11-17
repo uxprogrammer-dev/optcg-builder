@@ -558,10 +558,11 @@ def _apply_duplicate_encouragement_bias(
     special_ids: Set[int],
     bias_strength: float = 50.0,  # Dramatically increased from 25.0 - model still generating all 1x cards
     unseen_penalty: float = 20.0,  # NEW: Penalize cards that haven't been generated yet
+    min_cards_before_penalty: int = 15,  # NEW: Only penalize unseen cards after generating this many cards
 ) -> tf.Tensor:
     """
     Encourage duplicates by boosting cards that have been generated 1-3 times,
-    and penalizing cards that haven't been generated yet.
+    and penalizing cards that haven't been generated yet (after generating some cards).
     
     Args:
         logits: Raw logits [vocab_size]
@@ -569,6 +570,7 @@ def _apply_duplicate_encouragement_bias(
         special_ids: Set of special token IDs to exclude
         bias_strength: How strongly to boost duplicates (higher = more aggressive)
         unseen_penalty: How strongly to penalize unseen cards (higher = more aggressive)
+        min_cards_before_penalty: Only apply unseen penalty after generating this many cards
     
     Returns:
         Modified logits with duplicate encouragement bias applied
@@ -577,19 +579,33 @@ def _apply_duplicate_encouragement_bias(
     vocab_size = tf.shape(logits)[0]
     vocab_size_int = int(vocab_size.numpy()) if hasattr(vocab_size, "numpy") else int(vocab_size)
     
-    # First, penalize all unseen cards (cards with 0 copies)
-    # This forces the model to prefer cards it has already generated
-    for token_id in range(vocab_size_int):
-        if token_id in special_ids:
-            continue
-        if token_id not in copy_counts or copy_counts[token_id] == 0:
-            # Penalize unseen cards to encourage duplicates
-            penalty = -unseen_penalty
-            bias = tf.tensor_scatter_nd_update(
-                bias,
-                [[token_id]],
-                [tf.constant(penalty, dtype=tf.float32)]
-            )
+    # Count total cards generated so far (excluding special tokens)
+    total_cards_generated = sum(count for token_id, count in copy_counts.items() if token_id not in special_ids)
+    
+    # Only penalize unseen cards after we've generated a minimum number of cards
+    # This allows the model to generate a diverse initial set, then forces duplicates
+    if total_cards_generated >= min_cards_before_penalty:
+        # Progressive penalty: stronger as we generate more cards
+        # After 15 cards: full penalty
+        # After 30 cards: 1.5x penalty
+        # After 40 cards: 2x penalty
+        penalty_multiplier = 1.0
+        if total_cards_generated >= 40:
+            penalty_multiplier = 2.0
+        elif total_cards_generated >= 30:
+            penalty_multiplier = 1.5
+        
+        for token_id in range(vocab_size_int):
+            if token_id in special_ids:
+                continue
+            if token_id not in copy_counts or copy_counts[token_id] == 0:
+                # Penalize unseen cards to encourage duplicates
+                penalty = -unseen_penalty * penalty_multiplier
+                bias = tf.tensor_scatter_nd_update(
+                    bias,
+                    [[token_id]],
+                    [tf.constant(penalty, dtype=tf.float32)]
+                )
     
     # Then, boost cards that have been generated 1-3 times (encourage 2x, 3x, 4x)
     # Cards with 1 copy: moderate boost (encourage 2x)
