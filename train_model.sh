@@ -22,7 +22,7 @@ python -m ml.training.train \
   --entropy-penalty 2.0 \
   --low-prob-penalty 10.0 \
   --low-prob-threshold 0.3 \
-  --sequence-level-weight 200.0 \
+  --sequence-level-weight 500.0 \
   --coverage-weight 0.05 \
   --early-stopping-patience 10
 

@@ -142,14 +142,17 @@ def sequence_level_loss(
         # Tournament decks average ~2.1 singletons, so penalize if predicted > 2.1
         target_singletons = 2.1
         singleton_excess = tf.maximum(0.0, predicted_singletons - target_singletons)
-        singleton_penalty = tf.reduce_mean(singleton_excess) * 5.0  # Moderate penalty for excess singletons (reduced from 20.0 to prevent training instability)
+        # CRITICAL: Use quadratic penalty for excess singletons to make it much more aggressive
+        # Linear penalty (5.0) is too weak - model still generates 49 unique cards
+        singleton_penalty = tf.reduce_mean(singleton_excess ** 2) * 20.0  # Quadratic penalty for excess singletons (much stronger)
         
         # 3. Diversity penalty: penalize if too many unique cards are predicted
         # Tournament decks average ~16.3 unique cards, so penalize if predicted > 16.3
         predicted_unique = tf.reduce_sum(tf.cast(y_pred > 0.0, tf.float32), axis=-1)
         target_unique = 16.3
         unique_excess = tf.maximum(0.0, predicted_unique - target_unique)
-        unique_penalty = tf.reduce_mean(unique_excess) * 2.0  # Moderate penalty for too many unique cards (reduced from 10.0 to prevent training instability)
+        # CRITICAL: Use quadratic penalty for excess unique cards to make it much more aggressive
+        unique_penalty = tf.reduce_mean(unique_excess ** 2) * 10.0  # Quadratic penalty for too many unique cards (much stronger)
         
         total_loss = mse + singleton_penalty + unique_penalty
         
