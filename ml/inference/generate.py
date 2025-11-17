@@ -62,6 +62,21 @@ def _normalize_card_set(code: Optional[str]) -> Optional[str]:
     return f"{match.group(1)}{int(match.group(2)):02d}"
 
 
+def _normalize_card_id_to_base(card_id: str) -> str:
+    """
+    Normalize a card ID to its base code (remove variant suffixes like _p1, _r1).
+    
+    Examples:
+        OP01-017_p1 -> OP01-017
+        OP01-017_r1 -> OP01-017
+        OP01-017 -> OP01-017
+    """
+    if not card_id:
+        return card_id
+    # Split on underscore and take the first part (base code)
+    return card_id.upper().split("_")[0]
+
+
 def _extract_set_filters(prompt: str) -> Set[str]:
     filters: Set[str] = set()
     for prefix, number in _SET_PATTERN.findall(prompt.upper()):
@@ -556,6 +571,7 @@ def _apply_duplicate_encouragement_bias(
     logits: tf.Tensor,
     copy_counts: Counter,
     special_ids: Set[int],
+    index_to_card: Optional[Dict[int, str]] = None,  # NEW: Needed to normalize card IDs
     bias_strength: float = 50.0,  # Dramatically increased from 25.0 - model still generating all 1x cards
     unseen_penalty: float = 20.0,  # NEW: Penalize cards that haven't been generated yet
     min_cards_before_penalty: int = 15,  # NEW: Only penalize unseen cards after generating this many cards
@@ -580,7 +596,19 @@ def _apply_duplicate_encouragement_bias(
     vocab_size_int = int(vocab_size.numpy()) if hasattr(vocab_size, "numpy") else int(vocab_size)
     
     # Count total cards generated so far (excluding special tokens)
-    total_cards_generated = sum(count for token_id, count in copy_counts.items() if token_id not in special_ids)
+    # Since copy_counts now uses normalized base codes, we need to count unique base codes
+    if index_to_card:
+        unique_base_codes = set()
+        for token_id, count in copy_counts.items():
+            if token_id not in special_ids and count > 0:
+                card_id = index_to_card.get(token_id, "")
+                if card_id:
+                    base_code = _normalize_card_id_to_base(card_id)
+                    unique_base_codes.add(base_code)
+        total_cards_generated = len(unique_base_codes)
+    else:
+        # Fallback: count all tokens (may overcount variants)
+        total_cards_generated = sum(1 for token_id, count in copy_counts.items() if token_id not in special_ids and count > 0)
     
     # Only penalize unseen cards after we've generated a minimum number of cards
     # This allows the model to generate a diverse initial set, then forces duplicates
@@ -613,6 +641,20 @@ def _apply_duplicate_encouragement_bias(
     # Cards with 3 copies: very strong boost (encourage 4x)
     # Cards with 4+ copies: no boost (already at limit)
     
+    # Group token IDs by base code to boost all variants together
+    base_code_to_tokens: Dict[str, List[int]] = {}
+    if index_to_card:
+        vocab_size_int = int(vocab_size.numpy()) if hasattr(vocab_size, "numpy") else int(vocab_size)
+        for token_id in range(vocab_size_int):
+            if token_id in special_ids:
+                continue
+            card_id = index_to_card.get(token_id, "")
+            if card_id:
+                base_code = _normalize_card_id_to_base(card_id)
+                if base_code not in base_code_to_tokens:
+                    base_code_to_tokens[base_code] = []
+                base_code_to_tokens[base_code].append(token_id)
+    
     for token_id, count in copy_counts.items():
         if token_id in special_ids:
             continue
@@ -631,12 +673,26 @@ def _apply_duplicate_encouragement_bias(
             # Already at 4x or more, don't boost
             continue
         
-        # Override the unseen penalty with the boost
-        bias = tf.tensor_scatter_nd_update(
-            bias,
-            [[token_id]],
-            [tf.constant(boost, dtype=tf.float32)]
-        )
+        # Boost ALL token IDs that map to the same base code (all variants)
+        if index_to_card:
+            card_id = index_to_card.get(token_id, "")
+            if card_id:
+                base_code = _normalize_card_id_to_base(card_id)
+                variant_tokens = base_code_to_tokens.get(base_code, [token_id])
+                for variant_token_id in variant_tokens:
+                    if variant_token_id not in special_ids:
+                        bias = tf.tensor_scatter_nd_update(
+                            bias,
+                            [[variant_token_id]],
+                            [tf.constant(boost, dtype=tf.float32)]
+                        )
+        else:
+            # Fallback: only boost the exact token_id
+            bias = tf.tensor_scatter_nd_update(
+                bias,
+                [[token_id]],
+                [tf.constant(boost, dtype=tf.float32)]
+            )
     
     return logits + bias
 
@@ -806,9 +862,25 @@ def greedy_generate(
         card_feature_inputs = [cost_feat, power_feat, color_feat, type_feat, ability_feat, has_ability_feat]
 
     special_ids: Set[int] = {start_id, end_id, pad_id}
-    copy_counts = Counter(
-        token_id for token_id in generated if token_id not in special_ids
-    )
+    # Build copy_counts using normalized card IDs (base codes without variants)
+    # This ensures variant cards (OP01-017_p1, OP01-017_r1) are counted as the same card
+    base_code_counts: Dict[str, int] = {}
+    for token_id in generated:
+        if token_id not in special_ids:
+            card_id = index_to_card.get(token_id, "")
+            if card_id:
+                base_code = _normalize_card_id_to_base(card_id)
+                base_code_counts[base_code] = base_code_counts.get(base_code, 0) + 1
+    
+    # Convert back to token_id-based Counter for compatibility with existing code
+    # Map each token_id to the count of its base code
+    copy_counts = Counter()
+    for token_id in generated:
+        if token_id not in special_ids:
+            card_id = index_to_card.get(token_id, "")
+            if card_id:
+                base_code = _normalize_card_id_to_base(card_id)
+                copy_counts[token_id] = base_code_counts.get(base_code, 0)
 
     set_filters = _extract_set_filters(prompt)
     set_penalty = _build_set_penalty(
@@ -910,6 +982,7 @@ def greedy_generate(
                 next_token_logits,
                 copy_counts,
                 special_ids,
+                index_to_card=index_to_card,  # NEW: Pass index_to_card to normalize variants
                 bias_strength=50.0,  # Increased from 20.0 - need much stronger bias to overcome model's diversity preference
                 unseen_penalty=20.0,  # NEW: Penalize unseen cards to force duplicates
             )
@@ -1016,7 +1089,13 @@ def greedy_generate(
         print(f"DEBUG: Step {step}: generated token {next_token} -> {token_str}", file=sys.stderr)
         generated.append(next_token)
         if next_token not in special_ids:
-            copy_counts[next_token] += 1
+            # Update copy_counts using normalized base codes
+            # This ensures variant cards are counted together
+            base_code = _normalize_card_id_to_base(token_str)
+            # Find all token_ids that map to this base code and update their counts
+            for tid, cid in index_to_card.items():
+                if _normalize_card_id_to_base(cid) == base_code:
+                    copy_counts[tid] = copy_counts.get(tid, 0) + 1
             if next_token < len(token_types):
                 category = token_types[next_token]
                 if category in TYPE_BUCKETS:
@@ -1174,9 +1253,24 @@ def beam_search_generate(
                         step_logits = _apply_penalty(step_logits, color_penalty)
                         step_logits = _apply_penalty(step_logits, cost_restriction_penalty)
 
-                copy_counts = Counter(
-                    token_id for token_id in seq if token_id not in special_ids
-                )
+                # Build copy_counts using normalized card IDs (base codes without variants)
+                # This ensures variant cards (OP01-017_p1, OP01-017_r1) are counted as the same card
+                base_code_counts: Dict[str, int] = {}
+                for token_id in seq:
+                    if token_id not in special_ids:
+                        card_id = index_to_card.get(token_id, "")
+                        if card_id:
+                            base_code = _normalize_card_id_to_base(card_id)
+                            base_code_counts[base_code] = base_code_counts.get(base_code, 0) + 1
+                
+                # Convert back to token_id-based Counter for compatibility
+                copy_counts = Counter()
+                for token_id in seq:
+                    if token_id not in special_ids:
+                        card_id = index_to_card.get(token_id, "")
+                        if card_id:
+                            base_code = _normalize_card_id_to_base(card_id)
+                            copy_counts[token_id] = base_code_counts.get(base_code, 0)
                 step_logits = _apply_copy_limit_penalty(
                     step_logits, copy_counts, max_copies=4, special_ids=special_ids
                 )
@@ -1199,6 +1293,7 @@ def beam_search_generate(
                         step_logits,
                         copy_counts,
                         special_ids,
+                        index_to_card=index_to_card,  # NEW: Pass index_to_card to normalize variants
                         bias_strength=50.0,  # Increased from 20.0 - need much stronger bias to overcome model's diversity preference
                         unseen_penalty=20.0,  # NEW: Penalize unseen cards to force duplicates
                     )
