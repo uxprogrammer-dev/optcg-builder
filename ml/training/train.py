@@ -300,6 +300,7 @@ def train(
     entropy_penalty: float = 2.0,  # Increased from 1.0 - encourage more concentration on fewer cards
     low_prob_penalty: float = 10.0,  # Increased from 5.0 - stronger penalty for 1x cards
     low_prob_threshold: float = 0.3,  # Increased from 0.25 - penalize more cards
+    sequence_level_weight: float = 50.0,  # Phase 1: Weight for sequence-level loss (directly penalizes singleton-heavy generations)
     save_checkpoints: bool = True,
 ) -> None:
     deck_config = DeckConfig()
@@ -316,6 +317,8 @@ def train(
     )
 
     pad_token_id = card_to_index[deck_config.pad_token]
+    start_token_id = card_to_index[deck_config.start_token]
+    end_token_id = card_to_index[deck_config.end_token]
     use_card_features = card_features is not None
     model = build_deck_transformer(
         prompt_vocab_size=len(prompt_vocab),
@@ -325,6 +328,8 @@ def train(
         pad_token_id=pad_token_id,
         config=transformer_config,
         use_card_features=use_card_features,
+        start_token_id=start_token_id,  # Phase 1: For sequence-level loss
+        end_token_id=end_token_id,  # Phase 1: For sequence-level loss
     )
 
      # Log model input information
@@ -343,7 +348,11 @@ def train(
     loss_fn = masked_sparse_categorical_crossentropy(pad_token_id=pad_token_id)
     acc_fn = masked_accuracy(pad_token_id=pad_token_id)
 
-    from .losses import anti_singleton_loss
+    from .losses import anti_singleton_loss, sequence_level_loss
+    
+    # Get special token IDs for sequence-level loss
+    start_token_id = card_to_index[deck_config.start_token]
+    end_token_id = card_to_index[deck_config.end_token]
     
     losses = {
         "main": loss_fn,
@@ -355,11 +364,25 @@ def train(
             low_prob_penalty=low_prob_penalty,  # Strongly penalize low-probability cards (1x cards)
             low_prob_threshold=low_prob_threshold,
         ),
+        # Phase 1: Sequence-level loss - directly penalizes singleton-heavy generated sequences
+        "predicted_sequence_freq_hist": sequence_level_loss(
+            pad_token_id=pad_token_id,
+            start_token_id=start_token_id,
+            end_token_id=end_token_id,
+            max_copies=deck_config.max_copies_per_card,
+        ),
     }
     # Increased freq_hist weight from 0.1 to 1.0 (default) to strongly encourage realistic card counts
     # This helps the model learn that 4x staples and 2x tech cards are more common than 1x cards
     # Higher weight (1.0+) significantly reduces the number of 1x cards in generated decks
-    loss_weights = {"main": 1.0, "type_aux": 0.2, "cost_aux": 0.2, "freq_hist": freq_hist_weight}
+    # Phase 1: Add sequence-level loss weight (default 50.0) to directly penalize singleton-heavy generations
+    loss_weights = {
+        "main": 1.0,
+        "type_aux": 0.2,
+        "cost_aux": 0.2,
+        "freq_hist": freq_hist_weight,
+        "predicted_sequence_freq_hist": sequence_level_weight,  # Phase 1: Sequence-level loss weight
+    }
     metrics = {
         "main": [acc_fn],
         "freq_hist": [tf.keras.metrics.MeanSquaredError(name="freq_hist_metric")],
@@ -590,6 +613,12 @@ def parse_args() -> argparse.Namespace:
         help="Threshold for considering a card 'low probability' in freq_hist loss (matches 1 copy when hist targets are scaled by max copies). Default: 0.3",
     )
     parser.add_argument(
+        "--sequence-level-weight",
+        type=float,
+        default=50.0,  # Phase 1: Sequence-level loss weight
+        help="Weight for the sequence-level loss (Phase 1: directly penalizes singleton-heavy generated sequences). Default: 50.0",
+    )
+    parser.add_argument(
         "--disable-checkpoints",
         action="store_true",
         help="Disable saving checkpoints during training (saves disk space, useful for cloud training like RunPod). Only the final model will be saved.",
@@ -627,6 +656,7 @@ def main() -> None:
         entropy_penalty=args.entropy_penalty,
         low_prob_penalty=args.low_prob_penalty,
         low_prob_threshold=args.low_prob_threshold,
+        sequence_level_weight=args.sequence_level_weight,
         save_checkpoints=not args.disable_checkpoints,
     )
 

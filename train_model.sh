@@ -11,7 +11,7 @@ export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:/usr/local/cuda-12.8/targets/x8
 VENV_LIB=/workspace/optcg-builder/ml/.venv/lib/python3.12/site-packages
 export LD_LIBRARY_PATH=$VENV_LIB/nvidia/cudnn/lib:$VENV_LIB/nvidia/cublas/lib:$VENV_LIB/nvidia/cufft/lib:$VENV_LIB/nvidia/curand/lib:$VENV_LIB/nvidia/cusolver/lib:$VENV_LIB/nvidia/cusparse/lib:$VENV_LIB/nvidia/cuda_runtime/lib:$VENV_LIB/nvidia/nccl/lib:$LD_LIBRARY_PATH
 
-# Run training with new histogram-based duplicate regularization
+# Run training with Phase 1: Sequence-level loss for duplicate regularization
 python -m ml.training.train \
   --dataset data/training/decks_merged.jsonl \
   --output-dir models \
@@ -22,6 +22,7 @@ python -m ml.training.train \
   --entropy-penalty 2.0 \
   --low-prob-penalty 10.0 \
   --low-prob-threshold 0.3 \
+  --sequence-level-weight 50.0 \
   --coverage-weight 0.05 \
   --disable-checkpoints
 

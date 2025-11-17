@@ -90,3 +90,83 @@ def anti_singleton_loss(
         return total_loss
     
     return _loss
+
+
+def sequence_level_loss(
+    pad_token_id: int,
+    start_token_id: int,
+    end_token_id: int,
+    max_copies: int = 4,
+) -> tf.keras.losses.Loss:
+    """
+    Phase 1: Sequence-level loss that penalizes singleton-heavy generated sequences.
+    
+    Computes the frequency histogram from the model's predicted tokens (argmax of main output)
+    and compares it to the target frequency histogram.
+    
+    This directly penalizes the model for generating too many unique cards (1x cards).
+    
+    Args:
+        pad_token_id: Token ID for padding (to exclude from frequency count)
+        start_token_id: Token ID for BOS (to exclude from frequency count)
+        end_token_id: Token ID for EOS (to exclude from frequency count)
+        max_copies: Maximum copies per card (for normalization)
+    
+    Returns:
+        Loss function that can be used in model compilation
+    """
+    mse_loss = tf.keras.losses.MeanSquaredError(reduction=tf.keras.losses.Reduction.SUM_OVER_BATCH_SIZE)
+    
+    def _loss(y_true: tf.Tensor, y_pred: tf.Tensor) -> tf.Tensor:
+        """
+        Compute sequence-level loss from predicted tokens.
+        
+        Args:
+            y_true: Target frequency histogram (batch, vocab_size) - normalized [0, 1]
+            y_pred: Predicted tokens from main output (batch, seq_len) - token IDs (int32)
+        
+        Returns:
+            MSE loss between predicted and target frequency histograms
+        """
+        batch_size = tf.shape(y_pred)[0]
+        seq_len = tf.shape(y_pred)[1]
+        vocab_size = tf.shape(y_true)[1]
+        
+        # Convert predicted tokens to one-hot encoding
+        # y_pred shape: (batch, seq_len) - token IDs
+        y_pred_int = tf.cast(y_pred, tf.int32)
+        y_pred_one_hot = tf.one_hot(
+            y_pred_int,
+            depth=vocab_size,
+            dtype=tf.float32
+        )  # (batch, seq_len, vocab_size)
+        
+        # Sum across sequence dimension to get frequency histogram
+        predicted_freq_hist = tf.reduce_sum(y_pred_one_hot, axis=1)  # (batch, vocab_size)
+        
+        # Mask out special tokens (PAD, BOS, EOS)
+        special_ids = tf.constant([pad_token_id, start_token_id, end_token_id], dtype=tf.int32)
+        special_mask = tf.ones((vocab_size,), dtype=tf.float32)
+        # Zero out special tokens
+        special_mask = tf.tensor_scatter_nd_update(
+            special_mask,
+            tf.expand_dims(special_ids, 1),
+            tf.zeros((tf.shape(special_ids)[0],), dtype=tf.float32)
+        )
+        special_mask = tf.expand_dims(special_mask, 0)  # (1, vocab_size)
+        predicted_freq_hist = predicted_freq_hist * special_mask
+        
+        # Normalize by max copies (same as target)
+        max_copies_tensor = tf.constant(float(max_copies), dtype=tf.float32)
+        predicted_freq_hist = tf.minimum(predicted_freq_hist, max_copies_tensor)
+        predicted_freq_hist = tf.math.divide_no_nan(
+            predicted_freq_hist,
+            max_copies_tensor
+        )
+        
+        # Compute MSE loss between predicted and target frequency histograms
+        loss = mse_loss(y_true, predicted_freq_hist)
+        
+        return loss
+    
+    return _loss

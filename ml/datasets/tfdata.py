@@ -433,6 +433,8 @@ def make_tf_dataset(
                 "type_aux": type_label,
                 "cost_aux": cost_label,
                 "freq_hist": freq_hist,
+                # Phase 1: Sequence-level loss target (same as freq_hist)
+                "predicted_sequence_freq_hist": freq_hist,
             },
             weight,
         )

@@ -331,6 +331,8 @@ def build_deck_transformer(
     config: TransformerConfig = TransformerConfig(),
     use_card_features: bool = True,
     card_feature_dim: int = 128,
+    start_token_id: int = 1,  # Phase 1: For sequence-level loss
+    end_token_id: int = 2,  # Phase 1: For sequence-level loss
 ) -> Model:
     encoder_inputs = layers.Input(shape=(prompt_sequence_length,), dtype="int32", name="prompt_tokens")
     decoder_inputs = layers.Input(shape=(deck_sequence_length,), dtype="int32", name="decoder_input")
@@ -521,6 +523,71 @@ def build_deck_transformer(
         name="freq_hist",
     )(pooled_decoder)
 
+    # Phase 1: Sequence-level output - compute frequency histogram from predicted tokens
+    # This allows us to add a sequence-level loss that directly penalizes singleton-heavy generations
+    def make_compute_predicted_sequence_freq_hist(vocab_size, pad_id, start_id, end_id, max_copies_val):
+        """Create a closure that captures special token IDs for the Lambda layer."""
+        def compute_predicted_sequence_freq_hist(main_logits):
+            """
+            Compute frequency histogram from argmax predictions of main output.
+            
+            Args:
+                main_logits: (batch, seq_len, vocab_size) - logits from main output
+            
+            Returns:
+                (batch, vocab_size) - normalized frequency histogram [0, 1]
+            """
+            # Get predicted tokens (argmax)
+            predicted_tokens = tf.argmax(main_logits, axis=-1, output_type=tf.int32)  # (batch, seq_len)
+            
+            # Convert to one-hot
+            predicted_one_hot = tf.one_hot(
+                predicted_tokens,
+                depth=vocab_size,
+                dtype=tf.float32
+            )  # (batch, seq_len, vocab_size)
+            
+            # Sum across sequence dimension to get frequency histogram
+            predicted_freq_hist = tf.reduce_sum(predicted_one_hot, axis=1)  # (batch, vocab_size)
+            
+            # Mask out special tokens (PAD, BOS, EOS)
+            special_ids = tf.constant([pad_id, start_id, end_id], dtype=tf.int32)
+            special_mask = tf.ones((vocab_size,), dtype=tf.float32)
+            # Zero out special tokens
+            special_mask = tf.tensor_scatter_nd_update(
+                special_mask,
+                tf.expand_dims(special_ids, 1),
+                tf.zeros((tf.shape(special_ids)[0],), dtype=tf.float32)
+            )
+            special_mask = tf.expand_dims(special_mask, 0)  # (1, vocab_size)
+            predicted_freq_hist = predicted_freq_hist * special_mask
+            
+            # Normalize by max copies
+            max_copies_tensor = tf.constant(float(max_copies_val), dtype=tf.float32)
+            predicted_freq_hist = tf.minimum(predicted_freq_hist, max_copies_tensor)
+            predicted_freq_hist = tf.math.divide_no_nan(
+                predicted_freq_hist,
+                max_copies_tensor
+            )
+            
+            return predicted_freq_hist
+        return compute_predicted_sequence_freq_hist
+    
+    # Phase 1: Create Lambda layer with captured special token IDs
+    from ..config import DeckConfig
+    deck_config = DeckConfig()
+    compute_fn = make_compute_predicted_sequence_freq_hist(
+        vocab_size=deck_vocab_size,
+        pad_id=pad_token_id,
+        start_id=start_token_id,
+        end_id=end_token_id,
+        max_copies_val=deck_config.max_copies_per_card,
+    )
+    predicted_sequence_freq_hist = layers.Lambda(
+        compute_fn,
+        name="predicted_sequence_freq_hist"
+    )(main_output)
+
     # Build model inputs list
     model_inputs = [encoder_inputs, decoder_inputs]
     if use_card_features and card_cost_features is not None:
@@ -538,6 +605,7 @@ def build_deck_transformer(
         "type_aux": type_aux_output,
         "cost_aux": cost_aux_output,
         "freq_hist": freq_hist_output,
+        "predicted_sequence_freq_hist": predicted_sequence_freq_hist,
     }
 
     model = Model(inputs=model_inputs, outputs=model_outputs, name="deck_transformer")
