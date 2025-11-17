@@ -870,12 +870,12 @@ def greedy_generate(
             
             # Always apply duplicate encouragement bias (doesn't rely on freq_hist)
             # This encourages cards that have been generated 1-3 times to appear again
-            # Increased bias strength to encourage more duplicates (was 10.0, still generating mostly 1x cards)
+            # Dramatically increased bias strength - model still generating all 1x cards despite previous increases
             next_token_logits = _apply_duplicate_encouragement_bias(
                 next_token_logits,
                 copy_counts,
                 special_ids,
-                bias_strength=20.0,  # Increased from 10.0 - model still generating mostly 1x cards
+                bias_strength=50.0,  # Increased from 20.0 - need much stronger bias to overcome model's diversity preference
             )
 
         if repository and len(generated) >= 2:
