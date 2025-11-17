@@ -24,5 +24,5 @@ python -m ml.training.train \
   --low-prob-threshold 0.3 \
   --sequence-level-weight 200.0 \
   --coverage-weight 0.05 \
-  --disable-checkpoints
+  --early-stopping-patience 10
 
