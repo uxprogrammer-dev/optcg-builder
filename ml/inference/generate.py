@@ -572,7 +572,7 @@ def _apply_duplicate_encouragement_bias(
     copy_counts: Counter,
     special_ids: Set[int],
     index_to_card: Optional[Dict[int, str]] = None,  # NEW: Needed to normalize card IDs
-    bias_strength: float = 50.0,  # Dramatically increased from 25.0 - model still generating all 1x cards
+     bias_strength: float = 50.0,  # Dramatically increased from 25.0 - model still generating all 1x cards
     unseen_penalty: float = 20.0,  # NEW: Penalize cards that haven't been generated yet
     min_cards_before_penalty: int = 15,  # NEW: Only penalize unseen cards after generating this many cards
 ) -> tf.Tensor:
@@ -628,7 +628,17 @@ def _apply_duplicate_encouragement_bias(
                 continue
             if token_id not in copy_counts or copy_counts[token_id] == 0:
                 # Penalize unseen cards to encourage duplicates
-                penalty = -unseen_penalty * penalty_multiplier
+                # Use a much stronger penalty that scales with the number of cards generated
+                # After 15 cards: base penalty
+                # After 30 cards: 2x penalty  
+                # After 40 cards: 3x penalty
+                base_penalty = unseen_penalty * penalty_multiplier
+                # Additional scaling based on how many cards we've generated
+                if total_cards_generated >= 40:
+                    base_penalty *= 3.0
+                elif total_cards_generated >= 30:
+                    base_penalty *= 2.0
+                penalty = -base_penalty
                 bias = tf.tensor_scatter_nd_update(
                     bias,
                     [[token_id]],
@@ -699,10 +709,26 @@ def _apply_duplicate_encouragement_bias(
                         [tf.constant(boost, dtype=tf.float32)]
                     )
     
-    # Debug: show which cards are being boosted
+    # Debug: show which cards are being boosted and their logit values
     if boosted_cards:
         import sys
-        print(f"DEBUG: Boosting {len(boosted_cards)} card variants for duplicates: {boosted_cards[:5]}...", file=sys.stderr)
+        # Show logits for boosted cards (before and after boost)
+        boosted_info = []
+        for card_name, count, boost in boosted_cards[:10]:  # Show first 10
+            # Find token_id for this card
+            token_id = None
+            for tid, cid in index_to_card.items():
+                if cid == card_name:
+                    token_id = tid
+                    break
+            if token_id is not None and token_id < vocab_size_int:
+                orig_logit = float(logits[token_id].numpy()) if hasattr(logits[token_id], "numpy") else float(logits[token_id])
+                boosted_logit = orig_logit + boost
+                boosted_info.append(f"{card_name}({count}x): {orig_logit:.2f} -> {boosted_logit:.2f} (+{boost:.1f})")
+        if boosted_info:
+            print(f"DEBUG: Boosting {len(boosted_cards)} card variants. Sample logits: {', '.join(boosted_info[:5])}", file=sys.stderr)
+        else:
+            print(f"DEBUG: Boosting {len(boosted_cards)} card variants for duplicates: {boosted_cards[:5]}...", file=sys.stderr)
     
     return logits + bias
 
