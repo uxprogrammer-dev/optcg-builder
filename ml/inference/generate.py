@@ -1154,22 +1154,24 @@ def greedy_generate(
                 if category in TYPE_BUCKETS:
                     type_counts[category] += 1
         
-        # Only allow early termination if we have at least a few cards
+        # Only allow early termination if we have enough cards
+        actual_card_count = sum(1 for tid in generated if tid not in special_ids)
         if next_token == end_id:
-            if len(generated) < 5:  # Require at least 5 tokens (BOS + leader + 3 cards)
-                print(f"DEBUG: Ignoring early EOS at step {step} (too few tokens: {len(generated)})", file=sys.stderr)
-                # Replace EOS with a random card from top predictions (excluding EOS)
-                valid_predictions = [idx for idx, _, _ in top_predictions if idx != end_id]
+            min_cards_required = max(10, deck_config.main_deck_size - 10)  # Require at least main_deck_size - 10 cards
+            if actual_card_count < min_cards_required:
+                print(f"DEBUG: Ignoring early EOS at step {step} (too few cards: {actual_card_count} < {min_cards_required})", file=sys.stderr)
+                # Replace EOS with a random card from top predictions (excluding EOS and special tokens)
+                valid_predictions = [idx for idx, _, _ in top_predictions if idx != end_id and idx not in special_ids]
                 if valid_predictions:
                     next_token = valid_predictions[0]  # Use the top non-EOS prediction
                     generated[-1] = next_token
                     token_str = index_to_card.get(next_token, f"<UNK:{next_token}>")
                     print(f"DEBUG: Replaced EOS with {token_str} to continue generation", file=sys.stderr)
                 else:
-                    print(f"DEBUG: Early termination at step {step}", file=sys.stderr)
+                    print(f"DEBUG: Early termination at step {step} (no valid predictions)", file=sys.stderr)
                     break
             else:
-                print(f"DEBUG: Early termination at step {step}", file=sys.stderr)
+                print(f"DEBUG: Early termination at step {step} (enough cards: {actual_card_count})", file=sys.stderr)
                 break
 
     # Debug: show what tokens the generated sequence maps to before decoding
