@@ -122,22 +122,9 @@ class AutoregressiveSequenceLossStep(keras.Model):
             if isinstance(x, (list, tuple)):
                 prompt_tokens = x[0]
                 if self.use_card_features and len(x) > 2:
-                    card_feature_inputs = []
-                    for feat in x[2:]:
-                        feat_shape = tf.shape(feat)
-                        rank = tf.rank(feat)
-                        zero = tf.constant(0, dtype=feat_shape.dtype)
-                        batch_dim = tf.where(rank > 0, feat_shape[0], zero)
-                        broadcasted = tf.logical_or(tf.equal(batch_dim, 0), tf.equal(batch_dim, 1))
-                        def slice_feat():
-                            slice_sizes = tf.concat([[num_generate], tf.fill([rank - 1], -1)], axis=0)
-                            return tf.slice(feat, tf.zeros_like(slice_sizes), slice_sizes)
-                        sliced = tf.cond(
-                            broadcasted,
-                            lambda: feat,
-                            lambda: slice_feat()
-                        )
-                        card_feature_inputs.append(sliced)
+                    # Card features are global tensors (shape (1, vocab_size, ...)).
+                    # They broadcast automatically for any batch size, so we can pass them as-is.
+                    card_feature_inputs = list(x[2:])
                 else:
                     card_feature_inputs = []
             else:
