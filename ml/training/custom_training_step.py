@@ -61,7 +61,6 @@ class AutoregressiveSequenceLossStep(keras.Model):
         self.special_ids = tf.constant([self.start_id, self.end_id, self.pad_id], dtype=tf.int32)
         self.max_length = deck_config.max_total_cards + 2
         self.output_names = list(base_model.output_names)
-        self.metric_output_names = list(metric_output_names) if metric_output_names else None
         
     def call(self, inputs, training=False):
         """Forward pass through base model."""
