@@ -37,7 +37,6 @@ class AutoregressiveSequenceLossStep(keras.Model):
         generation_batch_fraction: float = 0.25,  # Only generate for 25% of batch to save compute
         losses: Optional[Dict] = None,
         loss_weights: Optional[Dict] = None,
-        metric_output_names: Optional[Sequence[str]] = None,
         **kwargs
     ):
         super().__init__(**kwargs)
