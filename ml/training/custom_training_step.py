@@ -116,63 +116,47 @@ class AutoregressiveSequenceLossStep(keras.Model):
                 tf.math.ceil(batch_size_float * generation_fraction),
                 tf.int32
             )
+            num_generate = tf.maximum(num_generate, 1)  # Ensure at least 1 sample for generation
             
-            # Only generate for a subset of the batch to save compute
-            if num_generate > 0:
-                # Extract prompt tokens and card features from inputs
-                if isinstance(x, (list, tuple)):
-                    prompt_tokens = x[0]
-                    # Card features are inputs 2-7 (cost, power, color, type, ability, has_ability)
-                    # But they might not be present if use_card_features is False
-                    if self.use_card_features and len(x) > 2:
-                        # Slice card features to match the batch size we're generating
-                        # Card features are typically (1, ...) and broadcast, but if they're (batch, ...)
-                        # we need to slice them. Use tf.slice for dynamic batch size.
-                        card_feature_inputs = []
-                        for feat in x[2:]:
-                            feat_shape = tf.shape(feat)
-                            if len(feat.shape) > 0 and feat_shape[0] > 1:
-                                # Batched, slice to match num_generate
-                                slice_sizes = [num_generate] + [-1] * (len(feat.shape) - 1)
-                                sliced = tf.slice(feat, [0] * len(feat.shape), slice_sizes)
-                                card_feature_inputs.append(sliced)
-                            else:
-                                # Broadcasting shape, use as-is
-                                card_feature_inputs.append(feat)
-                    else:
-                        card_feature_inputs = []
-                else:
-                    prompt_tokens = x
+            # Extract prompt tokens and card features from inputs for autoregressive generation
+            if isinstance(x, (list, tuple)):
+                prompt_tokens = x[0]
+                if self.use_card_features and len(x) > 2:
                     card_feature_inputs = []
-                
-                # Generate sequences autoregressively for first num_generate samples
-                generated_sequences = self._generate_autoregressive_batch(
-                    prompt_tokens[:num_generate],
-                    card_feature_inputs,
-                    training=True
+                    for feat in x[2:]:
+                        feat_shape = tf.shape(feat)
+                        if len(feat.shape) > 0 and feat_shape[0] > 1:
+                            slice_sizes = [num_generate] + [-1] * (len(feat.shape) - 1)
+                            sliced = tf.slice(feat, [0] * len(feat.shape), slice_sizes)
+                            card_feature_inputs.append(sliced)
+                        else:
+                            card_feature_inputs.append(feat)
+                else:
+                    card_feature_inputs = []
+            else:
+                prompt_tokens = x
+                card_feature_inputs = []
+            
+            generated_sequences = self._generate_autoregressive_batch(
+                prompt_tokens[:num_generate],
+                card_feature_inputs,
+                training=True
+            )
+            
+            generated_freq_hist = self._compute_freq_hist_from_sequences(
+                generated_sequences
+            )
+            
+            target_freq_hist = y.get("predicted_sequence_freq_hist")
+            if target_freq_hist is not None:
+                target_freq_hist_subset = target_freq_hist[:num_generate]
+                sequence_loss = self.sequence_level_loss_fn(
+                    target_freq_hist_subset,
+                    generated_freq_hist
                 )
-                
-                # Compute frequency histograms from generated sequences
-                generated_freq_hist = self._compute_freq_hist_from_sequences(
-                    generated_sequences
-                )
-                
-                # Get target frequency histograms (from ground truth)
-                target_freq_hist = y.get("predicted_sequence_freq_hist")
-                if target_freq_hist is not None:
-                    # Only use targets for the samples we generated
-                    target_freq_hist_subset = target_freq_hist[:num_generate]
-                    
-                    # Compute sequence-level loss
-                    sequence_loss = self.sequence_level_loss_fn(
-                        target_freq_hist_subset,
-                        generated_freq_hist
-                    )
-                    
-                    # Add to total loss
-                    weighted_sequence_loss = self.sequence_level_weight * sequence_loss
-                    total_loss += weighted_sequence_loss
-                    loss_values["autoregressive_sequence_loss"] = sequence_loss
+                weighted_sequence_loss = self.sequence_level_weight * sequence_loss
+                total_loss += weighted_sequence_loss
+                loss_values["autoregressive_sequence_loss"] = sequence_loss
         
         # Compute gradients and update weights
         trainable_vars = self.base_model.trainable_variables
