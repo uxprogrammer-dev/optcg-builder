@@ -7,7 +7,7 @@ from teacher forcing. This directly penalizes singleton-heavy generated sequence
 
 from __future__ import annotations
 
-from typing import Dict, Optional, Tuple, Sequence
+from typing import Dict, Optional, Tuple
 
 import tensorflow as tf
 from tensorflow import keras
@@ -37,7 +37,6 @@ class AutoregressiveSequenceLossStep(keras.Model):
         generation_batch_fraction: float = 0.25,  # Only generate for 25% of batch to save compute
         losses: Optional[Dict] = None,
         loss_weights: Optional[Dict] = None,
-        metric_output_names: Optional[Sequence[str]] = None,
         **kwargs
     ):
         super().__init__(**kwargs)
@@ -162,12 +161,11 @@ class AutoregressiveSequenceLossStep(keras.Model):
         # Apply gradients
         self.base_model.optimizer.apply_gradients(zip(gradients, trainable_vars))
         
-        # Update metrics (use wrapper's compiled metrics)
-        y_metrics, y_pred_metrics, sample_weight_metrics = self._prepare_metrics_inputs(y, outputs, sample_weight)
-        self.compiled_metrics.update_state(y_metrics, y_pred_metrics, sample_weight_metrics)
+        # Update metrics using base model's compiled metrics
+        self.base_model.compiled_metrics.update_state(y, outputs)
         
         # Return metrics
-        metrics = {m.name: m.result() for m in self.metrics}
+        metrics = {m.name: m.result() for m in self.base_model.metrics}
         metrics.update(loss_values)
         metrics["loss"] = total_loss
         
@@ -291,33 +289,13 @@ class AutoregressiveSequenceLossStep(keras.Model):
         
         return freq_hist
     
-    def _prepare_metrics_inputs(
-        self,
-        y_true,
-        y_pred,
-        sample_weight,
-    ):
-        if isinstance(y_pred, dict):
-            metric_names = self.metric_output_names or list(y_pred.keys())
-            y_true_dict = {}
-            y_pred_dict = {}
-            sample_weight_dict = {} if isinstance(sample_weight, dict) else sample_weight
-            for name in metric_names:
-                if name in y_pred and name in y_true:
-                    y_true_dict[name] = y_true[name]
-                    y_pred_dict[name] = y_pred[name]
-                    if isinstance(sample_weight, dict):
-                        sample_weight_dict[name] = sample_weight.get(name)
-            return y_true_dict, y_pred_dict, sample_weight_dict
-        return y_true, y_pred, sample_weight
-    
     def test_step(self, data):
         """Standard test step (no autoregressive generation for efficiency)."""
         x, y = data
         outputs = self.base_model(x, training=False)
         
         # Update metrics
-        self.compiled_metrics.update_state(y, outputs)
+        self.base_model.compiled_metrics.update_state(y, outputs)
         
         # Compute losses
         loss_values = {}
@@ -341,10 +319,7 @@ class AutoregressiveSequenceLossStep(keras.Model):
                     total_loss += weighted_loss
                     loss_values[f"{output_name}_loss"] = loss_value
         
-        y_metrics, y_pred_metrics, _ = self._prepare_metrics_inputs(y, outputs, None)
-        self.compiled_metrics.update_state(y_metrics, y_pred_metrics)
-        
-        metrics = {m.name: m.result() for m in self.metrics}
+        metrics = {m.name: m.result() for m in self.base_model.metrics}
         metrics.update(loss_values)
         metrics["loss"] = total_loss
         
