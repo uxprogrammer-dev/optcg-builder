@@ -7,7 +7,7 @@ from teacher forcing. This directly penalizes singleton-heavy generated sequence
 
 from __future__ import annotations
 
-from typing import Dict, Optional, Tuple, Sequence
+from typing import Dict, Optional, Tuple
 
 import tensorflow as tf
 from tensorflow import keras
@@ -65,10 +65,6 @@ class AutoregressiveSequenceLossStep(keras.Model):
     def call(self, inputs, training=False):
         """Forward pass through base model."""
         return self.base_model(inputs, training=training)
-    
-    @property
-    def metrics(self):
-        return self.base_model.metrics
     
     @property
     def metrics(self):
@@ -345,7 +341,6 @@ class AutoregressiveSequenceLossStep(keras.Model):
                     total_loss += weighted_loss
                     loss_values[f"{output_name}_loss"] = loss_value
         
-        metrics = self._collect_metric_results()
         metrics = self._collect_metric_results()
         metrics.update(loss_values)
         metrics["loss"] = total_loss
