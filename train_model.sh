@@ -29,5 +29,5 @@ python -m ml.training.train \
   --phase2-scheduled-sampling-rate 0.5 \
   --phase2-generation-batch-fraction 0.25 \
   --coverage-weight 0.05 \
-  --early-stopping-patience 10
-
+  --early-stopping-patience 10 \
+  --disable-checkpoints
