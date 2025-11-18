@@ -174,7 +174,7 @@ class AutoregressiveSequenceLossStep(keras.Model):
         self._update_metrics(y, outputs)
         
         # Return metrics
-        metrics = {m.name: m.result() for m in self.base_model.metrics}
+        metrics = self._collect_metric_results()
         metrics.update(loss_values)
         metrics["loss"] = total_loss
         
@@ -305,6 +305,15 @@ class AutoregressiveSequenceLossStep(keras.Model):
                 metric.update_state(y_dict["main"], outputs_dict["main"])
             elif name.startswith("freq_hist") and "freq_hist" in y_dict and "freq_hist" in outputs_dict:
                 metric.update_state(y_dict["freq_hist"], outputs_dict["freq_hist"])
+
+    def _collect_metric_results(self):
+        metric_values = {}
+        for metric in self.base_model.metrics:
+            try:
+                metric_values[metric.name] = metric.result()
+            except ValueError:
+                continue
+        return metric_values
     
     def test_step(self, data):
         """Standard test step (no autoregressive generation for efficiency)."""
@@ -336,7 +345,8 @@ class AutoregressiveSequenceLossStep(keras.Model):
                     total_loss += weighted_loss
                     loss_values[f"{output_name}_loss"] = loss_value
         
-        metrics = {m.name: m.result() for m in self.base_model.metrics}
+        metrics = self._collect_metric_results()
+        metrics = self._collect_metric_results()
         metrics.update(loss_values)
         metrics["loss"] = total_loss
         
