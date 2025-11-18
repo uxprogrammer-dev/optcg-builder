@@ -7,7 +7,7 @@ from teacher forcing. This directly penalizes singleton-heavy generated sequence
 
 from __future__ import annotations
 
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple, Sequence
 
 import tensorflow as tf
 from tensorflow import keras
@@ -37,6 +37,7 @@ class AutoregressiveSequenceLossStep(keras.Model):
         generation_batch_fraction: float = 0.25,  # Only generate for 25% of batch to save compute
         losses: Optional[Dict] = None,
         loss_weights: Optional[Dict] = None,
+        metric_output_names: Optional[Sequence[str]] = None,
         **kwargs
     ):
         super().__init__(**kwargs)
@@ -60,6 +61,7 @@ class AutoregressiveSequenceLossStep(keras.Model):
         self.special_ids = tf.constant([self.start_id, self.end_id, self.pad_id], dtype=tf.int32)
         self.max_length = deck_config.max_total_cards + 2
         self.output_names = list(base_model.output_names)
+        self.metric_output_names = list(metric_output_names) if metric_output_names else None
         
     def call(self, inputs, training=False):
         """Forward pass through base model."""
@@ -300,9 +302,10 @@ class AutoregressiveSequenceLossStep(keras.Model):
         y_pred,
     ):
         if isinstance(y_pred, dict):
+            metric_names = self.metric_output_names or self.output_names
             y_true_list = []
             y_pred_list = []
-            for name in self.output_names:
+            for name in metric_names:
                 if name in y_pred and name in y_true:
                     y_true_list.append(y_true[name])
                     y_pred_list.append(y_pred[name])
