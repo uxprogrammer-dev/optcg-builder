@@ -125,10 +125,12 @@ class AutoregressiveSequenceLossStep(keras.Model):
                     card_feature_inputs = []
                     for feat in x[2:]:
                         feat_shape = tf.shape(feat)
-                        batch_dim = feat_shape[0] if tf.rank(feat) > 0 else 0
+                        rank = tf.rank(feat)
+                        zero = tf.constant(0, dtype=feat_shape.dtype)
+                        batch_dim = tf.where(rank > 0, feat_shape[0], zero)
                         broadcasted = tf.logical_or(tf.equal(batch_dim, 0), tf.equal(batch_dim, 1))
                         def slice_feat():
-                            slice_sizes = tf.concat([[num_generate], tf.fill([tf.rank(feat) - 1], -1)], axis=0)
+                            slice_sizes = tf.concat([[num_generate], tf.fill([rank - 1], -1)], axis=0)
                             return tf.slice(feat, tf.zeros_like(slice_sizes), slice_sizes)
                         sliced = tf.cond(
                             broadcasted,
