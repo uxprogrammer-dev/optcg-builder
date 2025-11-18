@@ -299,19 +299,16 @@ class AutoregressiveSequenceLossStep(keras.Model):
     ):
         if isinstance(y_pred, dict):
             metric_names = self.metric_output_names or list(y_pred.keys())
-            y_true_list = []
-            y_pred_list = []
-            sample_weight_list = [] if sample_weight is not None else None
+            y_true_dict = {}
+            y_pred_dict = {}
+            sample_weight_dict = {} if isinstance(sample_weight, dict) else sample_weight
             for name in metric_names:
                 if name in y_pred and name in y_true:
-                    y_true_list.append(y_true[name])
-                    y_pred_list.append(y_pred[name])
-                    if sample_weight is not None:
-                        if isinstance(sample_weight, dict):
-                            sample_weight_list.append(sample_weight.get(name))
-                        else:
-                            sample_weight_list.append(sample_weight)
-            return y_true_list, y_pred_list, sample_weight_list
+                    y_true_dict[name] = y_true[name]
+                    y_pred_dict[name] = y_pred[name]
+                    if isinstance(sample_weight, dict):
+                        sample_weight_dict[name] = sample_weight.get(name)
+            return y_true_dict, y_pred_dict, sample_weight_dict
         return y_true, y_pred, sample_weight
     
     def test_step(self, data):
