@@ -417,7 +417,6 @@ def train(
             generation_batch_fraction=phase2_generation_batch_fraction,
             losses=losses,
             loss_weights=loss_weights,
-            metric_output_names=list(metrics.keys()),
         )
         # Recompile with the wrapped model (it will use the base model's compiled losses/metrics)
         model.compile(optimizer=optimizer, loss=losses, loss_weights=loss_weights, metrics=metrics)

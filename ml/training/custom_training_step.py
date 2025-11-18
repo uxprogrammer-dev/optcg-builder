@@ -60,11 +60,15 @@ class AutoregressiveSequenceLossStep(keras.Model):
         self.special_ids = tf.constant([self.start_id, self.end_id, self.pad_id], dtype=tf.int32)
         self.max_length = deck_config.max_total_cards + 2
         self.output_names = list(base_model.output_names)
-        self.metric_output_names = list(metric_output_names) if metric_output_names else None
         
     def call(self, inputs, training=False):
         """Forward pass through base model."""
         return self.base_model(inputs, training=training)
+    
+    @property
+    def metrics(self):
+        # Share base model metrics so Keras logging/reset works unchanged
+        return self.base_model.metrics
     
     def train_step(self, data):
         """
@@ -162,7 +166,8 @@ class AutoregressiveSequenceLossStep(keras.Model):
         self.base_model.optimizer.apply_gradients(zip(gradients, trainable_vars))
         
         # Update metrics using base model's compiled metrics
-        self.base_model.compiled_metrics.update_state(y, outputs)
+        y_metrics, y_pred_metrics = self._prepare_metrics_inputs(y, outputs)
+        self.base_model.compiled_metrics.update_state(y_metrics, y_pred_metrics)
         
         # Return metrics
         metrics = {m.name: m.result() for m in self.base_model.metrics}
@@ -289,13 +294,33 @@ class AutoregressiveSequenceLossStep(keras.Model):
         
         return freq_hist
     
+    def _prepare_metrics_inputs(
+        self,
+        y_true,
+        y_pred,
+    ):
+        if isinstance(y_pred, dict):
+            y_true_list = []
+            y_pred_list = []
+            for name in self.output_names:
+                if name in y_pred and name in y_true:
+                    y_true_list.append(y_true[name])
+                    y_pred_list.append(y_pred[name])
+            if not y_true_list:
+                return y_true, y_pred
+            if len(y_true_list) == 1:
+                return y_true_list[0], y_pred_list[0]
+            return y_true_list, y_pred_list
+        return y_true, y_pred
+    
     def test_step(self, data):
         """Standard test step (no autoregressive generation for efficiency)."""
         x, y = data
         outputs = self.base_model(x, training=False)
         
         # Update metrics
-        self.base_model.compiled_metrics.update_state(y, outputs)
+        y_metrics, y_pred_metrics = self._prepare_metrics_inputs(y, outputs)
+        self.base_model.compiled_metrics.update_state(y_metrics, y_pred_metrics)
         
         # Compute losses
         loss_values = {}
