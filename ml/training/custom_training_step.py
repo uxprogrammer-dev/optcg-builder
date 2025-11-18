@@ -110,8 +110,10 @@ class AutoregressiveSequenceLossStep(keras.Model):
             
             # Phase 2: Generate sequences autoregressively and compute sequence-level loss
             batch_size = tf.shape(x[0])[0] if isinstance(x, (list, tuple)) else tf.shape(x)[0]
+            batch_size_float = tf.cast(batch_size, tf.float32)
+            generation_fraction = tf.constant(self.generation_batch_fraction, dtype=tf.float32)
             num_generate = tf.cast(
-                tf.math.ceil(batch_size * self.generation_batch_fraction),
+                tf.math.ceil(batch_size_float * generation_fraction),
                 tf.int32
             )
             
