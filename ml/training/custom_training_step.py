@@ -187,13 +187,9 @@ class AutoregressiveSequenceLossStep(keras.Model):
         # Initialize with BOS token
         generated = tf.fill([batch_size, 1], self.start_id)  # (batch, 1)
         
-        # Prepare card features if available
+        # Prepare card features if available (stored separately to maintain input order)
         model_inputs_base = [prompt_tokens]
-        if self.use_card_features and card_feature_inputs:
-            # Card features are constant tensors that broadcast to batch size
-            # They're typically (1, vocab_size) or (1, vocab_size, embed_dim) for ability
-            # TensorFlow will automatically broadcast them, so we can use as-is
-            model_inputs_base.extend(card_feature_inputs)
+        feature_inputs = list(card_feature_inputs) if (self.use_card_features and card_feature_inputs) else []
         
         finished = tf.zeros([batch_size], dtype=tf.bool)
         training_flag = tf.convert_to_tensor(training, dtype=tf.bool)
@@ -206,7 +202,9 @@ class AutoregressiveSequenceLossStep(keras.Model):
             decoder_input = tf.concat([generated, padding], axis=1)
             decoder_input = decoder_input[:, :max_length]
             
-            model_inputs = model_inputs_base + [decoder_input]
+            model_inputs = [model_inputs_base[0], decoder_input]
+            if feature_inputs:
+                model_inputs.extend(feature_inputs)
             outputs = self.base_model(model_inputs, training=training)
             main_logits = outputs["main"]
             logit_position = current_length - 1
