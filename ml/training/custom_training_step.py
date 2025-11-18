@@ -208,70 +208,54 @@ class AutoregressiveSequenceLossStep(keras.Model):
             # TensorFlow will automatically broadcast them, so we can use as-is
             model_inputs_base.extend(card_feature_inputs)
         
-        # Generate autoregressively
-        for step in range(max_length - 1):
-            # Prepare decoder input (current sequence)
+        finished = tf.zeros([batch_size], dtype=tf.bool)
+        training_flag = tf.convert_to_tensor(training, dtype=tf.bool)
+        temperature = tf.constant(0.8, dtype=tf.float32)
+        
+        for _ in range(max_length - 1):
             current_length = tf.shape(generated)[1]
-            decoder_input = generated
+            pad_len = tf.maximum(max_length - current_length, 0)
+            padding = tf.fill(tf.stack([batch_size, pad_len]), self.pad_id)
+            decoder_input = tf.concat([generated, padding], axis=1)
+            decoder_input = decoder_input[:, :max_length]
             
-            # Pad to max_length if needed (though we'll stop at max_length)
-            if current_length < max_length:
-                padding = tf.fill(
-                    [batch_size, max_length - current_length],
-                    self.pad_id
-                )
-                decoder_input = tf.concat([decoder_input, padding], axis=1)
-            
-            # Build model inputs
             model_inputs = model_inputs_base + [decoder_input]
-            
-            # Forward pass
             outputs = self.base_model(model_inputs, training=training)
+            main_logits = outputs["main"]
+            logit_position = current_length - 1
+            next_token_logits = main_logits[:, logit_position, :]
             
-            # Extract main logits
-            main_logits = outputs["main"]  # (batch, seq_len, vocab_size)
+            random_val = tf.random.uniform([], dtype=tf.float32)
+            sample_condition = tf.logical_and(
+                training_flag,
+                tf.less(random_val, self.scheduled_sampling_rate)
+            )
             
-            # Get logits for the next token (at position current_length - 1)
-            next_token_logits = main_logits[:, current_length - 1, :]  # (batch, vocab_size)
-            
-            # Sample next token (use scheduled sampling: mix teacher forcing with model predictions)
-            if training and tf.random.uniform([]) < self.scheduled_sampling_rate:
-                # Use model's own predictions (autoregressive)
-                # Apply temperature and sample
-                temperature = 0.8
-                next_token_logits = next_token_logits / temperature
-                next_token = tf.random.categorical(
-                    next_token_logits,
+            def sample_next():
+                sampled = tf.random.categorical(
+                    next_token_logits / temperature,
                     num_samples=1,
                     dtype=tf.int32
-                )  # (batch, 1)
-                next_token = tf.squeeze(next_token, axis=1)  # (batch,)
-            else:
-                # Use argmax (greedy) for efficiency
-                next_token = tf.argmax(next_token_logits, axis=-1, output_type=tf.int32)  # (batch,)
+                )
+                return tf.squeeze(sampled, axis=1)
             
-            # Check for EOS
-            eos_mask = tf.equal(next_token, self.end_id)
-            if tf.reduce_all(eos_mask):
-                # All sequences ended
-                break
+            def greedy_next():
+                return tf.argmax(next_token_logits, axis=-1, output_type=tf.int32)
             
-            # Append next token
-            next_token = tf.expand_dims(next_token, axis=1)  # (batch, 1)
-            generated = tf.concat([generated, next_token], axis=1)
-            
-            # Stop if we've reached max length
-            if tf.shape(generated)[1] >= max_length:
-                break
-        
-        # Pad to max_length
-        current_length = tf.shape(generated)[1]
-        if current_length < max_length:
-            padding = tf.fill(
-                [batch_size, max_length - current_length],
-                self.pad_id
+            next_token_candidate = tf.cond(sample_condition, sample_next, greedy_next)
+            write_token = tf.where(
+                finished,
+                tf.fill([batch_size], self.pad_id),
+                next_token_candidate
             )
-            generated = tf.concat([generated, padding], axis=1)
+            generated = tf.concat([generated, tf.expand_dims(write_token, axis=1)], axis=1)
+            finished = tf.logical_or(finished, tf.equal(write_token, self.end_id))
+        
+        current_length = tf.shape(generated)[1]
+        pad_len = tf.maximum(max_length - current_length, 0)
+        padding = tf.fill(tf.stack([batch_size, pad_len]), self.pad_id)
+        generated = tf.concat([generated, padding], axis=1)
+        generated = generated[:, :max_length]
         
         return generated  # (batch, max_length)
     
