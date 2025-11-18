@@ -415,6 +415,8 @@ def train(
             use_card_features=use_card_features,
             scheduled_sampling_rate=phase2_scheduled_sampling_rate,
             generation_batch_fraction=phase2_generation_batch_fraction,
+            losses=losses,
+            loss_weights=loss_weights,
         )
         # Recompile with the wrapped model (it will use the base model's compiled losses/metrics)
         model.compile(optimizer=optimizer, loss=losses, loss_weights=loss_weights, metrics=metrics)

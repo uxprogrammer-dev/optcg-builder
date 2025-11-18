@@ -35,6 +35,8 @@ class AutoregressiveSequenceLossStep(keras.Model):
         use_card_features: bool = True,
         scheduled_sampling_rate: float = 0.5,
         generation_batch_fraction: float = 0.25,  # Only generate for 25% of batch to save compute
+        losses: Optional[Dict] = None,
+        loss_weights: Optional[Dict] = None,
         **kwargs
     ):
         super().__init__(**kwargs)
@@ -47,6 +49,9 @@ class AutoregressiveSequenceLossStep(keras.Model):
         self.use_card_features = use_card_features
         self.scheduled_sampling_rate = scheduled_sampling_rate
         self.generation_batch_fraction = generation_batch_fraction
+        # Store losses and loss weights for manual computation
+        self.losses_dict = losses or {}
+        self.loss_weights_dict = loss_weights or {}
         
         # Special token IDs
         self.start_id = card_to_index[deck_config.start_token]
@@ -83,9 +88,9 @@ class AutoregressiveSequenceLossStep(keras.Model):
             total_loss = 0.0
             loss_values = {}
             
-            # Get loss functions and weights from base model
-            loss_fns = self.base_model.compiled_loss._losses
-            loss_weights = self.base_model.compiled_loss._loss_weights
+            # Get loss functions and weights from stored dicts
+            loss_fns = self.losses_dict
+            loss_weights = self.loss_weights_dict
             
             for output_name, target in y.items():
                 if output_name == "predicted_sequence_freq_hist":
@@ -332,8 +337,8 @@ class AutoregressiveSequenceLossStep(keras.Model):
         loss_values = {}
         total_loss = 0.0
         
-        loss_fns = self.base_model.compiled_loss._losses
-        loss_weights = self.base_model.compiled_loss._loss_weights
+        loss_fns = self.losses_dict
+        loss_weights = self.loss_weights_dict
         
         for output_name, target in y.items():
             if output_name == "predicted_sequence_freq_hist":
