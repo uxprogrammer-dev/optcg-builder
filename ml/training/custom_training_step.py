@@ -171,17 +171,7 @@ class AutoregressiveSequenceLossStep(keras.Model):
         self.base_model.optimizer.apply_gradients(zip(gradients, trainable_vars))
         
         # Update metrics using base model's compiled metrics (only for outputs that have metrics)
-        metric_y = []
-        metric_outputs = []
-        for name in ("main", "freq_hist"):
-            if name in y and name in outputs:
-                metric_y.append(y[name])
-                metric_outputs.append(outputs[name])
-        if metric_y:
-            if len(metric_y) == 1:
-                self.base_model.compiled_metrics.update_state(metric_y[0], metric_outputs[0])
-            else:
-                self.base_model.compiled_metrics.update_state(metric_y, metric_outputs)
+        self._update_metrics(y, outputs)
         
         # Return metrics
         metrics = {m.name: m.result() for m in self.base_model.metrics}
@@ -308,23 +298,21 @@ class AutoregressiveSequenceLossStep(keras.Model):
         
         return freq_hist
     
+    def _update_metrics(self, y_dict, outputs_dict):
+        for metric in self.base_model.metrics:
+            name = metric.name or ""
+            if name.startswith("main") and "main" in y_dict and "main" in outputs_dict:
+                metric.update_state(y_dict["main"], outputs_dict["main"])
+            elif name.startswith("freq_hist") and "freq_hist" in y_dict and "freq_hist" in outputs_dict:
+                metric.update_state(y_dict["freq_hist"], outputs_dict["freq_hist"])
+    
     def test_step(self, data):
         """Standard test step (no autoregressive generation for efficiency)."""
         x, y = data
         outputs = self.base_model(x, training=False)
         
         # Update metrics
-        metric_y = []
-        metric_outputs = []
-        for name in ("main", "freq_hist"):
-            if name in y and name in outputs:
-                metric_y.append(y[name])
-                metric_outputs.append(outputs[name])
-        if metric_y:
-            if len(metric_y) == 1:
-                self.base_model.compiled_metrics.update_state(metric_y[0], metric_outputs[0])
-            else:
-                self.base_model.compiled_metrics.update_state(metric_y, metric_outputs)
+        self._update_metrics(y, outputs)
         
         # Compute losses
         loss_values = {}
