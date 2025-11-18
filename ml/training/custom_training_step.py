@@ -170,8 +170,15 @@ class AutoregressiveSequenceLossStep(keras.Model):
         # Apply gradients
         self.base_model.optimizer.apply_gradients(zip(gradients, trainable_vars))
         
-        # Update metrics using base model's compiled metrics
-        self.base_model.compiled_metrics.update_state(y, outputs)
+        # Update metrics using base model's compiled metrics (only for outputs that have metrics)
+        metric_y = {}
+        metric_outputs = {}
+        for name in ("main", "freq_hist"):
+            if name in y and name in outputs:
+                metric_y[name] = y[name]
+                metric_outputs[name] = outputs[name]
+        if metric_y:
+            self.base_model.compiled_metrics.update_state(metric_y, metric_outputs)
         
         # Return metrics
         metrics = {m.name: m.result() for m in self.base_model.metrics}
@@ -304,7 +311,10 @@ class AutoregressiveSequenceLossStep(keras.Model):
         outputs = self.base_model(x, training=False)
         
         # Update metrics
-        self.base_model.compiled_metrics.update_state(y, outputs)
+        metric_y = {name: y[name] for name in ("main", "freq_hist") if name in y and name in outputs}
+        metric_outputs = {name: outputs[name] for name in metric_y.keys()}
+        if metric_y:
+            self.base_model.compiled_metrics.update_state(metric_y, metric_outputs)
         
         # Compute losses
         loss_values = {}
