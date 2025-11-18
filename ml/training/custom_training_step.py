@@ -59,6 +59,7 @@ class AutoregressiveSequenceLossStep(keras.Model):
         self.pad_id = card_to_index[deck_config.pad_token]
         self.special_ids = tf.constant([self.start_id, self.end_id, self.pad_id], dtype=tf.int32)
         self.max_length = deck_config.max_total_cards + 2
+        self.output_names = list(base_model.output_names)
         
     def call(self, inputs, training=False):
         """Forward pass through base model."""
@@ -160,7 +161,8 @@ class AutoregressiveSequenceLossStep(keras.Model):
         self.base_model.optimizer.apply_gradients(zip(gradients, trainable_vars))
         
         # Update metrics (use wrapper's compiled metrics)
-        self.compiled_metrics.update_state(y, outputs)
+        y_metrics, y_pred_metrics, sample_weight_metrics = self._prepare_metrics_inputs(y, outputs, sample_weight)
+        self.compiled_metrics.update_state(y_metrics, y_pred_metrics, sample_weight_metrics)
         
         # Return metrics
         metrics = {m.name: m.result() for m in self.metrics}
@@ -287,6 +289,31 @@ class AutoregressiveSequenceLossStep(keras.Model):
         
         return freq_hist
     
+    def _prepare_metrics_inputs(
+        self,
+        y_true,
+        y_pred,
+        sample_weight,
+    ):
+        if isinstance(y_pred, dict):
+            y_true_list = []
+            y_pred_list = []
+            if sample_weight is not None:
+                sample_weight_list = []
+            else:
+                sample_weight_list = None
+            for name in self.output_names:
+                if name in y_pred and name in y_true:
+                    y_true_list.append(y_true[name])
+                    y_pred_list.append(y_pred[name])
+                    if sample_weight is not None:
+                        if isinstance(sample_weight, dict):
+                            sample_weight_list.append(sample_weight.get(name))
+                        else:
+                            sample_weight_list.append(sample_weight)
+            return y_true_list, y_pred_list, sample_weight_list
+        return y_true, y_pred, sample_weight
+    
     def test_step(self, data):
         """Standard test step (no autoregressive generation for efficiency)."""
         x, y = data
@@ -316,6 +343,9 @@ class AutoregressiveSequenceLossStep(keras.Model):
                     weighted_loss = loss_weight * loss_value
                     total_loss += weighted_loss
                     loss_values[f"{output_name}_loss"] = loss_value
+        
+        y_metrics, y_pred_metrics, _ = self._prepare_metrics_inputs(y, outputs, None)
+        self.compiled_metrics.update_state(y_metrics, y_pred_metrics)
         
         metrics = {m.name: m.result() for m in self.metrics}
         metrics.update(loss_values)
