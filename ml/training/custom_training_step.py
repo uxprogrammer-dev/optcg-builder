@@ -171,14 +171,17 @@ class AutoregressiveSequenceLossStep(keras.Model):
         self.base_model.optimizer.apply_gradients(zip(gradients, trainable_vars))
         
         # Update metrics using base model's compiled metrics (only for outputs that have metrics)
-        metric_y = {}
-        metric_outputs = {}
+        metric_y = []
+        metric_outputs = []
         for name in ("main", "freq_hist"):
             if name in y and name in outputs:
-                metric_y[name] = y[name]
-                metric_outputs[name] = outputs[name]
+                metric_y.append(y[name])
+                metric_outputs.append(outputs[name])
         if metric_y:
-            self.base_model.compiled_metrics.update_state(metric_y, metric_outputs)
+            if len(metric_y) == 1:
+                self.base_model.compiled_metrics.update_state(metric_y[0], metric_outputs[0])
+            else:
+                self.base_model.compiled_metrics.update_state(metric_y, metric_outputs)
         
         # Return metrics
         metrics = {m.name: m.result() for m in self.base_model.metrics}
@@ -311,10 +314,17 @@ class AutoregressiveSequenceLossStep(keras.Model):
         outputs = self.base_model(x, training=False)
         
         # Update metrics
-        metric_y = {name: y[name] for name in ("main", "freq_hist") if name in y and name in outputs}
-        metric_outputs = {name: outputs[name] for name in metric_y.keys()}
+        metric_y = []
+        metric_outputs = []
+        for name in ("main", "freq_hist"):
+            if name in y and name in outputs:
+                metric_y.append(y[name])
+                metric_outputs.append(outputs[name])
         if metric_y:
-            self.base_model.compiled_metrics.update_state(metric_y, metric_outputs)
+            if len(metric_y) == 1:
+                self.base_model.compiled_metrics.update_state(metric_y[0], metric_outputs[0])
+            else:
+                self.base_model.compiled_metrics.update_state(metric_y, metric_outputs)
         
         # Compute losses
         loss_values = {}
