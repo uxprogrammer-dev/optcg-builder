@@ -159,11 +159,11 @@ class AutoregressiveSequenceLossStep(keras.Model):
         # Apply gradients
         self.base_model.optimizer.apply_gradients(zip(gradients, trainable_vars))
         
-        # Update metrics
-        self.base_model.compiled_metrics.update_state(y, outputs)
+        # Update metrics (use wrapper's compiled metrics)
+        self.compiled_metrics.update_state(y, outputs)
         
         # Return metrics
-        metrics = {m.name: m.result() for m in self.base_model.metrics}
+        metrics = {m.name: m.result() for m in self.metrics}
         metrics.update(loss_values)
         metrics["loss"] = total_loss
         
@@ -293,7 +293,7 @@ class AutoregressiveSequenceLossStep(keras.Model):
         outputs = self.base_model(x, training=False)
         
         # Update metrics
-        self.base_model.compiled_metrics.update_state(y, outputs)
+        self.compiled_metrics.update_state(y, outputs)
         
         # Compute losses
         loss_values = {}
@@ -317,7 +317,7 @@ class AutoregressiveSequenceLossStep(keras.Model):
                     total_loss += weighted_loss
                     loss_values[f"{output_name}_loss"] = loss_value
         
-        metrics = {m.name: m.result() for m in self.base_model.metrics}
+        metrics = {m.name: m.result() for m in self.metrics}
         metrics.update(loss_values)
         metrics["loss"] = total_loss
         
