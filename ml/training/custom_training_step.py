@@ -39,6 +39,8 @@ class AutoregressiveSequenceLossStep(keras.Model):
         loss_weights: Optional[Dict] = None,
         **kwargs
     ):
+        # Backward compatibility: older call sites passed metric_output_names, ignore them
+        kwargs.pop("metric_output_names", None)
         super().__init__(**kwargs)
         self.base_model = base_model
         self.sequence_level_loss_fn = sequence_level_loss_fn
