@@ -306,6 +306,7 @@ def train(
     phase2_scheduled_sampling_rate: float = 0.5,  # Phase 2: Probability of using model's own predictions vs teacher forcing
     phase2_generation_batch_fraction: float = 0.25,  # Phase 2: Fraction of batch to generate autoregressively (to save compute)
     save_checkpoints: bool = True,
+    gradient_checkpointing: bool = False,
 ) -> None:
     deck_config = DeckConfig()
     prompt_config = PromptConfig()
@@ -335,6 +336,15 @@ def train(
         start_token_id=start_token_id,  # Phase 1: For sequence-level loss
         end_token_id=end_token_id,  # Phase 1: For sequence-level loss
     )
+
+    if gradient_checkpointing:
+        try:
+            tf.keras.utils.enable_tf_gradient_checkpointing(model)
+            print("Gradient checkpointing: ENABLED")
+        except AttributeError:
+            print("WARNING: tf.keras.utils.enable_tf_gradient_checkpointing unavailable in "
+                  f"TensorFlow {tf.__version__}; proceeding without gradient checkpointing.")
+            gradient_checkpointing = False
 
      # Log model input information
     num_inputs = len(model.inputs)
@@ -671,6 +681,11 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Disable saving checkpoints during training (saves disk space, useful for cloud training like RunPod). Only the final model will be saved.",
     )
+    parser.add_argument(
+        "--gradient-checkpointing",
+        action="store_true",
+        help="Enable TensorFlow gradient checkpointing to reduce activation memory usage (slower but saves GPU RAM).",
+    )
     return parser.parse_args()
 
 
@@ -709,6 +724,7 @@ def main() -> None:
         phase2_scheduled_sampling_rate=args.phase2_scheduled_sampling_rate,
         phase2_generation_batch_fraction=args.phase2_generation_batch_fraction,
         save_checkpoints=not args.disable_checkpoints,
+        gradient_checkpointing=args.gradient_checkpointing,
     )
 
 

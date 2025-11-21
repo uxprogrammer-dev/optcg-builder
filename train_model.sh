@@ -30,4 +30,5 @@ python -m ml.training.train \
   --phase2-generation-batch-fraction 0.25 \
   --coverage-weight 0.05 \
   --early-stopping-patience 10 \
-  --disable-checkpoints
+  --disable-checkpoints \
+  --gradient-checkpointing
