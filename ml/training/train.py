@@ -423,8 +423,8 @@ def train(
             loss_weights=loss_weights,
             max_generate_length=max_decode,
         )
-        training_model.compile(optimizer=optimizer)
-        training_model.compiled_metrics = model.compiled_metrics
+        # Compile wrapper with the same optimizer/metrics; losses are handled inside the wrapper.
+        training_model.compile(optimizer=optimizer, metrics=model.metrics)
     
     # Wrap datasets to include card features if enabled
     if use_card_features and card_features:
