@@ -1,0 +1,204 @@
+[33mcommit 51ef8fcf8e4e0d398a17ed42001299449fce858c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Ivan @ UX Programmer <uxprogrammer@gmail.com>
+Date:   Fri Nov 21 22:25:53 2025 +0800
+
+    Add optional gradient checkpointing (env + CLI)
+    
+    - : new --gradient-checkpointing flag, enable tf.keras.utils.enable_tf_gradient_checkpointing when requested
+    - : pass the flag by default on RunPod so GPU memory footprint drops during Phase 2 training
+
+[1mdiff --git a/ml/training/train.py b/ml/training/train.py[m
+[1mindex aef5ff9..79f77b4 100644[m
+[1m--- a/ml/training/train.py[m
+[1m+++ b/ml/training/train.py[m
+[36m@@ -306,6 +306,7 @@[m [mdef train([m
+     phase2_scheduled_sampling_rate: float = 0.5,  # Phase 2: Probability of using model's own predictions vs teacher forcing[m
+     phase2_generation_batch_fraction: float = 0.25,  # Phase 2: Fraction of batch to generate autoregressively (to save compute)[m
+     save_checkpoints: bool = True,[m
+[32m+[m[32m    gradient_checkpointing: bool = False,[m
+ ) -> None:[m
+     deck_config = DeckConfig()[m
+     prompt_config = PromptConfig()[m
+[36m@@ -336,6 +337,15 @@[m [mdef train([m
+         end_token_id=end_token_id,  # Phase 1: For sequence-level loss[m
+     )[m
+ [m
+[32m+[m[32m    if gradient_checkpointing:[m
+[32m+[m[32m        try:[m
+[32m+[m[32m            tf.keras.utils.enable_tf_gradient_checkpointing(model)[m
+[32m+[m[32m            print("Gradient checkpointing: ENABLED")[m
+[32m+[m[32m        except AttributeError:[m
+[32m+[m[32m            print("WARNING: tf.keras.utils.enable_tf_gradient_checkpointing unavailable in "[m
+[32m+[m[32m                  f"TensorFlow {tf.__version__}; proceeding without gradient checkpointing.")[m
+[32m+[m[32m            gradient_checkpointing = False[m
+[32m+[m
+      # Log model input information[m
+     num_inputs = len(model.inputs)[m
+     print(f"Model built with {num_inputs} inputs (card features: {'enabled' if use_card_features else 'disabled'})")[m
+[36m@@ -671,6 +681,11 @@[m [mdef parse_args() -> argparse.Namespace:[m
+         action="store_true",[m
+         help="Disable saving checkpoints during training (saves disk space, useful for cloud training like RunPod). Only the final model will be saved.",[m
+     )[m
+[32m+[m[32m    parser.add_argument([m
+[32m+[m[32m        "--gradient-checkpointing",[m
+[32m+[m[32m        action="store_true",[m
+[32m+[m[32m        help="Enable TensorFlow gradient checkpointing to reduce activation memory usage (slower but saves GPU RAM).",[m
+[32m+[m[32m    )[m
+     return parser.parse_args()[m
+ [m
+ [m
+[36m@@ -709,6 +724,7 @@[m [mdef main() -> None:[m
+         phase2_scheduled_sampling_rate=args.phase2_scheduled_sampling_rate,[m
+         phase2_generation_batch_fraction=args.phase2_generation_batch_fraction,[m
+         save_checkpoints=not args.disable_checkpoints,[m
+[32m+[m[32m        gradient_checkpointing=args.gradient_checkpointing,[m
+     )[m
+ [m
+ [m
+[1mdiff --git a/train_model.sh b/train_model.sh[m
+[1mindex d9c9e91..fbbe8e5 100644[m
+[1m--- a/train_model.sh[m
+[1m+++ b/train_model.sh[m
+[36m@@ -30,4 +30,5 @@[m [mpython -m ml.training.train \[m
+   --phase2-generation-batch-fraction 0.25 \[m
+   --coverage-weight 0.05 \[m
+   --early-stopping-patience 10 \[m
+[31m-  --disable-checkpoints[m
+[32m+[m[32m  --disable-checkpoints \[m
+[32m+[m[32m  --gradient-checkpointing[m
+[33mcommit 51ef8fcf8e4e0d398a17ed42001299449fce858c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Ivan @ UX Programmer <uxprogrammer@gmail.com>
+Date:   Fri Nov 21 22:25:53 2025 +0800
+
+    Add optional gradient checkpointing (env + CLI)
+    
+    - : new --gradient-checkpointing flag, enable tf.keras.utils.enable_tf_gradient_checkpointing when requested
+    - : pass the flag by default on RunPod so GPU memory footprint drops during Phase 2 training
+
+[1mdiff --git a/ml/training/train.py b/ml/training/train.py[m
+[1mindex aef5ff9..79f77b4 100644[m
+[1m--- a/ml/training/train.py[m
+[1m+++ b/ml/training/train.py[m
+[36m@@ -306,6 +306,7 @@[m [mdef train([m
+     phase2_scheduled_sampling_rate: float = 0.5,  # Phase 2: Probability of using model's own predictions vs teacher forcing[m
+     phase2_generation_batch_fraction: float = 0.25,  # Phase 2: Fraction of batch to generate autoregressively (to save compute)[m
+     save_checkpoints: bool = True,[m
+[32m+[m[32m    gradient_checkpointing: bool = False,[m
+ ) -> None:[m
+     deck_config = DeckConfig()[m
+     prompt_config = PromptConfig()[m
+[36m@@ -336,6 +337,15 @@[m [mdef train([m
+         end_token_id=end_token_id,  # Phase 1: For sequence-level loss[m
+     )[m
+ [m
+[32m+[m[32m    if gradient_checkpointing:[m
+[32m+[m[32m        try:[m
+[32m+[m[32m            tf.keras.utils.enable_tf_gradient_checkpointing(model)[m
+[32m+[m[32m            print("Gradient checkpointing: ENABLED")[m
+[32m+[m[32m        except AttributeError:[m
+[32m+[m[32m            print("WARNING: tf.keras.utils.enable_tf_gradient_checkpointing unavailable in "[m
+[32m+[m[32m                  f"TensorFlow {tf.__version__}; proceeding without gradient checkpointing.")[m
+[32m+[m[32m            gradient_checkpointing = False[m
+[32m+[m
+      # Log model input information[m
+     num_inputs = len(model.inputs)[m
+     print(f"Model built with {num_inputs} inputs (card features: {'enabled' if use_card_features else 'disabled'})")[m
+[36m@@ -671,6 +681,11 @@[m [mdef parse_args() -> argparse.Namespace:[m
+         action="store_true",[m
+         help="Disable saving checkpoints during training (saves disk space, useful for cloud training like RunPod). Only the final model will be saved.",[m
+     )[m
+[32m+[m[32m    parser.add_argument([m
+[32m+[m[32m        "--gradient-checkpointing",[m
+[32m+[m[32m        action="store_true",[m
+[32m+[m[32m        help="Enable TensorFlow gradient checkpointing to reduce activation memory usage (slower but saves GPU RAM).",[m
+[32m+[m[32m    )[m
+     return parser.parse_args()[m
+ [m
+ [m
+[36m@@ -709,6 +724,7 @@[m [mdef main() -> None:[m
+         phase2_scheduled_sampling_rate=args.phase2_scheduled_sampling_rate,[m
+         phase2_generation_batch_fraction=args.phase2_generation_batch_fraction,[m
+         save_checkpoints=not args.disable_checkpoints,[m
+[32m+[m[32m        gradient_checkpointing=args.gradient_checkpointing,[m
+     )[m
+ [m
+ [m
+[1mdiff --git a/train_model.sh b/train_model.sh[m
+[1mindex d9c9e91..fbbe8e5 100644[m
+[1m--- a/train_model.sh[m
+[1m+++ b/train_model.sh[m
+[36m@@ -30,4 +30,5 @@[m [mpython -m ml.training.train \[m
+   --phase2-generation-batch-fraction 0.25 \[m
+   --coverage-weight 0.05 \[m
+   --early-stopping-patience 10 \[m
+[31m-  --disable-checkpoints[m
+[32m+[m[32m  --disable-checkpoints \[m
+[32m+[m[32m  --gradient-checkpointing[m
+[33mcommit 51ef8fcf8e4e0d398a17ed42001299449fce858c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Ivan @ UX Programmer <uxprogrammer@gmail.com>
+Date:   Fri Nov 21 22:25:53 2025 +0800
+
+    Add optional gradient checkpointing (env + CLI)
+    
+    - : new --gradient-checkpointing flag, enable tf.keras.utils.enable_tf_gradient_checkpointing when requested
+    - : pass the flag by default on RunPod so GPU memory footprint drops during Phase 2 training
+
+[1mdiff --git a/ml/training/train.py b/ml/training/train.py[m
+[1mindex aef5ff9..79f77b4 100644[m
+[1m--- a/ml/training/train.py[m
+[1m+++ b/ml/training/train.py[m
+[36m@@ -306,6 +306,7 @@[m [mdef train([m
+     phase2_scheduled_sampling_rate: float = 0.5,  # Phase 2: Probability of using model's own predictions vs teacher forcing[m
+     phase2_generation_batch_fraction: float = 0.25,  # Phase 2: Fraction of batch to generate autoregressively (to save compute)[m
+     save_checkpoints: bool = True,[m
+[32m+[m[32m    gradient_checkpointing: bool = False,[m
+ ) -> None:[m
+     deck_config = DeckConfig()[m
+     prompt_config = PromptConfig()[m
+[36m@@ -336,6 +337,15 @@[m [mdef train([m
+         end_token_id=end_token_id,  # Phase 1: For sequence-level loss[m
+     )[m
+ [m
+[32m+[m[32m    if gradient_checkpointing:[m
+[32m+[m[32m        try:[m
+[32m+[m[32m            tf.keras.utils.enable_tf_gradient_checkpointing(model)[m
+[32m+[m[32m            print("Gradient checkpointing: ENABLED")[m
+[32m+[m[32m        except AttributeError:[m
+[32m+[m[32m            print("WARNING: tf.keras.utils.enable_tf_gradient_checkpointing unavailable in "[m
+[32m+[m[32m                  f"TensorFlow {tf.__version__}; proceeding without gradient checkpointing.")[m
+[32m+[m[32m            gradient_checkpointing = False[m
+[32m+[m
+      # Log model input information[m
+     num_inputs = len(model.inputs)[m
+     print(f"Model built with {num_inputs} inputs (card features: {'enabled' if use_card_features else 'disabled'})")[m
+[36m@@ -671,6 +681,11 @@[m [mdef parse_args() -> argparse.Namespace:[m
+         action="store_true",[m
+         help="Disable saving checkpoints during training (saves disk space, useful for cloud training like RunPod). Only the final model will be saved.",[m
+     )[m
+[32m+[m[32m    parser.add_argument([m
+[32m+[m[32m        "--gradient-checkpointing",[m
+[32m+[m[32m        action="store_true",[m
+[32m+[m[32m        help="Enable TensorFlow gradient checkpointing to reduce activation memory usage (slower but saves GPU RAM).",[m
+[32m+[m[32m    )[m
+     return parser.parse_args()[m
+ [m
+ [m
+[36m@@ -709,6 +724,7 @@[m [mdef main() -> None:[m
+         phase2_scheduled_sampling_rate=args.phase2_scheduled_sampling_rate,[m
+         phase2_generation_batch_fraction=args.phase2_generation_batch_fraction,[m
+         save_checkpoints=not args.disable_checkpoints,[m
+[32m+[m[32m        gradient_checkpointing=args.gradient_checkpointing,[m
+     )[m
+ [m
+ [m
+[1mdiff --git a/train_model.sh b/train_model.sh[m
+[1mindex d9c9e91..fbbe8e5 100644[m
+[1m--- a/train_model.sh[m
+[1m+++ b/train_model.sh[m
+[36m@@ -30,4 +30,5 @@[m [mpython -m ml.training.train \[m
+   --phase2-generation-batch-fraction 0.25 \[m
+   --coverage-weight 0.05 \[m
+   --early-stopping-patience 10 \[m
+[31m-  --disable-checkpoints[m
+[32m+[m[32m  --disable-checkpoints \[m
+[32m+[m[32m  --gradient-checkpointing[m
