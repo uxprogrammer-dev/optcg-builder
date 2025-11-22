@@ -9,7 +9,7 @@ import datetime as dt
 import json
 import os
 from pathlib import Path
-from typing import Dict, List, Optional, Sequence, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import tensorflow as tf
 
@@ -23,7 +23,6 @@ from ..datasets import (
 )
 from ..models import TransformerConfig, build_deck_transformer
 from .losses import masked_accuracy, masked_sparse_categorical_crossentropy
-from .custom_training_step import AutoregressiveSequenceLossStep
 
 
 def configure_tensorflow_for_gpu() -> None:
@@ -297,14 +296,11 @@ def train(
     early_stopping_patience: Optional[int] = 3,
     include_control_tokens: bool = True,
     resume_from: Optional[Path] = None,
-    freq_hist_weight: float = 100.0,  # Increased from 10.0 - need much stronger penalty to match tournament decks (16.3 unique cards, 2.1 at 1x)
-    entropy_penalty: float = 2.0,  # Increased from 1.0 - encourage more concentration on fewer cards
-    low_prob_penalty: float = 10.0,  # Increased from 5.0 - stronger penalty for 1x cards
+    freq_hist_weight: float = 200.0,  # Heavier penalty to match tournament duplicate ratios (16.3 unique cards, 2.1 at 1x)
+    entropy_penalty: float = 5.0,  # Stronger push toward concentrated distributions (fewer unique cards)
+    low_prob_penalty: float = 20.0,  # Stronger penalty for cards predicted at 1x (low probability)
     low_prob_threshold: float = 0.3,  # Increased from 0.25 - penalize more cards
-    sequence_level_weight: float = 200.0,  # Phase 1: Weight for sequence-level loss - Increased from 100.0 to 200.0 to strongly penalize 49 unique cards (with new penalties: 49 unique = ~10.7M loss contribution)
-    use_phase2_autoregressive: bool = True,  # Phase 2: Use autoregressive sequence-level loss (generates sequences during training)
-    phase2_scheduled_sampling_rate: float = 0.5,  # Phase 2: Probability of using model's own predictions vs teacher forcing
-    phase2_generation_batch_fraction: float = 0.25,  # Phase 2: Fraction of batch to generate autoregressively (to save compute)
+    sequence_level_weight: float = 400.0,  # Phase 1: Weight for sequence-level loss - heavily penalize singleton-heavy generations
     save_checkpoints: bool = True,
     gradient_checkpointing: bool = False,
 ) -> None:
@@ -403,33 +399,6 @@ def train(
     }
 
     model.compile(optimizer=optimizer, loss=losses, loss_weights=loss_weights, metrics=metrics)
-    
-    # Phase 2: Wrap model with custom training step for autoregressive sequence-level loss
-    index_to_card = {index: card_id for card_id, index in card_to_index.items()}
-    if use_phase2_autoregressive:
-        print("Phase 2: Using autoregressive sequence-level loss (generates sequences during training)")
-        print(f"  Scheduled sampling rate: {phase2_scheduled_sampling_rate}")
-        print(f"  Generation batch fraction: {phase2_generation_batch_fraction}")
-        model = AutoregressiveSequenceLossStep(
-            base_model=model,
-            sequence_level_loss_fn=sequence_level_loss(
-                pad_token_id=pad_token_id,
-                start_token_id=start_token_id,
-                end_token_id=end_token_id,
-                max_copies=deck_config.max_copies_per_card,
-            ),
-            sequence_level_weight=sequence_level_weight,
-            card_to_index=card_to_index,
-            index_to_card=index_to_card,
-            deck_config=deck_config,
-            use_card_features=use_card_features,
-            scheduled_sampling_rate=phase2_scheduled_sampling_rate,
-            generation_batch_fraction=phase2_generation_batch_fraction,
-            losses=losses,
-            loss_weights=loss_weights,
-        )
-        # Recompile with the wrapped model (it will use the base model's compiled losses/metrics)
-        model.compile(optimizer=optimizer, loss=losses, loss_weights=loss_weights, metrics=metrics)
     
     # Wrap datasets to include card features if enabled
     if use_card_features and card_features:
@@ -632,20 +601,20 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--freq-hist-weight",
         type=float,
-        default=100.0,  # Increased from 10.0 - need much stronger penalty to match tournament decks (16.3 unique cards, 2.1 at 1x)
-        help="Weight for the frequency histogram loss (higher = stronger regularization against 1x cards). Default: 100.0",
+        default=200.0,
+        help="Weight for the frequency histogram loss (higher = stronger regularization against 1x cards). Default: 200.0",
     )
     parser.add_argument(
         "--entropy-penalty",
         type=float,
-        default=2.0,  # Increased from 1.0 - encourage more concentration on fewer cards
-        help="Weight for entropy penalty in freq_hist loss (higher = more concentration on fewer cards). Default: 2.0",
+        default=5.0,
+        help="Weight for entropy penalty in freq_hist loss (higher = more concentration on fewer cards). Default: 5.0",
     )
     parser.add_argument(
         "--low-prob-penalty",
         type=float,
-        default=10.0,  # Increased from 5.0 - stronger penalty for 1x cards
-        help="Weight for low-probability penalty in freq_hist loss (higher = stronger penalty for 1x cards). Default: 10.0",
+        default=20.0,
+        help="Weight for low-probability penalty in freq_hist loss (higher = stronger penalty for 1x cards). Default: 20.0",
     )
     parser.add_argument(
         "--low-prob-threshold",
@@ -656,25 +625,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--sequence-level-weight",
         type=float,
-        default=200.0,  # Phase 1: Sequence-level loss weight
-        help="Weight for the sequence-level loss (Phase 1: directly penalizes singleton-heavy generated sequences). Default: 200.0",
-    )
-    parser.add_argument(
-        "--disable-phase2",
-        action="store_true",
-        help="Disable Phase 2 autoregressive sequence-level loss (use only Phase 1). Default: Phase 2 enabled",
-    )
-    parser.add_argument(
-        "--phase2-scheduled-sampling-rate",
-        type=float,
-        default=0.5,
-        help="Phase 2: Probability of using model's own predictions vs teacher forcing during autoregressive generation. Default: 0.5",
-    )
-    parser.add_argument(
-        "--phase2-generation-batch-fraction",
-        type=float,
-        default=0.25,
-        help="Phase 2: Fraction of batch to generate autoregressively (to save compute). Default: 0.25",
+        default=400.0,
+        help="Weight for the sequence-level loss (Phase 1: directly penalizes singleton-heavy generated sequences). Default: 400.0",
     )
     parser.add_argument(
         "--disable-checkpoints",
@@ -720,9 +672,6 @@ def main() -> None:
         low_prob_penalty=args.low_prob_penalty,
         low_prob_threshold=args.low_prob_threshold,
         sequence_level_weight=args.sequence_level_weight,
-        use_phase2_autoregressive=not args.disable_phase2,
-        phase2_scheduled_sampling_rate=args.phase2_scheduled_sampling_rate,
-        phase2_generation_batch_fraction=args.phase2_generation_batch_fraction,
         save_checkpoints=not args.disable_checkpoints,
         gradient_checkpointing=args.gradient_checkpointing,
     )

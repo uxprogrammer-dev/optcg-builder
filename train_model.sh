@@ -21,14 +21,11 @@ python -m ml.training.train \
   --epochs 40 \
   --batch-size 32 \
   --learning-rate 3e-4 \
-  --freq-hist-weight 100.0 \
-  --entropy-penalty 2.0 \
-  --low-prob-penalty 10.0 \
+  --freq-hist-weight 200.0 \
+  --entropy-penalty 5.0 \
+  --low-prob-penalty 20.0 \
   --low-prob-threshold 0.3 \
-  --sequence-level-weight 200.0 \
-  --phase2-scheduled-sampling-rate 0.5 \
-  --phase2-generation-batch-fraction 0.25 \
+  --sequence-level-weight 400.0 \
   --coverage-weight 0.05 \
   --early-stopping-patience 10 \
-  --disable-checkpoints \
-  --gradient-checkpointing
+  --disable-checkpoints
