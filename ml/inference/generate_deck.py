@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from collections import OrderedDict
 from pathlib import Path
 from typing import Dict, List, Mapping, Optional, Sequence
 
@@ -84,6 +85,17 @@ def _aggregate_prior_tokens(
     type_avg = [value / count for value in type_accum]
     cost_avg = [value / count for value in cost_accum]
     return _format_control_tokens(type_avg, cost_avg)
+
+
+def _format_card_counts(cards: Sequence[str]) -> List[str]:
+    """
+    Collapse duplicate card IDs into "NxCARD_ID" entries while preserving order.
+    """
+    counts: "OrderedDict[str, int]" = OrderedDict()
+    for card_id in cards:
+        normalized = str(card_id)
+        counts[normalized] = counts.get(normalized, 0) + 1
+    return [f"{count}x{card_id}" for card_id, count in counts.items()]
 
 
 def _load_prompt_vocab(path: Path) -> list[str]:
@@ -167,6 +179,11 @@ def _build_parser() -> argparse.ArgumentParser:
         type=Path,
         default=Path("data"),
         help="Path to data directory containing cards/ (for card features).",
+    )
+    parser.add_argument(
+        "--format-counts",
+        action="store_true",
+        help="Format deck lists using compact strings like '2xOP12-006' instead of repeated IDs.",
     )
     return parser
 
@@ -571,6 +588,11 @@ def main() -> None:
     }
     if sideboard:
         payload["sideboard"] = sideboard
+
+    if args.format_counts:
+        payload["main_deck"] = _format_card_counts(main_deck)
+        if sideboard:
+            payload["sideboard"] = _format_card_counts(sideboard)
 
     print(json.dumps(payload))
 

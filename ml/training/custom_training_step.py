@@ -37,6 +37,7 @@ class AutoregressiveSequenceLossStep(keras.Model):
         generation_batch_fraction: float = 0.25,  # Only generate for 25% of batch to save compute
         losses: Optional[Dict] = None,
         loss_weights: Optional[Dict] = None,
+        max_generate_length: Optional[int] = None,
         **kwargs
     ):
         # Backward compatibility: older call sites passed metric_output_names, ignore them
@@ -54,13 +55,18 @@ class AutoregressiveSequenceLossStep(keras.Model):
         # Store losses and loss weights for manual computation
         self.losses_dict = losses or {}
         self.loss_weights_dict = loss_weights or {}
+        self.max_generate_length = max_generate_length
         
         # Special token IDs
         self.start_id = card_to_index[deck_config.start_token]
         self.end_id = card_to_index[deck_config.end_token]
         self.pad_id = card_to_index[deck_config.pad_token]
         self.special_ids = tf.constant([self.start_id, self.end_id, self.pad_id], dtype=tf.int32)
-        self.max_length = deck_config.max_total_cards + 2
+        default_max = deck_config.max_total_cards + 2
+        if self.max_generate_length is not None:
+            self.max_length = max(2, int(self.max_generate_length))
+        else:
+            self.max_length = default_max
         self.output_names = list(base_model.output_names)
         
     def call(self, inputs, training=False):

@@ -22,6 +22,7 @@ from ..datasets import (
     make_tf_dataset,
 )
 from ..models import TransformerConfig, build_deck_transformer
+from .custom_training_step import AutoregressiveSequenceLossStep
 from .losses import masked_accuracy, masked_sparse_categorical_crossentropy
 
 
@@ -303,6 +304,10 @@ def train(
     sequence_level_weight: float = 400.0,  # Phase 1: Weight for sequence-level loss - heavily penalize singleton-heavy generations
     save_checkpoints: bool = True,
     gradient_checkpointing: bool = False,
+    phase2_lite: bool = False,
+    phase2_generation_fraction: float = 0.1,
+    phase2_scheduled_sampling_rate: float = 0.3,
+    phase2_max_decode_length: Optional[int] = 32,
 ) -> None:
     deck_config = DeckConfig()
     prompt_config = PromptConfig()
@@ -399,6 +404,26 @@ def train(
     }
 
     model.compile(optimizer=optimizer, loss=losses, loss_weights=loss_weights, metrics=metrics)
+    training_model = model
+    index_to_card = {index: card_id for card_id, index in card_to_index.items()}
+
+    if phase2_lite:
+        max_decode = None if phase2_max_decode_length is None or phase2_max_decode_length <= 0 else phase2_max_decode_length
+        training_model = AutoregressiveSequenceLossStep(
+            base_model=model,
+            sequence_level_loss_fn=losses["predicted_sequence_freq_hist"],
+            sequence_level_weight=sequence_level_weight,
+            card_to_index=card_to_index,
+            index_to_card=index_to_card,
+            deck_config=deck_config,
+            use_card_features=use_card_features,
+            scheduled_sampling_rate=phase2_scheduled_sampling_rate,
+            generation_batch_fraction=phase2_generation_fraction,
+            losses=losses,
+            loss_weights=loss_weights,
+            max_generate_length=max_decode,
+        )
+        training_model.compile(optimizer=optimizer)
     
     # Wrap datasets to include card features if enabled
     if use_card_features and card_features:
@@ -456,7 +481,6 @@ def train(
         with (vocab_dir / "prompt_vocabulary.txt").open("w", encoding="utf-8") as fp:
             for token in prompt_vocab:
                 fp.write(token + "\n")
-        index_to_card = {index: card_id for card_id, index in card_to_index.items()}
         with (vocab_dir / "card_vocabulary.json").open("w", encoding="utf-8") as fp:
             json.dump({"card_to_index": card_to_index, "index_to_card": index_to_card}, fp, indent=2)
     else:
@@ -490,8 +514,9 @@ def train(
                 resume_weights_path = latest_ckpt
             elif fallback_ckpts:
                 resume_weights_path = fallback_ckpts[-1]
+            target_model = training_model if phase2_lite else model
             if resume_weights_path and resume_weights_path.exists():
-                model.load_weights(str(resume_weights_path))
+                target_model.load_weights(str(resume_weights_path))
                 print(f"Loaded weights from {resume_weights_path}")
             else:
                 print("No checkpoint weights found; starting from randomly initialized weights.")
@@ -535,7 +560,7 @@ def train(
             )
         )
 
-    history = model.fit(
+    history = training_model.fit(
         train_ds,
         validation_data=val_ds,
         epochs=epochs,
@@ -638,6 +663,29 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Enable TensorFlow gradient checkpointing to reduce activation memory usage (slower but saves GPU RAM).",
     )
+    parser.add_argument(
+        "--enable-phase2-lite",
+        action="store_true",
+        help="Enable lightweight autoregressive sequence-level loss (Phase 2) during training.",
+    )
+    parser.add_argument(
+        "--phase2-generation-fraction",
+        type=float,
+        default=0.1,
+        help="Fraction of each batch to use for autoregressive generation when Phase 2 lite is enabled. Default: 0.1",
+    )
+    parser.add_argument(
+        "--phase2-sampling-rate",
+        type=float,
+        default=0.3,
+        help="Scheduled sampling rate for autoregressive generation in Phase 2 lite. Default: 0.3",
+    )
+    parser.add_argument(
+        "--phase2-max-gen-length",
+        type=int,
+        default=32,
+        help="Maximum number of tokens to generate during Phase 2 lite (shorter sequences reduce GPU usage). Use <=0 for full length.",
+    )
     return parser.parse_args()
 
 
@@ -674,6 +722,10 @@ def main() -> None:
         sequence_level_weight=args.sequence_level_weight,
         save_checkpoints=not args.disable_checkpoints,
         gradient_checkpointing=args.gradient_checkpointing,
+        phase2_lite=args.enable_phase2_lite,
+        phase2_generation_fraction=args.phase2_generation_fraction,
+        phase2_scheduled_sampling_rate=args.phase2_sampling_rate,
+        phase2_max_decode_length=args.phase2_max_gen_length,
     )
 
 
