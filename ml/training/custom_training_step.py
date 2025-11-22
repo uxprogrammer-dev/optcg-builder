@@ -55,18 +55,17 @@ class AutoregressiveSequenceLossStep(keras.Model):
         # Store losses and loss weights for manual computation
         self.losses_dict = losses or {}
         self.loss_weights_dict = loss_weights or {}
-        self.max_generate_length = max_generate_length
+        self.model_seq_len = deck_config.max_total_cards + 2
+        if max_generate_length is not None and max_generate_length > 1:
+            self.autoregressive_length = int(max_generate_length)
+        else:
+            self.autoregressive_length = self.model_seq_len
         
         # Special token IDs
         self.start_id = card_to_index[deck_config.start_token]
         self.end_id = card_to_index[deck_config.end_token]
         self.pad_id = card_to_index[deck_config.pad_token]
         self.special_ids = tf.constant([self.start_id, self.end_id, self.pad_id], dtype=tf.int32)
-        default_max = deck_config.max_total_cards + 2
-        if self.max_generate_length is not None:
-            self.max_length = max(2, int(self.max_generate_length))
-        else:
-            self.max_length = default_max
         self.output_names = list(base_model.output_names)
         
     def call(self, inputs, training=False):
@@ -196,7 +195,8 @@ class AutoregressiveSequenceLossStep(keras.Model):
             generated_sequences: (batch, max_length) tensor of token IDs
         """
         batch_size = tf.shape(prompt_tokens)[0]
-        max_length = self.max_length
+        max_length = self.autoregressive_length
+        model_seq_len = self.model_seq_len
         
         # Initialize with BOS token
         generated = tf.fill([batch_size, 1], self.start_id)  # (batch, 1)
@@ -211,10 +211,10 @@ class AutoregressiveSequenceLossStep(keras.Model):
         
         for _ in range(max_length - 1):
             current_length = tf.shape(generated)[1]
-            pad_len = tf.maximum(max_length - current_length, 0)
+            pad_len = tf.maximum(model_seq_len - current_length, 0)
             padding = tf.fill(tf.stack([batch_size, pad_len]), self.pad_id)
             decoder_input = tf.concat([generated, padding], axis=1)
-            decoder_input = decoder_input[:, :max_length]
+            decoder_input = decoder_input[:, :model_seq_len]
             
             model_inputs = [model_inputs_base[0], decoder_input]
             if feature_inputs:
@@ -251,10 +251,10 @@ class AutoregressiveSequenceLossStep(keras.Model):
             finished = tf.logical_or(finished, tf.equal(write_token, self.end_id))
         
         current_length = tf.shape(generated)[1]
-        pad_len = tf.maximum(max_length - current_length, 0)
+        pad_len = tf.maximum(model_seq_len - current_length, 0)
         padding = tf.fill(tf.stack([batch_size, pad_len]), self.pad_id)
         generated = tf.concat([generated, padding], axis=1)
-        generated = generated[:, :max_length]
+        generated = generated[:, :model_seq_len]
         
         return generated  # (batch, max_length)
     
