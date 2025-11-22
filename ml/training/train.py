@@ -424,6 +424,7 @@ def train(
             max_generate_length=max_decode,
         )
         training_model.compile(optimizer=optimizer)
+        training_model.compiled_metrics = model.compiled_metrics
     
     # Wrap datasets to include card features if enabled
     if use_card_features and card_features:
