@@ -354,6 +354,19 @@ def make_tf_dataset(
         tf.zeros((3,), dtype=tf.float32),
     )
 
+    def _build_copy_ratio_targets(target_tokens: tf.Tensor) -> tf.Tensor:
+        """
+        Convert a sequence of deck tokens into normalized copy counts per card.
+
+        Returns a vector where each index stores (#copies / max_copies_per_card),
+        ensuring the model learns precise card multiplicities instead of binary flags.
+        """
+        token_one_hot = tf.one_hot(target_tokens, depth=vocab_size, dtype=tf.float32)
+        copy_counts = tf.reduce_sum(token_one_hot, axis=0)
+        copy_counts = copy_counts * special_token_mask
+        capped_counts = tf.minimum(copy_counts, max_copies)
+        return tf.math.divide_no_nan(capped_counts, max_copies)
+
     def _map_fn(
         prompt: tf.Tensor,
         deck_vector: tf.Tensor,
@@ -419,12 +432,7 @@ def make_tf_dataset(
         decoder_target = tf.concat([decoder_target, tf.reshape(pad_value, (1,))], axis=0)
         # Return inputs as a tuple (encoder_input, decoder_input) and target as a tensor
         # Card features are constant and will be passed separately to the model during training
-        token_one_hot = tf.one_hot(decoder_target, depth=vocab_size, dtype=tf.float32)
-        freq_hist = tf.reduce_sum(token_one_hot, axis=0)
-        freq_hist = freq_hist * special_token_mask
-        # Normalize by max copies per card so targets fall in [0, 1]
-        freq_hist = tf.minimum(freq_hist, max_copies)
-        freq_hist = tf.math.divide_no_nan(freq_hist, max_copies)
+        freq_hist = _build_copy_ratio_targets(decoder_target)
 
         return (
             (prompt_tokens, decoder_input),
