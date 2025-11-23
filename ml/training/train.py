@@ -297,11 +297,11 @@ def train(
     early_stopping_patience: Optional[int] = 3,
     include_control_tokens: bool = True,
     resume_from: Optional[Path] = None,
-    freq_hist_weight: float = 200.0,  # Heavier penalty to match tournament duplicate ratios (16.3 unique cards, 2.1 at 1x)
+    freq_hist_weight: float = 300.0,  # Increased from 200.0 - stronger penalty to match tournament duplicate ratios (16.3 unique cards, 2.1 at 1x)
     entropy_penalty: float = 5.0,  # Stronger push toward concentrated distributions (fewer unique cards)
     low_prob_penalty: float = 20.0,  # Stronger penalty for cards predicted at 1x (low probability)
     low_prob_threshold: float = 0.3,  # Increased from 0.25 - penalize more cards
-    sequence_level_weight: float = 400.0,  # Phase 1: Weight for sequence-level loss - heavily penalize singleton-heavy generations
+    sequence_level_weight: float = 25.0,  # Reduced from 400.0 to 25.0 - moderate penalty for singleton-heavy generations (user requested 20-30 range)
     save_checkpoints: bool = True,
     gradient_checkpointing: bool = False,
     phase2_lite: bool = False,
@@ -627,8 +627,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--freq-hist-weight",
         type=float,
-        default=200.0,
-        help="Weight for the frequency histogram loss (higher = stronger regularization against 1x cards). Default: 200.0",
+        default=300.0,
+        help="Weight for the frequency histogram loss (higher = stronger regularization against 1x cards). Default: 300.0",
     )
     parser.add_argument(
         "--entropy-penalty",
@@ -651,8 +651,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--sequence-level-weight",
         type=float,
-        default=400.0,
-        help="Weight for the sequence-level loss (Phase 1: directly penalizes singleton-heavy generated sequences). Default: 400.0",
+        default=25.0,
+        help="Weight for the sequence-level loss (Phase 1: directly penalizes singleton-heavy generated sequences). Default: 25.0",
     )
     parser.add_argument(
         "--disable-checkpoints",

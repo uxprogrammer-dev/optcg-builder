@@ -1099,6 +1099,9 @@ def greedy_generate(
             next_token_logits = _apply_penalty(next_token_logits, leader_penalty)
             next_token_logits = _apply_penalty(next_token_logits, color_penalty)
             next_token_logits = _apply_penalty(next_token_logits, cost_restriction_penalty)
+            # Sample with replacement: allow cards to be selected multiple times up to max_copies (4)
+            # The copy_limit_penalty only blocks cards that have reached max_copies, enabling
+            # realistic deck generation with multiple copies of key cards
             next_token_logits = _apply_copy_limit_penalty(
                 next_token_logits,
                 copy_counts,
@@ -1385,6 +1388,9 @@ def beam_search_generate(
                         if card_id:
                             base_code = _normalize_card_id_to_base(card_id)
                             copy_counts[token_id] = base_code_counts.get(base_code, 0)
+                # Sample with replacement: allow cards to be selected multiple times up to max_copies (4)
+                # The copy_limit_penalty only blocks cards that have reached max_copies, enabling
+                # realistic deck generation with multiple copies of key cards
                 step_logits = _apply_copy_limit_penalty(
                     step_logits,
                     copy_counts,
