@@ -360,6 +360,10 @@ def make_tf_dataset(
 
         Returns a vector where each index stores (#copies / max_copies_per_card),
         ensuring the model learns precise card multiplicities instead of binary flags.
+        
+        Example: If a card appears 2 times in the deck, its target value will be 2/4 = 0.5.
+        This allows the model to learn that cards should appear in multiples (2x, 3x, 4x)
+        rather than just being present (0/1).
         """
         token_one_hot = tf.one_hot(target_tokens, depth=vocab_size, dtype=tf.float32)
         copy_counts = tf.reduce_sum(token_one_hot, axis=0)
