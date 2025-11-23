@@ -42,6 +42,8 @@ TYPE_ID_TO_BUCKET = {
     2: "EVENT",
     3: "STAGE",
 }
+_DEFAULT_DECK_CONFIG = DeckConfig()
+_MAX_COPIES_PER_CARD = _DEFAULT_DECK_CONFIG.max_copies_per_card
 
 
 def _split_colors(raw: Optional[str]) -> Set[str]:
@@ -739,6 +741,7 @@ def _apply_freq_hist_bias(
     copy_counts: Counter,
     special_ids: Set[int],
     bias_strength: float = 1.0,
+    max_copies: Optional[int] = None,
 ) -> tf.Tensor:
     """
     Apply frequency histogram bias to encourage realistic card counts.
@@ -749,6 +752,7 @@ def _apply_freq_hist_bias(
         copy_counts: Counter of how many times each card has been generated
         special_ids: Set of special token IDs to exclude
         bias_strength: How strongly to apply the bias (higher = more aggressive)
+        max_copies: Maximum allowed copies per card (defaults to DeckConfig rule)
     
     Returns:
         Biased logits
@@ -756,8 +760,13 @@ def _apply_freq_hist_bias(
     if freq_hist is None:
         return logits
     
+    if max_copies is None:
+        max_copies = _MAX_COPIES_PER_CARD
+    max_copies_float = float(max_copies)
+    min_expected_prob = 1.0 / max_copies_float
+    
     # freq_hist shape is [vocab_size] (1D tensor from pooled decoder output)
-    # Values are scaled between 0 and 1, where 1.0 ~= max_copies_per_card (4 copies)
+    # Values are scaled between 0 and 1, where 1.0 ~= max_copies_per_card copies
     # We want to boost cards that:
     # 1. Have high freq_hist probability (should appear multiple times)
     # 2. Have already been generated but haven't reached their expected count yet
@@ -791,7 +800,7 @@ def _apply_freq_hist_bias(
                 continue
             # Expected count based on freq_hist (scaled by max copies)
             expected_prob = float(freq_hist_np[token_id])
-            expected_count = expected_prob * 4.0  # Convert back to copies
+            expected_count = expected_prob * max_copies_float  # Convert back to copies
             
             # If we haven't reached expected count, boost this card
             if current_count < expected_count:
@@ -810,8 +819,8 @@ def _apply_freq_hist_bias(
             if token_id in special_ids or token_id in copy_counts:
                 continue
             prob = float(freq_hist_np[token_id])
-            if prob > 0.25:  # Model expects at least one copy
-                boost = min(prob * bias_strength * 4.0, 10.0)
+            if prob >= min_expected_prob:  # Model expects at least one copy
+                boost = min(prob * bias_strength * max_copies_float, 10.0)
                 bias = tf.tensor_scatter_nd_update(
                     bias,
                     [[token_id]],
@@ -825,7 +834,7 @@ def _apply_freq_hist_bias(
                 continue
             # Expected count based on freq_hist (scaled by max copies)
             expected_prob = tf.gather(freq_hist_flat, token_id)
-            expected_count = expected_prob * 4.0
+            expected_count = expected_prob * max_copies_float
             
             # If we haven't reached expected count, boost this card
             boost = tf.maximum(
@@ -1028,6 +1037,7 @@ def greedy_generate(
                     copy_counts,
                     special_ids,
                     bias_strength=5.0,  # Moderate bias (reduced from 20.0 - was too strong and breaking generation)
+                    max_copies=deck_config.max_copies_per_card,
                 )
             
             # Always apply duplicate encouragement bias (doesn't rely on freq_hist)
@@ -1090,7 +1100,10 @@ def greedy_generate(
             next_token_logits = _apply_penalty(next_token_logits, color_penalty)
             next_token_logits = _apply_penalty(next_token_logits, cost_restriction_penalty)
             next_token_logits = _apply_copy_limit_penalty(
-                next_token_logits, copy_counts, max_copies=4, special_ids=special_ids
+                next_token_logits,
+                copy_counts,
+                max_copies=deck_config.max_copies_per_card,
+                special_ids=special_ids,
             )
             next_token_logits = _apply_repetition_bonus(
                 next_token_logits, copy_counts, special_ids=special_ids, bonus=0.5
@@ -1373,7 +1386,10 @@ def beam_search_generate(
                             base_code = _normalize_card_id_to_base(card_id)
                             copy_counts[token_id] = base_code_counts.get(base_code, 0)
                 step_logits = _apply_copy_limit_penalty(
-                    step_logits, copy_counts, max_copies=4, special_ids=special_ids
+                    step_logits,
+                    copy_counts,
+                    max_copies=deck_config.max_copies_per_card,
+                    special_ids=special_ids,
                 )
                 # Apply duplicate encouragement bias to reduce 1x cards
                 if len(seq) >= 2:  # Only apply after leader has been generated
@@ -1385,6 +1401,7 @@ def beam_search_generate(
                             copy_counts,
                             special_ids,
                             bias_strength=5.0,  # Moderate bias (reduced from 20.0 - was too strong and breaking generation)
+                            max_copies=deck_config.max_copies_per_card,
                         )
                     
                     # Always apply duplicate encouragement bias (doesn't rely on freq_hist)
